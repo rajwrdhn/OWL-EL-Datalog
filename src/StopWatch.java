@@ -17,12 +17,6 @@ public class StopWatch {
 	{
 	}
 	
-	/** Constructor, stores log for output */
-	public StopWatch(InferenceForOWLELMain log)
-	{
-		this.log = log;
-	}
-	
 	/** Start the stop watch (without task description) */
 	public StopWatch start()
 	{
@@ -50,18 +44,11 @@ public class StopWatch {
 
 	/**
 	 * Stop the stop watch, optionally taking extra text for output.
-	 * If a log and a task description / extra text was given, output
-	 * elapsed time.
-	 * <br>
-	 * Extra text is output as "... xx.yy seconds, extra-text."
-	 * @param extraText extra text to output (optional, ignored if {@code null})
 	 */
 	public long stop(String extraText) {
 		time = System.currentTimeMillis() - time;
 		running = false;
 		if (descrptionOfTask != null) {
-			// log.print("Time for " + descrptionOfTask + ": " + elapsedSeconds() + "
-			// seconds");
 			System.out.println("Time for " + descrptionOfTask + ": " + elapsedSeconds() + " seconds");
 			if (extraText != null) {
 				System.out.println(", " + extraText);
