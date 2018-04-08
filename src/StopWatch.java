@@ -3,9 +3,6 @@ public class StopWatch {
 	/** task description (if needed)*/
 	protected String descrptionOfTask;
 	
-	/** The (optional) log */
-	protected InferenceForOWLELMain log;
-
 	/** For storing the time */
 	protected long time = 0;
 	
