@@ -9,7 +9,7 @@ public class StopWatch {
 	/** Is the watch running? */
 	protected boolean running = false;
 	
-	/** Constructor, no log and no output */
+	/** Constructor, no output */
 	public StopWatch()
 	{
 	}
