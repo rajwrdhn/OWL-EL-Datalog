@@ -75,9 +75,9 @@ public class Normalize {
 	 * Call axiomVisitor Class , Normalize and return new set of normalized axioms.
 	 */
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException {
-		v_axioms.addAll(onto.getAxioms());
+		onto.axioms().forEach(x -> v_axioms.add(x));
 		//v_axioms.addAll((Collection<? extends OWLAxiom>) onto.axioms());
-		visitAxioms(onto.getLogicalAxioms());
+		visitAxioms(v_axioms);
 		return n_axioms;
 	}
 	
