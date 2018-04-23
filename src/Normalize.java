@@ -144,6 +144,15 @@ public class Normalize {
 			}
 		}
 	}
+	
+	/**
+	 * input translation as string of subsumption axioms
+	 * @return
+	 */
+	public Set<String> getinputTranslationAxioms() {
+		return inputStringTranslation;
+	}
+	
 	/*
 	 * Visitor Class for Axioms in the Ontology.
 	 */
