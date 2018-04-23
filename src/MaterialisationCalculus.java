@@ -16,21 +16,30 @@ public class MaterialisationCalculus {
 	final Variable y = Expressions.makeVariable("y");
 	final Variable z = Expressions.makeVariable("z");
 	
+	
+	
+	
 	public MaterialisationCalculus() {
 		listIDBPredicates = new List();
 		listEDBPredicates = new List();
 		listRules = new List();
 		listAtoms = new List();
 	}
-	
+	/**
+	 * rules
+	 */
 	public void rulesImplementation() {
 		//rule 1
 		
 	}
+	/**
+	 * instantiating facts and entities
+	 */
 	public void factBase() {
-		
+		InferenceForOWLELMain inm = new InferenceForOWLELMain();
+		for (String s: inm.getOWLIndividualNamesAsStrings()) {
+			s.substring(5, 5);
+			//make predicate
+		}
 	}
-	public void visitAll() {
-		
-	}	
 }

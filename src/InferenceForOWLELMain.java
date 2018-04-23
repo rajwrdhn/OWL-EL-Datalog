@@ -1,9 +1,12 @@
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
+
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -32,6 +35,28 @@ public class InferenceForOWLELMain {
 		onto.individualsInSignature().forEach(x -> v_individualNames.add("{nom("+x+")}"));
 		onto.objectPropertiesInSignature().forEach(x -> v_roleNames.add("{rol("+x+")}"));
 		onto.classesInSignature().forEach(x -> v_classNames.add("{cls("+x+")}") );
+	}
+	
+	/**
+	 * set of individual names set {{nom(a)},...}
+	 * @return
+	 */
+	public Set<String> getOWLIndividualNamesAsStrings() {
+		return v_individualNames;
+	}
+	/**
+	 * set of class names set {{cls(A)},...}
+	 * @return
+	 */
+	public Set<String> getOWLClassNamesAsStrings() {
+		return v_classNames;
+	}
+	/**
+	 * set of role names set {{rol(R)},...}
+	 * @return
+	 */
+	public Set<String> getRoleNamesAsStrings() {
+		return v_roleNames;
 	}
 	
 	public OWLOntology loadOntology(String fileadd) throws OWLOntologyCreationException {
