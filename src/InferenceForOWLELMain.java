@@ -1,24 +1,44 @@
 import java.io.File;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.vlog4j.core.reasoner.Algorithm;
+import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 
 //Main class upload ontology here
 public class InferenceForOWLELMain {
+	protected final Set<String> v_individualNames;
+	protected final Set<String> v_classNames;
+	protected final Set<String> v_roleNames;
 	
 	public InferenceForOWLELMain() {
+		v_individualNames = new HashSet<>();
+		v_classNames = new HashSet<>();
+		v_roleNames = new HashSet<>();
+	}
+	
+	public void FinalReasoning() {
+		final Reasoner reasoner = Reasoner.getInstance();
+		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
+	}
+	
+	public void inputTranslation(OWLOntology onto) {
+		
+		
+		onto.individualsInSignature();
 		
 	}
 	
-	
-	public OWLOntology Loadontology(String fileadd) throws OWLOntologyCreationException {
+	public OWLOntology loadOntology(String fileadd) throws OWLOntologyCreationException {
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		File file = new File(fileadd);
 		OWLOntology onto = man.loadOntologyFromOntologyDocument(file);
@@ -37,10 +57,9 @@ public class InferenceForOWLELMain {
 		timer.start("Normalize EL-Ontology! ");
 		String file = args[0];
 		try {
-			elmain.Loadontology(file);
+			elmain.loadOntology(file);
 			
 		} catch (OWLOntologyCreationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		timer.stop("Done!");

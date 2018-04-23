@@ -55,17 +55,18 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
+import org.semanticweb.owlapi.util.OWLClassExpressionCollector;
 
 public class Normalize {
     protected final OWLDataFactory v_factory;
     protected final Set<OWLAxiom> v_axioms;
     protected final Set<OWLAxiom> n_axioms;
-    protected final IRI v_IRI;
+    //protected final IRI v_IRI;
 	protected final Set<String> inputStringTranslation;
 	//constructor
     public Normalize(OWLDataFactory factory, OWLOntologyID ontID) {
         v_factory=factory;
-        v_IRI = ontID.getOntologyIRI();
+        //v_IRI = ontID.getOntologyIRI();
         v_axioms= new HashSet<>();
         n_axioms= new HashSet<>();
         inputStringTranslation = new HashSet<>();
@@ -75,7 +76,8 @@ public class Normalize {
 	 */
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException {
 		v_axioms.addAll(onto.getAxioms());
-		visitAxioms(onto.getLogicalAxioms());		
+		//v_axioms.addAll((Collection<? extends OWLAxiom>) onto.axioms());
+		visitAxioms(onto.getLogicalAxioms());
 		return n_axioms;
 	}
 	
@@ -84,7 +86,6 @@ public class Normalize {
 	 */
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
 		AxiomVisitor axmVisitor = new AxiomVisitor();
-		
 		for (OWLAxiom axiom : axioms) {
 			axiom.accept(axmVisitor);
 		}
@@ -94,7 +95,7 @@ public class Normalize {
 	 * Adds the fresh concept name
 	 */
 	public OWLClassExpression addFreshClassName(long conceptNumber) {		
-		return v_factory.getOWLClass(IRI.create(v_IRI+"#FreshConcept" + conceptNumber));
+		return v_factory.getOWLClass(IRI.create("#FreshConcept" + conceptNumber));
 	}
 	/*
 	 * Adds Fresh Class name to the existentially quantified Concept expression
