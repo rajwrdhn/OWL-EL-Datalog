@@ -32,10 +32,9 @@ public class InferenceForOWLELMain {
 	}
 	
 	public void inputTranslation(OWLOntology onto) {
-		
-		
-		onto.individualsInSignature();
-		
+		onto.individualsInSignature().forEach(x -> v_individualNames.add("{nom("+x+")}"));
+		onto.objectPropertiesInSignature().forEach(x -> v_roleNames.add("{rol("+x+")}"));
+		onto.classesInSignature().forEach(x -> v_classNames.add("{cls("+x+")}") );
 	}
 	
 	public OWLOntology loadOntology(String fileadd) throws OWLOntologyCreationException {
