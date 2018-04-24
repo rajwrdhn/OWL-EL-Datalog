@@ -43,7 +43,6 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
 import org.semanticweb.owlapi.model.OWLSubAnnotationPropertyOfAxiom;
@@ -62,7 +61,7 @@ public class Normalize {
     //protected final IRI v_IRI;
 	protected final Set<String> inputStringTranslation;
 	//constructor
-    public Normalize(OWLDataFactory factory, OWLOntologyID ontID) {
+    public Normalize(OWLDataFactory factory) {
         v_factory=factory;
         //v_IRI = ontID.getOntologyIRI();
         v_axioms= new HashSet<>();
