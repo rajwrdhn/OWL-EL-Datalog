@@ -16,9 +16,6 @@ public class MaterialisationCalculus {
 	final Variable y = Expressions.makeVariable("y");
 	final Variable z = Expressions.makeVariable("z");
 	
-	
-	
-	
 	public MaterialisationCalculus() {
 		listIDBPredicates = new List();
 		listEDBPredicates = new List();
@@ -40,6 +37,14 @@ public class MaterialisationCalculus {
 		for (String s: inm.getOWLIndividualNamesAsStrings()) {
 			s.substring(5, 5);
 			//make predicate
+		}
+		
+		for (String s: inm.getOWLClassNamesAsStrings()) {
+			s.substring(5, 5);
+		}
+		
+		for (String s: inm.getRoleNamesAsStrings()) {
+			s.substring(5, 5);
 		}
 	}
 }
