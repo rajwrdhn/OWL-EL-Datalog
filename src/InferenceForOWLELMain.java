@@ -34,21 +34,21 @@ public class InferenceForOWLELMain {
 	}
 	
 	/**
-	 * set of individual names set {{nom(a)},...}
+	 * set of individual names set ({nom(a)},...)
 	 * @return
 	 */
 	public Set<String> getOWLIndividualNamesAsStrings() {
 		return v_individualNames;
 	}
 	/**
-	 * set of class names set {{cls(A)},...}
+	 * set of class names set ({cls(A)},...)
 	 * @return
 	 */
 	public Set<String> getOWLClassNamesAsStrings() {
 		return v_classNames;
 	}
 	/**
-	 * set of role names set {{rol(R)},...}
+	 * set of role names set ({rol(R)},...)
 	 * @return
 	 */
 	public Set<String> getRoleNamesAsStrings() {
