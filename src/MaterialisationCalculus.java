@@ -37,6 +37,7 @@ public class MaterialisationCalculus {
 		for (String s: inm.getOWLIndividualNamesAsStrings()) {
 			s.substring(5, 5);
 			//make predicate
+			
 		}
 		
 		for (String s: inm.getOWLClassNamesAsStrings()) {

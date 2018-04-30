@@ -15,24 +15,31 @@ public class InferenceForOWLELMain {
 	protected final Set<String> v_individualNames;
 	protected final Set<String> v_classNames;
 	protected final Set<String> v_roleNames;
+	protected Set<String> v_otherLogicalAxioms;
+	protected static StopWatch timer;
+	//Normalize norm = new Normalize(factory);
 	
 	public InferenceForOWLELMain() {
 		v_individualNames = new HashSet<>();
 		v_classNames = new HashSet<>();
 		v_roleNames = new HashSet<>();
+		v_otherLogicalAxioms = new HashSet<>();
+		timer = new StopWatch();
 	}
 	
 	public void FinalReasoning() {
 		final Reasoner reasoner = Reasoner.getInstance();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
 	}
-	
+	/**
+	 * New Ontology here
+	 * @param onto
+	 */
 	public void inputTranslation(OWLOntology onto) {
-		onto.individualsInSignature().forEach(x -> v_individualNames.add("{nom("+x+")}"));
-		onto.objectPropertiesInSignature().forEach(x -> v_roleNames.add("{rol("+x+")}"));
-		onto.classesInSignature().forEach(x -> v_classNames.add("{cls("+x+")}") );
+		onto.individualsInSignature().forEach(x -> v_individualNames.add("{nom("+x.toString()+")}"));
+		onto.objectPropertiesInSignature().forEach(x -> v_roleNames.add("{rol("+x.toString()+")}"));
+		onto.classesInSignature().forEach(x -> v_classNames.add("{cls("+x.toString()+")}") );
 	}
-	
 	/**
 	 * set of individual names set ({nom(a)},...)
 	 * @return
@@ -61,15 +68,19 @@ public class InferenceForOWLELMain {
 		OWLOntology onto = man.loadOntologyFromOntologyDocument(file);
 		OWLDataFactory factory = man.getOWLDataFactory();
 		Normalize norm = new Normalize(factory);	
+		//v_otherLogicalAxioms = norm.getFromOntology(onto);
 		Set<OWLAxiom> axioms= norm.getFromOntology(onto);
 		OWLOntology ont = man.createOntology(axioms);
-		
 		return ont;
 	}
-	public static void main(String args[]){
+	/**
+	 * 
+	 * @param args
+	 */
+	public static void main(String []args){
 		System.out.println();
 		InferenceForOWLELMain elmain = new InferenceForOWLELMain();
-		StopWatch timer = new StopWatch();
+		
 		timer.start("Normalize EL-Ontology! ");
 		String file = args[0];
 		try {

@@ -59,7 +59,7 @@ public class Normalize {
     protected final Set<OWLAxiom> v_axioms;
     protected final Set<OWLAxiom> n_axioms;
     //protected final IRI v_IRI;
-	protected final Set<String> inputStringTranslation;
+	public final Set<String> inputStringTranslation;
 	//constructor
     public Normalize(OWLDataFactory factory) {
         v_factory=factory;
@@ -68,7 +68,7 @@ public class Normalize {
         n_axioms= new HashSet<>();
         inputStringTranslation = new HashSet<>();
 	}
-	/*
+	/**
 	 * Call axiomVisitor Class , Normalize and return new set of normalized axioms.
 	 */
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException {
@@ -78,7 +78,7 @@ public class Normalize {
 		return n_axioms;
 	}
 	
-	/*
+	/**
 	 * Visit all Axioms in the initial Ontology and normalize the axioms
 	 */
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
@@ -88,32 +88,32 @@ public class Normalize {
 		}
 	}
 	
-	/*
+	/**
 	 * Adds the fresh concept name
 	 */
 	public OWLClassExpression addFreshClassName(long conceptNumber) {		
 		return v_factory.getOWLClass(IRI.create("#FreshConcept" + conceptNumber));
 	}
-	/*
+	/**
 	 * Adds Fresh Class name to the existentially quantified Concept expression
 	 */
 	public OWLObjectSomeValuesFrom addSomeValuesFromToFreshClassName(OWLObjectSomeValuesFrom expr, long conceptNumber) {
 		return v_factory.getOWLObjectSomeValuesFrom(expr.getProperty(), addFreshClassName(conceptNumber));
 	}
-	/*
+	/**
 	 * gets the property "R" from "Exists.R.C"
 	 */
 	public OWLObjectPropertyExpression getPropertyfromClassExpression(OWLObjectSomeValuesFrom expr) {		
 		return expr.getProperty();
 	}
-	/*
+	/**
 	 * Return the Class from Existentially quantified Class Expression
 	 */
 	public OWLClassExpression getClassFromObjectSomeValuesFrom(OWLObjectSomeValuesFrom expr) {
 		
 		return expr.getFiller();
 	}
-	/*
+	/**
 	 * Return the Class from Self Restriction Class Expression
 	 */
 	public OWLClassExpression getClassFromObjectSomeValuesFrom(OWLObjectHasSelf expr) {
