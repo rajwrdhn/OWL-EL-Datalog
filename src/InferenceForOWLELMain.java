@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.vlog4j.core.reasoner.Algorithm;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
@@ -62,12 +63,13 @@ public class InferenceForOWLELMain {
 		return v_roleNames;
 	}
 	
-	public OWLOntology loadOntology(String fileadd) throws OWLOntologyCreationException {
+	public static OWLOntology loadOntology(String fileadd) throws OWLOntologyCreationException {
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		File file = new File(fileadd);
 		OWLOntology onto = man.loadOntologyFromOntologyDocument(file);
 		OWLDataFactory factory = man.getOWLDataFactory();
-		Normalize norm = new Normalize(factory);	
+		OWLOntologyID ontID = onto.getOntologyID();
+		Normalize norm = new Normalize(factory,ontID);	
 		//v_otherLogicalAxioms = norm.getFromOntology(onto);
 		Set<OWLAxiom> axioms= norm.getFromOntology(onto);
 		OWLOntology ont = man.createOntology(axioms);
@@ -84,7 +86,7 @@ public class InferenceForOWLELMain {
 		timer.start("Normalize EL-Ontology! ");
 		String file = args[0];
 		try {
-			elmain.loadOntology(file);
+			OWLOntology ont = loadOntology(file);
 			
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();
