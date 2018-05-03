@@ -16,7 +16,7 @@ public class InferenceForOWLELMain {
 	protected final Set<String> v_individualNames;
 	protected final Set<String> v_classNames;
 	protected final Set<String> v_roleNames;
-	protected Set<String> v_otherLogicalAxioms;
+	protected static Set<String> v_otherLogicalAxioms;
 	protected static StopWatch timer;
 	//Normalize norm = new Normalize(factory);
 	
@@ -70,9 +70,14 @@ public class InferenceForOWLELMain {
 		OWLDataFactory factory = man.getOWLDataFactory();
 		OWLOntologyID ontID = onto.getOntologyID();
 		Normalize norm = new Normalize(factory,ontID);	
-		//v_otherLogicalAxioms = norm.getFromOntology(onto);
+		
 		Set<OWLAxiom> axioms= norm.getFromOntology(onto);
+		
 		OWLOntology ont = man.createOntology(axioms);
+		v_otherLogicalAxioms = norm.getinputTranslationAxioms();
+		for(String s : v_otherLogicalAxioms) {
+			System.out.println(s);
+		}
 		return ont;
 	}
 	/**
