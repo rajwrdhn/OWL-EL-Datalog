@@ -209,32 +209,32 @@ public class Normalize {
 			if(axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
 				// A subsumes B
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
-				//inputStringTranslation.add("{subClass("+axiom.getSubClass()+","+axiom.getSuperClass()+")}");
+				inputStringTranslation.add("{subClass("+axiom.getSubClass()+","+axiom.getSuperClass()+")}");
 			} else if (axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass() instanceof OWLObjectSomeValuesFrom ) {
 				//Exists.R.C subsumes A
 				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSubClass()).isClassExpressionLiteral()) {
 					n_axioms.add(axiom);
+					inputStringTranslation.add("{subEx("+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty()+","+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getFiller()+","+axiom.getSuperClass()+")}");
 				} else {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getClassFromObjectSomeValuesFrom((OWLObjectSomeValuesFrom)axiom.getSubClass()), addFreshClassName(freshConceptNumber)));
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom((OWLObjectSomeValuesFrom) addFreshClassName(freshConceptNumber), axiom.getSuperClass()));					
+					inputStringTranslation.add("{subEx("+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty()+","+addFreshClassName(freshConceptNumber)+","+axiom.getSuperClass()+")}");					
 					freshConceptNumber++;
 				}
-				//inputStringTranslation.add("{subEx("+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty()+","+(OWLObjectSomeValuesFrom) addFreshClassName(freshConceptNumber)+","+axiom.getSuperClass()+")}");
-				
+			
 			} else if (axiom.getSuperClass() instanceof OWLObjectSomeValuesFrom && axiom.getSubClass().isClassExpressionLiteral()) {
 				// A subsumes Exists.R.C
 				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSuperClass()).isClassExpressionLiteral() ) {
 					n_axioms.add(axiom);
+					inputStringTranslation.add("{subEx("+axiom.getSubClass()+((OWLObjectSomeValuesFrom) axiom.getSuperClass()).getProperty()+","+((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getFiller() +","+"aux"+auxnum+")}");
+					auxnum++;
 				} else {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), getClassFromObjectSomeValuesFrom((OWLObjectSomeValuesFrom)axiom.getSuperClass())));
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), addSomeValuesFromToFreshClassName((OWLObjectSomeValuesFrom) axiom.getSuperClass(), freshConceptNumber)));
+					inputStringTranslation.add("{subEx("+axiom.getSubClass()+","+getPropertyfromClassExpression((OWLObjectSomeValuesFrom)axiom.getSuperClass())+","+addFreshClassName(freshConceptNumber)+","+"aux"+auxnum+")}");
+					auxnum++;
 					freshConceptNumber++;
 				}
-				
-				//inputStringTranslation.add("{subEx("+axiom.getSubClass()+","+getPropertyfromClassExpression((OWLObjectSomeValuesFrom)axiom.getSuperClass())+","+addFreshClassName(freshConceptNumber)+","+"aux"+auxnum+")}");
-				System.out.println("here2`");
-				
-				auxnum++;
 				
 			} else if (axiom.getSubClass().isAnonymous() && axiom.getSuperClass().isAnonymous()) {
 				// C subsumes D
@@ -244,11 +244,11 @@ public class Normalize {
 			} else if (axiom.getSubClass().isTopEntity()) {
 				//Empty Set 
 				//C subsumes Top
-				//inputStringTranslation.add("{top("+axiom.getSuperClass()+")}");
+				inputStringTranslation.add("{top("+axiom.getSuperClass()+")}");
 			} else if (axiom.getSuperClass().isBottomEntity()) {
 				//Empty Set
 				//Bottom subsumes C
-				//inputStringTranslation.add("{bot("+axiom.getSubClass()+")}");
+				inputStringTranslation.add("{bot("+axiom.getSubClass()+")}");
 			} else if (axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
 				//A subsumes C and D 
 				Iterator<OWLClassExpression> itr = axiom.getSuperClass().asConjunctSet().iterator();				
@@ -274,7 +274,7 @@ public class Normalize {
 				}
 				if (allClassNames[0]==allClassNames[1]==true) {
 					//A and B subsumes X
-					//n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
+					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
 					inputStringTranslation.add("{subConj("+itr.next()+","+itr.next()+","+axiom.getSuperClass()+")}");
 				} else {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptNumber)));
@@ -402,15 +402,13 @@ public class Normalize {
 			
 			if (axiom.getClassExpression().isClassExpressionLiteral()) {
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));
+				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+axiom.getClassExpression()+")}");
 			} else {
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), axiom.getClassExpression()));
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), axiom.getIndividual()));
-			}
-			
-			//
-			
-			//inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+axiom.getClassExpression()+")}");
-			freshConceptNumber++;			
+				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+addFreshClassName(freshConceptNumber)+")}");
+				freshConceptNumber++;	
+			}		
 		}
 
 		@Override
