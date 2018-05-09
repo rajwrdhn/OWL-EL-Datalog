@@ -13,12 +13,13 @@ import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 
 //Main class upload ontology here
 public class InferenceForOWLELMain {
-	protected final Set<String> v_individualNames;
-	protected final Set<String> v_classNames;
-	protected final Set<String> v_roleNames;
+	protected static Set<String> v_individualNames;
+	protected static Set<String> v_classNames;
+	protected static Set<String> v_roleNames;
 	protected static Set<String> v_otherLogicalAxioms;
 	protected static StopWatch timer;
 	//Normalize norm = new Normalize(factory);
+	protected static MaterialisationCalculus matcalc;
 	
 	public InferenceForOWLELMain() {
 		v_individualNames = new HashSet<>();
@@ -26,20 +27,12 @@ public class InferenceForOWLELMain {
 		v_roleNames = new HashSet<>();
 		v_otherLogicalAxioms = new HashSet<>();
 		timer = new StopWatch();
+		matcalc= new MaterialisationCalculus();
 	}
 	
 	public void FinalReasoning() {
 		final Reasoner reasoner = Reasoner.getInstance();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
-	}
-	/**
-	 * New Ontology here
-	 * @param onto
-	 */
-	public void inputTranslation(OWLOntology onto) {
-		onto.individualsInSignature().forEach(x -> v_individualNames.add("{nom("+x.toString()+")}"));
-		onto.objectPropertiesInSignature().forEach(x -> v_roleNames.add("{rol("+x.toString()+")}"));
-		onto.classesInSignature().forEach(x -> v_classNames.add("{cls("+x.toString()+")}") );
 	}
 	/**
 	 * set of individual names set ({nom(a)},...)
@@ -63,6 +56,14 @@ public class InferenceForOWLELMain {
 		return v_roleNames;
 	}
 	
+	/**
+	 * set of axioms as String
+	 * @return
+	 */
+	public Set<String> getAxiomsAsStrings() {
+		return v_otherLogicalAxioms;
+	}
+	
 	public static OWLOntology loadOntology(String fileadd) throws OWLOntologyCreationException {
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		File file = new File(fileadd);
@@ -75,10 +76,14 @@ public class InferenceForOWLELMain {
 		
 		OWLOntology ont = man.createOntology(axioms);
 		v_otherLogicalAxioms = norm.getinputTranslationAxioms();
-		for(String s : v_otherLogicalAxioms) {
-			System.out.println(s);
-		}
+		ont.individualsInSignature().forEach(x -> v_individualNames.add("{nom("+x.toString()+")}"));
+		ont.objectPropertiesInSignature().forEach(x -> v_roleNames.add("{rol("+x.toString()+")}"));
+		ont.classesInSignature().forEach(x -> v_classNames.add("{cls("+x.toString()+")}") );
 		return ont;
+	}
+	
+	public static void materialisationCalc() {
+		matcalc.factBase();
 	}
 	/**
 	 * 
@@ -92,6 +97,7 @@ public class InferenceForOWLELMain {
 		String file = args[0];
 		try {
 			OWLOntology ont = loadOntology(file);
+			materialisationCalc();
 			
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();

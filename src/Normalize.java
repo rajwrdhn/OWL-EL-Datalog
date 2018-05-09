@@ -77,11 +77,6 @@ public class Normalize {
 		onto.axioms().forEach(x -> v_axioms.add(x));
 		//v_axioms.addAll((Collection<? extends OWLAxiom>) onto.axioms());
 		visitAxioms(v_axioms);
-		
-		for (OWLAxiom axiom : n_axioms) {
-			System.out.println("here");
-			System.out.println(axiom);
-		}
 		return n_axioms;
 	}
 	
@@ -91,7 +86,6 @@ public class Normalize {
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
 		AxiomVisitor axmVisitor = new AxiomVisitor();
 		for (OWLAxiom axiom : axioms) {
-			System.out.println(axiom);
 			axiom.accept(axmVisitor);
 		}
 	}
@@ -180,7 +174,7 @@ public class Normalize {
 		public void visit(OWLAnnotationAssertionAxiom axiom) {
 			//Annotations do not change the logical meaning of the OWL Ontology.
 			//False
-			System.out.println(axiom.isLogicalAxiom());
+			//System.out.println(axiom.isLogicalAxiom());
 		}
 
 		@Override
@@ -200,7 +194,7 @@ public class Normalize {
 		public void visit(OWLDeclarationAxiom arg0) {
 			//Entity (Not Logical Axiom)
 			//False
-			System.out.println(arg0.isLogicalAxiom());
+			//System.out.println(arg0.isLogicalAxiom());
 		}
 
 		@Override
@@ -318,7 +312,7 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectPropertyDomainAxiom arg0) {
-			System.out.println("Object Property Domain Axiom");
+			System.out.println("Object Property Domain Axiom"+ arg0);
 		}
 
 		@Override
