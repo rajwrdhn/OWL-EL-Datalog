@@ -13,9 +13,9 @@ public class MaterialisationCalculus {
 	protected final List listAtomsIDB;
 	protected final List listAtomsEDB;
 	//final Predicate inst = Expressions.makePredicate(name, 2);
-	final Variable x = Expressions.makeVariable("x");
-	//final Variable y = Expressions.makeVariable("y");
-	//final Variable z = Expressions.makeVariable("z");
+	protected final Variable x = Expressions.makeVariable("x");
+	protected final Variable y = Expressions.makeVariable("y");
+	protected final Variable z = Expressions.makeVariable("z");
 	public MaterialisationCalculus() {
 		listIDBPredicates = new List();
 		//listEDBPredicates = new List();

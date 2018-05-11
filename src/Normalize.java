@@ -70,13 +70,18 @@ public class Normalize {
         n_axioms= new HashSet<>();
         inputStringTranslation = new HashSet<>();
 	}
-	/**
+	
+    /**
 	 * Call axiomVisitor Class , Normalize and return new set of normalized axioms.
 	 */
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException {
 		onto.axioms().forEach(x -> v_axioms.add(x));
 		//v_axioms.addAll((Collection<? extends OWLAxiom>) onto.axioms());
-		visitAxioms(v_axioms);
+		if(v_axioms.isEmpty()) {
+			System.out.println("No Axioms in the Ontology!!");
+		} else {
+			visitAxioms(v_axioms);
+		}	
 		return n_axioms;
 	}
 	
@@ -85,8 +90,22 @@ public class Normalize {
 	 */
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
 		AxiomVisitor axmVisitor = new AxiomVisitor();
+		Set<OWLAxiom> new_v_axioms = new HashSet<>();
+		new_v_axioms.addAll(axioms);		
+
+		
 		for (OWLAxiom axiom : axioms) {
 			axiom.accept(axmVisitor);
+			//new_v_axioms.remove(axiom);
+		}
+		for (OWLAxiom axiom : new_v_axioms ) {
+			v_axioms.remove(axiom);
+		}
+		
+		if (v_axioms.isEmpty()) {
+			System.out.println("Normalisation complete!!");
+		} else {
+			visitAxioms(v_axioms);
 		}
 	}
 	
@@ -156,6 +175,7 @@ public class Normalize {
 	 * Visitor Class for Axioms in the Ontology.
 	 */
 	protected class AxiomVisitor implements OWLAxiomVisitor {
+		
         protected long freshConceptNumber;
         protected long auxnum;
 		protected long i ;
@@ -199,21 +219,24 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLSubClassOfAxiom axiom) {
-			
+
 			if(axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
 				// A subsumes B
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
 				inputStringTranslation.add("{subClass("+axiom.getSubClass()+","+axiom.getSuperClass()+")}");
+				
 			} else if (axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass() instanceof OWLObjectSomeValuesFrom ) {
 				//Exists.R.C subsumes A
 				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSubClass()).isClassExpressionLiteral()) {
 					n_axioms.add(axiom);
 					inputStringTranslation.add("{subEx("+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty()+","+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getFiller()+","+axiom.getSuperClass()+")}");
+					
 				} else {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getClassFromObjectSomeValuesFrom((OWLObjectSomeValuesFrom)axiom.getSubClass()), addFreshClassName(freshConceptNumber)));
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom((OWLObjectSomeValuesFrom) addFreshClassName(freshConceptNumber), axiom.getSuperClass()));					
 					inputStringTranslation.add("{subEx("+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty()+","+addFreshClassName(freshConceptNumber)+","+axiom.getSuperClass()+")}");					
 					freshConceptNumber++;
+					
 				}
 			
 			} else if (axiom.getSuperClass() instanceof OWLObjectSomeValuesFrom && axiom.getSubClass().isClassExpressionLiteral()) {
@@ -222,12 +245,14 @@ public class Normalize {
 					n_axioms.add(axiom);
 					inputStringTranslation.add("{subEx("+axiom.getSubClass()+((OWLObjectSomeValuesFrom) axiom.getSuperClass()).getProperty()+","+((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getFiller() +","+"aux"+auxnum+")}");
 					auxnum++;
+					
 				} else {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), getClassFromObjectSomeValuesFrom((OWLObjectSomeValuesFrom)axiom.getSuperClass())));
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), addSomeValuesFromToFreshClassName((OWLObjectSomeValuesFrom) axiom.getSuperClass(), freshConceptNumber)));
 					inputStringTranslation.add("{subEx("+axiom.getSubClass()+","+getPropertyfromClassExpression((OWLObjectSomeValuesFrom)axiom.getSuperClass())+","+addFreshClassName(freshConceptNumber)+","+"aux"+auxnum+")}");
 					auxnum++;
 					freshConceptNumber++;
+					
 				}
 				
 			} else if (axiom.getSubClass().isAnonymous() && axiom.getSuperClass().isAnonymous()) {
@@ -235,20 +260,24 @@ public class Normalize {
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), addFreshClassName(freshConceptNumber)));
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), axiom.getSuperClass()));
 				freshConceptNumber++;
+				
 			} else if (axiom.getSubClass().isTopEntity()) {
 				//Empty Set 
 				//C subsumes Top
 				inputStringTranslation.add("{top("+axiom.getSuperClass()+")}");
+				
 			} else if (axiom.getSuperClass().isBottomEntity()) {
 				//Empty Set
 				//Bottom subsumes C
 				inputStringTranslation.add("{bot("+axiom.getSubClass()+")}");
+				
 			} else if (axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
 				//A subsumes C and D 
 				Iterator<OWLClassExpression> itr = axiom.getSuperClass().asConjunctSet().iterator();				
 				while(itr.hasNext()) {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), itr.next()));
 				}
+				
 			} else if (axiom.getSuperClass().isClassExpressionLiteral() && !axiom.getSubClass().isClassExpressionLiteral() && axiom.getSubClass().isAnonymous() && axiom.getSubClass().asConjunctSet().size()>1) {
 				//C and D subsumes B 
 				Iterator<OWLClassExpression> itr = axiom.getSubClass().asConjunctSet().iterator();
@@ -270,16 +299,20 @@ public class Normalize {
 					//A and B subsumes X
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
 					inputStringTranslation.add("{subConj("+itr.next()+","+itr.next()+","+axiom.getSuperClass()+")}");
+					
 				} else {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptNumber)));
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getConjunctClassExpression(axiom.getSubClass(), addFreshClassName(freshConceptNumber), itr.next()), axiom.getSuperClass()));
 					freshConceptNumber++;
+					
 				}
 			}/* else if (!axiom.getSuperClass().isClassExpressionLiteral() && !axiom.getSuperClass().isTopEntity() && !axiom.getSuperClass().isBottomEntity() ) {
 				// {a} subsumes C
 				
 			}*/ else {
+				
 				System.out.println("This is left!! subclass ----------" + axiom.getSubClass().toString() +"          super-------"+axiom.getSuperClass().toString());
+				
 			}
 		}
 		@Override
@@ -350,6 +383,7 @@ public class Normalize {
 		public void visit(OWLObjectPropertyAssertionAxiom axiom) {
 			// TODO Check
 			n_axioms.add(axiom);
+			
 			System.out.println("ObjectProperty Assertion Axiom:"+ axiom.toString());
 		}
 
@@ -397,11 +431,13 @@ public class Normalize {
 			if (axiom.getClassExpression().isClassExpressionLiteral()) {
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));
 				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+axiom.getClassExpression()+")}");
+				
 			} else {
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), axiom.getClassExpression()));
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), axiom.getIndividual()));
 				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+addFreshClassName(freshConceptNumber)+")}");
 				freshConceptNumber++;	
+				
 			}		
 		}
 
