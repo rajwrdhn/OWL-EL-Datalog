@@ -1,4 +1,3 @@
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,12 +11,21 @@ import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomVisitor;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLClassExpressionVisitor;
+import org.semanticweb.owlapi.model.OWLClassExpressionVisitorEx;
+import org.semanticweb.owlapi.model.OWLDataAllValuesFrom;
+import org.semanticweb.owlapi.model.OWLDataExactCardinality;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataHasValue;
+import org.semanticweb.owlapi.model.OWLDataMaxCardinality;
+import org.semanticweb.owlapi.model.OWLDataMinCardinality;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
@@ -36,12 +44,21 @@ import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectComplementOf;
+import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
 import org.semanticweb.owlapi.model.OWLObjectHasSelf;
+import org.semanticweb.owlapi.model.OWLObjectHasValue;
+import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
+import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
+import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
+import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -170,6 +187,11 @@ public class Normalize {
 	public Set<String> getinputTranslationAxioms() {
 		return inputStringTranslation;
 	}
+	
+	public void normalizeClassExpression() {
+		
+	}
+	
 	
 	/*
 	 * Visitor Class for Axioms in the Ontology.
@@ -424,7 +446,6 @@ public class Normalize {
 		public void visit(OWLEquivalentDataPropertiesAxiom axiom) {
 			throw new IllegalAccessError("Equivalent Data Properties Axiom Exception !");
 		}
-
 		@Override
 		public void visit(OWLClassAssertionAxiom axiom) {
 			
@@ -436,8 +457,7 @@ public class Normalize {
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), axiom.getClassExpression()));
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), axiom.getIndividual()));
 				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+addFreshClassName(freshConceptNumber)+")}");
-				freshConceptNumber++;	
-				
+				freshConceptNumber++;					
 			}		
 		}
 
@@ -515,5 +535,263 @@ public class Normalize {
 			throw new IllegalAccessError("SWRL rule Exception !");
 			
 		}
+	}
+	
+	protected class ClassExpressionNormalize implements OWLClassExpressionVisitorEx<OWLClassExpression> {
+		
+		public ClassExpressionNormalize() {
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLClass ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public <T> OWLClassExpression doDefault(T object) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.doDefault(object);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectIntersectionOf ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectUnionOf ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectComplementOf ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectSomeValuesFrom ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectAllValuesFrom ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectHasValue ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectMinCardinality ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectExactCardinality ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectMaxCardinality ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectHasSelf ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLObjectOneOf ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLDataSomeValuesFrom ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLDataAllValuesFrom ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLDataHasValue ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLDataMinCardinality ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLDataExactCardinality ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public OWLClassExpression visit(OWLDataMaxCardinality ce) {
+			// TODO Auto-generated method stub
+			return OWLClassExpressionVisitorEx.super.visit(ce);
+		}
+
+		@Override
+		public int hashCode() {
+			// TODO Auto-generated method stub
+			return super.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			// TODO Auto-generated method stub
+			return super.equals(obj);
+		}
+
+		@Override
+		protected Object clone() throws CloneNotSupportedException {
+			// TODO Auto-generated method stub
+			return super.clone();
+		}
+
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return super.toString();
+		}
+
+		@Override
+		protected void finalize() throws Throwable {
+			// TODO Auto-generated method stub
+			super.finalize();
+		}
+		
+	}
+	
+	protected class classExpressionNormalizer implements OWLClassExpressionVisitor {
+
+		@Override
+		public void visit(OWLObjectIntersectionOf ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectUnionOf ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectComplementOf ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectSomeValuesFrom ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectAllValuesFrom ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectHasValue ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectMinCardinality ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectExactCardinality ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectMaxCardinality ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectHasSelf ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLObjectOneOf ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLDataSomeValuesFrom ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLDataAllValuesFrom ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLDataHasValue ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLDataMinCardinality ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLDataExactCardinality ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+
+		@Override
+		public void visit(OWLDataMaxCardinality ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
+		}
+		
 	}
 }

@@ -17,17 +17,16 @@ public class InferenceForOWLELMain {
 	protected static Set<String> v_classNames;
 	protected static Set<String> v_roleNames;
 	protected static Set<String> v_otherLogicalAxioms;
-	protected static StopWatch timer;
+	
 	//Normalize norm = new Normalize(factory);
-	protected static MaterialisationCalculus matcalc;
+	
 	
 	public InferenceForOWLELMain() {
 		v_individualNames = new HashSet<>();
 		v_classNames = new HashSet<>();
 		v_roleNames = new HashSet<>();
-		v_otherLogicalAxioms = new HashSet<>();
-		timer = new StopWatch();
-		matcalc= new MaterialisationCalculus();
+		v_otherLogicalAxioms = new HashSet<>();		
+		//matcalc= new MaterialisationCalculus();
 	}
 	
 	public void FinalReasoning() {
@@ -69,12 +68,12 @@ public class InferenceForOWLELMain {
 		File file = new File(fileadd);
 		OWLOntology onto = man.loadOntologyFromOntologyDocument(file);
 		OWLDataFactory factory = man.getOWLDataFactory();
-		OWLOntologyID ontID = onto.getOntologyID();
-		Normalize norm = new Normalize(factory,ontID);	
-		
-		Set<OWLAxiom> axioms= norm.getFromOntology(onto);
-		
+		OWLOntologyID ontID = onto.getOntologyID();		
+		Normalize norm = new Normalize(factory,ontID);			
+		Set<OWLAxiom> axioms= norm.getFromOntology(onto);		
 		OWLOntology ont = man.createOntology(axioms);
+		//OwlToRulesConverter owlToRulesConverter = new OwlToRulesConverter();
+		//owlToRulesConverter.addOntology(ont);		
 		v_otherLogicalAxioms = norm.getinputTranslationAxioms();
 		ont.individualsInSignature().forEach(x -> v_individualNames.add("{nom("+x.toString()+")}"));
 		ont.objectPropertiesInSignature().forEach(x -> v_roleNames.add("{rol("+x.toString()+")}"));
@@ -83,6 +82,7 @@ public class InferenceForOWLELMain {
 	}
 	
 	public static void materialisationCalc() {
+		MaterialisationCalculus matcalc = new MaterialisationCalculus();	
 		matcalc.factBase();
 	}
 	/**
@@ -92,7 +92,7 @@ public class InferenceForOWLELMain {
 	public static void main(String []args){
 		System.out.println();
 		InferenceForOWLELMain elmain = new InferenceForOWLELMain();
-		
+		StopWatch timer = new StopWatch();
 		timer.start("Normalize EL-Ontology! ");
 		String file = args[0];
 		try {

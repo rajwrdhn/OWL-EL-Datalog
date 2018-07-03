@@ -1,5 +1,3 @@
-
-
 public class StopWatch {
 	/** task description (if needed)*/
 	protected String descrptionOfTask; 
