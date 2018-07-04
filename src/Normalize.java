@@ -77,6 +77,7 @@ public class Normalize {
     protected final OWLDataFactory v_factory;
     protected final Set<OWLAxiom> v_axioms;
     protected final Set<OWLAxiom> n_axioms;
+    protected final Set<OWLClassExpression> v_classExpression;
     protected final Optional<IRI> v_IRI;
 	protected final Set<String> inputStringTranslation;
 	//constructor
@@ -86,6 +87,7 @@ public class Normalize {
         v_axioms= new HashSet<>();
         n_axioms= new HashSet<>();
         inputStringTranslation = new HashSet<>();
+        v_classExpression = new HashSet<>();
 	}
 	
     /**
@@ -187,8 +189,16 @@ public class Normalize {
 	public Set<String> getinputTranslationAxioms() {
 		return inputStringTranslation;
 	}
-	
-	public void normalizeClassExpression() {
+	/**
+	 * class Expression Visitor
+	 * @param ce
+	 */
+	public void normalizeClassExpression(OWLClassExpression ce) {
+		//clear the set of class expression
+		v_classExpression.clear();
+		
+		ClassExpressionNormalizer ceVisitor = new ClassExpressionNormalizer();
+		ce.accept(ceVisitor);
 		
 	}
 	
@@ -240,14 +250,14 @@ public class Normalize {
 		}
 
 		@Override
-		public void visit(OWLSubClassOfAxiom axiom) {
+		public void visit(OWLSubClassOfAxiom axiom) {			
 
 			if(axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
 				// A subsumes B
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
 				inputStringTranslation.add("{subClass("+axiom.getSubClass()+","+axiom.getSuperClass()+")}");
 				
-			} else if (axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass() instanceof OWLObjectSomeValuesFrom ) {
+			} else if (axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass() instanceof OWLObjectSomeValuesFrom && !axiom.getSubClass().isAnonymous() && !axiom.getSubClass().isClassExpressionLiteral() && axiom.getSubClass().asConjunctSet().size()==1) {
 				//Exists.R.C subsumes A
 				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSubClass()).isClassExpressionLiteral()) {
 					n_axioms.add(axiom);
@@ -293,7 +303,7 @@ public class Normalize {
 				//Bottom subsumes C
 				inputStringTranslation.add("{bot("+axiom.getSubClass()+")}");
 				
-			} else if (axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
+			} else if (axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
 				//A subsumes C and D 
 				Iterator<OWLClassExpression> itr = axiom.getSuperClass().asConjunctSet().iterator();				
 				while(itr.hasNext()) {
@@ -328,13 +338,16 @@ public class Normalize {
 					freshConceptNumber++;
 					
 				}
-			}/* else if (!axiom.getSuperClass().isClassExpressionLiteral() && !axiom.getSuperClass().isTopEntity() && !axiom.getSuperClass().isBottomEntity() ) {
-				// {a} subsumes C
-				
-			}*/ else {
+			} else {
 				
 				System.out.println("This is left!! subclass ----------" + axiom.getSubClass().toString() +"          super-------"+axiom.getSuperClass().toString());
-				
+				if (axiom.getSubClass().isAnonymous() && axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass().asConjunctSet().size() ==1) {
+					normalizeClassExpression(axiom.getSubClass());
+				} else if (axiom.getSuperClass().isAnonymous() && axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().asConjunctSet().size() ==1) {
+					normalizeClassExpression(axiom.getSuperClass());
+				} else {
+					throw new IllegalAccessError("Not a OWL-EL Axiom!!");
+				}
 			}
 		}
 		@Override
@@ -463,15 +476,8 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLEquivalentClassesAxiom axiom) {
-			//TODO
-/*			Iterator<OWLClassExpression> itr = axiom.getClassExpressions().iterator();
-			while (itr.hasNext()) {
-				n_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptNumber)));
-				n_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), itr.next()));
-				//n_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptName+1)));
-				//n_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptName+1), itr.next()));
-				freshConceptNumber ++;
-			}*/
+			//C equivalent to D
+			v_axioms.addAll(axiom.asOWLSubClassOfAxioms());
 		}
 
 		@Override
@@ -536,164 +542,16 @@ public class Normalize {
 			
 		}
 	}
-	
-	protected class ClassExpressionNormalize implements OWLClassExpressionVisitorEx<OWLClassExpression> {
+	protected class ClassExpressionNormalizer implements OWLClassExpressionVisitor {
 		
-		public ClassExpressionNormalize() {
+		public ClassExpressionNormalizer() {
 			// TODO Auto-generated constructor stub
 		}
 
 		@Override
-		public OWLClassExpression visit(OWLClass ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public <T> OWLClassExpression doDefault(T object) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.doDefault(object);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectIntersectionOf ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectUnionOf ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectComplementOf ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectSomeValuesFrom ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectAllValuesFrom ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectHasValue ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectMinCardinality ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectExactCardinality ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectMaxCardinality ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectHasSelf ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLObjectOneOf ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLDataSomeValuesFrom ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLDataAllValuesFrom ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLDataHasValue ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLDataMinCardinality ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLDataExactCardinality ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public OWLClassExpression visit(OWLDataMaxCardinality ce) {
-			// TODO Auto-generated method stub
-			return OWLClassExpressionVisitorEx.super.visit(ce);
-		}
-
-		@Override
-		public int hashCode() {
-			// TODO Auto-generated method stub
-			return super.hashCode();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			// TODO Auto-generated method stub
-			return super.equals(obj);
-		}
-
-		@Override
-		protected Object clone() throws CloneNotSupportedException {
-			// TODO Auto-generated method stub
-			return super.clone();
-		}
-
-		@Override
-		public String toString() {
-			// TODO Auto-generated method stub
-			return super.toString();
-		}
-
-		@Override
-		protected void finalize() throws Throwable {
-			// TODO Auto-generated method stub
-			super.finalize();
-		}
-		
-	}
-	
-	protected class classExpressionNormalizer implements OWLClassExpressionVisitor {
-
-		@Override
 		public void visit(OWLObjectIntersectionOf ce) {
 			// TODO Auto-generated method stub
+			v_classExpression.add(ce);
 			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
@@ -712,25 +570,31 @@ public class Normalize {
 		@Override
 		public void visit(OWLObjectSomeValuesFrom ce) {
 			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			System.out.println(ce.toString());
+			v_classExpression.add(ce);
+			
 		}
 
 		@Override
 		public void visit(OWLObjectAllValuesFrom ce) {
 			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			 throw new IllegalAccessError("Not a OWL-EL Expression"+ ce.toString());
 		}
 
 		@Override
 		public void visit(OWLObjectHasValue ce) {
 			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			System.out.println(ce.toString());
+			v_classExpression.add(ce);
 		}
 
 		@Override
 		public void visit(OWLObjectMinCardinality ce) {
 			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			ce.getFiller();
+			ce.getCardinality();
+			ce.getProperty();
+			v_classExpression.add(ce);
 		}
 
 		@Override
@@ -748,31 +612,34 @@ public class Normalize {
 		@Override
 		public void visit(OWLObjectHasSelf ce) {
 			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			System.out.println(ce.toString());
+			v_classExpression.add(ce);
 		}
 
 		@Override
 		public void visit(OWLObjectOneOf ce) {
 			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			System.out.println(ce.toString());
+			v_classExpression.add(ce);
 		}
 
 		@Override
 		public void visit(OWLDataSomeValuesFrom ce) {
 			// TODO Auto-generated method stub
+			System.out.println(ce.toString());
 			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
 		public void visit(OWLDataAllValuesFrom ce) {
 			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			//v_classExpression.add(ce);
 		}
 
 		@Override
 		public void visit(OWLDataHasValue ce) {
 			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			//v_classExpression.add(ce);
 		}
 
 		@Override
