@@ -1,8 +1,13 @@
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -72,6 +77,14 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
+import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.model.api.Rule;
+import org.semanticweb.vlog4j.core.model.api.Variable;
+import org.semanticweb.vlog4j.core.model.implementation.Expressions;
+import org.semanticweb.vlog4j.core.reasoner.Reasoner;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 public class Normalize {
     protected final OWLDataFactory v_factory;
@@ -80,6 +93,14 @@ public class Normalize {
     protected final Set<OWLClassExpression> v_classExpression;
     protected final Optional<IRI> v_IRI;
 	protected final Set<String> inputStringTranslation;
+	protected final Set<Atom> setFacts;
+	protected final Set<Atom> setAtoms;
+	protected final List<Rule> listRules;
+	protected final Variable v;
+	protected final Variable w;
+	protected final Variable x;
+	protected final Variable y;
+	protected final Variable z;
 	//constructor
     public Normalize(OWLDataFactory factory,OWLOntologyID ontID) {
         v_factory=factory;
@@ -88,6 +109,14 @@ public class Normalize {
         n_axioms= new HashSet<>();
         inputStringTranslation = new HashSet<>();
         v_classExpression = new HashSet<>();
+        setFacts = new HashSet<>();
+        setAtoms = new HashSet<>();
+        listRules = new ArrayList<>();
+        v = Expressions.makeVariable("v");
+        w = Expressions.makeVariable("w");
+        x = Expressions.makeVariable("x");
+        y = Expressions.makeVariable("y");
+        z = Expressions.makeVariable("z");
 	}
 	
     /**
@@ -103,7 +132,6 @@ public class Normalize {
 		}	
 		return n_axioms;
 	}
-	
 	/**
 	 * Visit all Axioms in the initial Ontology and normalize the axioms
 	 */
@@ -201,7 +229,18 @@ public class Normalize {
 		ce.accept(ceVisitor);
 		
 	}
-	
+	public void rules() {
+		
+	}
+	/*
+	 * 
+	 */
+	public void callReasoner() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+		Reasoner reasoner = Reasoner.getInstance();
+		reasoner.addRules(listRules);
+		reasoner.addFacts(setFacts);
+		reasoner.load();
+	}
 	
 	/*
 	 * Visitor Class for Axioms in the Ontology.
@@ -255,12 +294,14 @@ public class Normalize {
 			if(axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
 				// A subsumes B
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
+				Expressions.makePredicate(axiom.getSubClass().toString(), 1);
 				inputStringTranslation.add("{subClass("+axiom.getSubClass()+","+axiom.getSuperClass()+")}");
 				
 			} else if (axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass() instanceof OWLObjectSomeValuesFrom && !axiom.getSubClass().isAnonymous() && !axiom.getSubClass().isClassExpressionLiteral() && axiom.getSubClass().asConjunctSet().size()==1) {
 				//Exists.R.C subsumes A
 				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSubClass()).isClassExpressionLiteral()) {
 					n_axioms.add(axiom);
+					//setFacts.add(e);
 					inputStringTranslation.add("{subEx("+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty()+","+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getFiller()+","+axiom.getSuperClass()+")}");
 					
 				} else {
@@ -295,7 +336,7 @@ public class Normalize {
 				
 			} else if (axiom.getSubClass().isTopEntity()) {
 				//Empty Set 
-				//C subsumes Top
+				//Top subsumes C
 				inputStringTranslation.add("{top("+axiom.getSuperClass()+")}");
 				
 			} else if (axiom.getSuperClass().isBottomEntity()) {
@@ -330,6 +371,7 @@ public class Normalize {
 				if (allClassNames[0]==allClassNames[1]==true) {
 					//A and B subsumes X
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
+					//setFacts.add(Expressions.makeAtom(Expressions.makePredicate(name, arity), terms));
 					inputStringTranslation.add("{subConj("+itr.next()+","+itr.next()+","+axiom.getSuperClass()+")}");
 					
 				} else {
@@ -464,11 +506,14 @@ public class Normalize {
 			
 			if (axiom.getClassExpression().isClassExpressionLiteral()) {
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));
+				setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getClassExpression().toString(), 1), Expressions.makeConstant(axiom.getIndividual().toString())));
 				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+axiom.getClassExpression()+")}");
 				
 			} else {
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), axiom.getClassExpression()));
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), axiom.getIndividual()));
+				setFacts.add(Expressions.makeAtom(Expressions.makePredicate(addFreshClassName(freshConceptNumber).toString(), 1), Expressions.makeConstant(axiom.getIndividual().toString())));
+				
 				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+addFreshClassName(freshConceptNumber)+")}");
 				freshConceptNumber++;					
 			}		

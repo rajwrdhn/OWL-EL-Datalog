@@ -88,7 +88,9 @@ public class MaterialisationCalculus {
 		Rule rule6 = Expressions.makeRule(Expressions.makeConjunction(subExX,selfX,instX), Expressions.makeConjunction(instX));
 		Rule rule7 = Expressions.makeRule(Expressions.makeConjunction(supExX,instX), Expressions.makeConjunction(tripleX));
 		Rule rule8 = Expressions.makeRule(Expressions.makeConjunction(supExX,instX), Expressions.makeConjunction(instX));
-			
+		
+		//Rule rule9 = Expressions.makeRule(headAtom, bodyAtoms);
+		//Rule rule10 = Expressions.makeRule(head, body);
 		Reasoner reasoner = Reasoner.getInstance();
 		reasoner.addRules(rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8);
 		reasoner.addFacts(setFacts);
