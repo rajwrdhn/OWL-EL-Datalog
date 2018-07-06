@@ -78,6 +78,7 @@ import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
 import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
@@ -96,6 +97,8 @@ public class Normalize {
 	protected final Set<Atom> setFacts;
 	protected final Set<Atom> setAtoms;
 	protected final List<Rule> listRules;
+	protected final Predicate subClass;
+	protected final Predicate subConj;
 	protected final Variable v;
 	protected final Variable w;
 	protected final Variable x;
@@ -112,6 +115,8 @@ public class Normalize {
         setFacts = new HashSet<>();
         setAtoms = new HashSet<>();
         listRules = new ArrayList<>();
+        subClass = Expressions.makePredicate("subclass", 2);
+        subConj = Expressions.makePredicate("subconj", 2);
         v = Expressions.makeVariable("v");
         w = Expressions.makeVariable("w");
         x = Expressions.makeVariable("x");
@@ -264,8 +269,6 @@ public class Normalize {
 		@Override
 		public void visit(OWLAnnotationAssertionAxiom axiom) {
 			//Annotations do not change the logical meaning of the OWL Ontology.
-			//False
-			//System.out.println(axiom.isLogicalAxiom());
 		}
 
 		@Override
@@ -283,9 +286,7 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLDeclarationAxiom arg0) {
-			//Entity (Not Logical Axiom)
-			//False
-			//System.out.println(arg0.isLogicalAxiom());
+			//Entity (Not Logical Axioms)
 		}
 
 		@Override
@@ -294,7 +295,7 @@ public class Normalize {
 			if(axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
 				// A subsumes B
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
-				Expressions.makePredicate(axiom.getSubClass().toString(), 1);
+				setFacts.add(Expressions.makeAtom(subClass, Expressions.makeConstant(axiom.getSubClass().toString()),Expressions.makeConstant(axiom.getSuperClass().toString())));
 				inputStringTranslation.add("{subClass("+axiom.getSubClass()+","+axiom.getSuperClass()+")}");
 				
 			} else if (axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass() instanceof OWLObjectSomeValuesFrom && !axiom.getSubClass().isAnonymous() && !axiom.getSubClass().isClassExpressionLiteral() && axiom.getSubClass().asConjunctSet().size()==1) {
