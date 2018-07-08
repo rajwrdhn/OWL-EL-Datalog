@@ -97,8 +97,14 @@ public class Normalize {
 	protected final Set<Atom> setFacts;
 	protected final Set<Atom> setAtoms;
 	protected final List<Rule> listRules;
+	protected final Predicate nom;
+	protected final Predicate triple;
 	protected final Predicate subClass;
+	protected final Predicate top;
+	protected final Predicate bot;
 	protected final Predicate subConj;
+	protected final Predicate subEx;
+	protected final Predicate supEx; 
 	protected final Variable v;
 	protected final Variable w;
 	protected final Variable x;
@@ -115,8 +121,14 @@ public class Normalize {
         setFacts = new HashSet<>();
         setAtoms = new HashSet<>();
         listRules = new ArrayList<>();
+        nom = Expressions.makePredicate("nom",1);
+        triple = Expressions.makePredicate("triple", 3);
         subClass = Expressions.makePredicate("subclass", 2);
-        subConj = Expressions.makePredicate("subconj", 2);
+        top = Expressions.makePredicate("top", 1);
+        bot = Expressions.makePredicate("bot", 1);
+        subConj = Expressions.makePredicate("subconj", 3);
+        subEx = Expressions.makePredicate("subex", 3);
+        supEx = Expressions.makePredicate("supex", 4);
         v = Expressions.makeVariable("v");
         w = Expressions.makeVariable("w");
         x = Expressions.makeVariable("x");
@@ -235,7 +247,16 @@ public class Normalize {
 		
 	}
 	public void rules() {
-		
+		// nom(x) :- subClass(x,x)
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(nom, x), 
+				Expressions.makeAtom(subClass, x,x)));
+		//
+		//rule subclass (A,B) , subclass(B,C) :- subclass (A,C)   
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+					Expressions.makeAtom(subClass, x,y),
+					Expressions.makeAtom(subClass, y,z)
+			),
+				Expressions.makeConjunction(Expressions.makeAtom(subClass, x,z))));
 	}
 	/*
 	 * 
@@ -295,20 +316,38 @@ public class Normalize {
 			if(axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
 				// A subsumes B
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
-				setFacts.add(Expressions.makeAtom(subClass, Expressions.makeConstant(axiom.getSubClass().toString()),Expressions.makeConstant(axiom.getSuperClass().toString())));
-				inputStringTranslation.add("{subClass("+axiom.getSubClass()+","+axiom.getSuperClass()+")}");
-				
-			} else if (axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass() instanceof OWLObjectSomeValuesFrom && !axiom.getSubClass().isAnonymous() && !axiom.getSubClass().isClassExpressionLiteral() && axiom.getSubClass().asConjunctSet().size()==1) {
+				//subclass fact A is a subset of B
+				setFacts.add(Expressions.makeAtom(subClass, 
+						Expressions.makeConstant(axiom.getSubClass().toString()), 
+						Expressions.makeConstant(axiom.getSuperClass().toString())));
+			} else if (axiom.getSuperClass().isClassExpressionLiteral() && 
+					axiom.getSubClass() instanceof OWLObjectSomeValuesFrom && 
+					!axiom.getSubClass().isAnonymous() && 
+					!axiom.getSubClass().isClassExpressionLiteral() && 
+					axiom.getSubClass().asConjunctSet().size()==1) {
 				//Exists.R.C subsumes A
 				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSubClass()).isClassExpressionLiteral()) {
 					n_axioms.add(axiom);
-					//setFacts.add(e);
-					inputStringTranslation.add("{subEx("+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty()+","+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getFiller()+","+axiom.getSuperClass()+")}");
-					
+					//Exists.R.B subsumes A
+					//subEx(R,B,A)
+					setFacts.add(Expressions.makeAtom(subEx, Expressions.makeConstant(((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty().toString()), 
+							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString()),
+							Expressions.makeConstant(axiom.getSuperClass().toString())));					
 				} else {
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getClassFromObjectSomeValuesFrom((OWLObjectSomeValuesFrom)axiom.getSubClass()), addFreshClassName(freshConceptNumber)));
-					n_axioms.add(v_factory.getOWLSubClassOfAxiom((OWLObjectSomeValuesFrom) addFreshClassName(freshConceptNumber), axiom.getSuperClass()));					
-					inputStringTranslation.add("{subEx("+((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty()+","+addFreshClassName(freshConceptNumber)+","+axiom.getSuperClass()+")}");					
+					// C subsumes A
+					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getClassFromObjectSomeValuesFrom(
+							(OWLObjectSomeValuesFrom)axiom.getSubClass()), 
+							addFreshClassName(freshConceptNumber)));
+					//Exists.R.X subsumes A
+					n_axioms.add(v_factory.getOWLSubClassOfAxiom(
+							(OWLObjectSomeValuesFrom)addFreshClassName(freshConceptNumber), 
+							axiom.getSuperClass()));
+					//subEx(R,X,A) where X-> new concept
+					setFacts.add(Expressions.makeAtom(subClass, 
+							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString()),
+							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
+							Expressions.makeConstant(axiom.getSuperClass().toString())
+							));					
 					freshConceptNumber++;
 					
 				}
@@ -317,13 +356,32 @@ public class Normalize {
 				// A subsumes Exists.R.C
 				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSuperClass()).isClassExpressionLiteral() ) {
 					n_axioms.add(axiom);
-					inputStringTranslation.add("{subEx("+axiom.getSubClass()+((OWLObjectSomeValuesFrom) axiom.getSuperClass()).getProperty()+","+((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getFiller() +","+"aux"+auxnum+")}");
+					inputStringTranslation.add("{subEx("+axiom.getSubClass()+
+							((OWLObjectSomeValuesFrom) axiom.getSuperClass()).getProperty()+","+
+							((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getFiller() +","+"aux"+auxnum+")}");
+					setFacts.add(Expressions.makeAtom(supEx, 
+							Expressions.makeConstant(axiom.getSubClass().toString()),
+							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getProperty().toString()),
+							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getFiller().toString()),
+							Expressions.makeConstant("aux"+auxnum)
+							));
 					auxnum++;
 					
 				} else {
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), getClassFromObjectSomeValuesFrom((OWLObjectSomeValuesFrom)axiom.getSuperClass())));
-					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), addSomeValuesFromToFreshClassName((OWLObjectSomeValuesFrom) axiom.getSuperClass(), freshConceptNumber)));
-					inputStringTranslation.add("{subEx("+axiom.getSubClass()+","+getPropertyfromClassExpression((OWLObjectSomeValuesFrom)axiom.getSuperClass())+","+addFreshClassName(freshConceptNumber)+","+"aux"+auxnum+")}");
+					v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), 
+							getClassFromObjectSomeValuesFrom((OWLObjectSomeValuesFrom)axiom.getSuperClass())));
+					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), 
+							addSomeValuesFromToFreshClassName((OWLObjectSomeValuesFrom) axiom.getSuperClass(), 
+									freshConceptNumber)));
+					inputStringTranslation.add("{subEx("+axiom.getSubClass()+","+
+									getPropertyfromClassExpression((OWLObjectSomeValuesFrom)axiom.getSuperClass())+","
+							+addFreshClassName(freshConceptNumber)+","+"aux"+auxnum+")}");
+					setFacts.add(Expressions.makeAtom(supEx,
+							Expressions.makeConstant(axiom.getSubClass().toString()),
+							Expressions.makeConstant(getPropertyfromClassExpression((OWLObjectSomeValuesFrom)axiom.getSuperClass()).toString()),
+							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
+							Expressions.makeConstant("aux"+auxnum)							
+							));
 					auxnum++;
 					freshConceptNumber++;
 					
@@ -338,11 +396,13 @@ public class Normalize {
 			} else if (axiom.getSubClass().isTopEntity()) {
 				//Empty Set 
 				//Top subsumes C
+				setFacts.add(Expressions.makeAtom(top, Expressions.makeConstant(axiom.getSuperClass().toString())));
 				inputStringTranslation.add("{top("+axiom.getSuperClass()+")}");
 				
 			} else if (axiom.getSuperClass().isBottomEntity()) {
 				//Empty Set
 				//Bottom subsumes C
+				setFacts.add(Expressions.makeAtom(bot, Expressions.makeConstant(axiom.getSubClass().toString())));
 				inputStringTranslation.add("{bot("+axiom.getSubClass()+")}");
 				
 			} else if (axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
@@ -372,9 +432,11 @@ public class Normalize {
 				if (allClassNames[0]==allClassNames[1]==true) {
 					//A and B subsumes X
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
-					//setFacts.add(Expressions.makeAtom(Expressions.makePredicate(name, arity), terms));
-					inputStringTranslation.add("{subConj("+itr.next()+","+itr.next()+","+axiom.getSuperClass()+")}");
-					
+					setFacts.add(Expressions.makeAtom(subConj, 
+							Expressions.makeConstant(itr.next().toString()),
+							Expressions.makeConstant(itr.next().toString()),
+							Expressions.makeConstant(axiom.getSuperClass().toString())
+							));					
 				} else {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptNumber)));
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getConjunctClassExpression(axiom.getSubClass(), addFreshClassName(freshConceptNumber), itr.next()), axiom.getSuperClass()));
@@ -507,14 +569,21 @@ public class Normalize {
 			
 			if (axiom.getClassExpression().isClassExpressionLiteral()) {
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));
-				setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getClassExpression().toString(), 1), Expressions.makeConstant(axiom.getIndividual().toString())));
+				setFacts.add(Expressions.makeAtom(subClass, 
+						Expressions.makeConstant(axiom.getIndividual().toString()),
+						Expressions.makeConstant(axiom.getClassExpression().toString())
+						));
 				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+axiom.getClassExpression()+")}");
 				
 			} else {
-				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), axiom.getClassExpression()));
-				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), axiom.getIndividual()));
-				setFacts.add(Expressions.makeAtom(Expressions.makePredicate(addFreshClassName(freshConceptNumber).toString(), 1), Expressions.makeConstant(axiom.getIndividual().toString())));
-				
+				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), 
+						axiom.getClassExpression()));
+				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), 
+						axiom.getIndividual()));
+				setFacts.add(Expressions.makeAtom(subClass, 
+						Expressions.makeConstant(axiom.getIndividual().toString()),
+						Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())
+						));
 				inputStringTranslation.add("{subClass("+axiom.getIndividual()+","+addFreshClassName(freshConceptNumber)+")}");
 				freshConceptNumber++;					
 			}		
