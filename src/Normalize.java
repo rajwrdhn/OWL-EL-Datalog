@@ -279,12 +279,14 @@ public class Normalize {
 		protected boolean cNameBool;
 		protected boolean[] allClassNames;
 		protected boolean allClassExpr;
+		protected final Set<OWLClassExpression> axiConj;
 		public AxiomVisitor() {
 			freshConceptNumber =1;
 			cNameBool = false;
 			allClassExpr = false;
 			i=0;
 			auxnum =1;
+			axiConj = new HashSet<>();
 		}
 
 		@Override
@@ -421,6 +423,7 @@ public class Normalize {
 					while (itr.hasNext()) {
 						if (itr.next().isClassExpressionLiteral()) {
 							allClassNames[i-1] = true;
+							axiConj.add(itr.next());
 							i--;
 						}
 						else {
@@ -433,8 +436,8 @@ public class Normalize {
 					//A and B subsumes X
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
 					setFacts.add(Expressions.makeAtom(subConj, 
-							Expressions.makeConstant(itr.next().toString()),
-							Expressions.makeConstant(itr.next().toString()),
+							Expressions.makeConstant(axiConj.toArray()[0].toString()),
+							Expressions.makeConstant(axiConj.toArray()[1].toString()),
 							Expressions.makeConstant(axiom.getSuperClass().toString())
 							));					
 				} else {
