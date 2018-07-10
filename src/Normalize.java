@@ -95,12 +95,24 @@ public class Normalize {
 	protected final Set<Atom> setFacts;
 	protected final Set<Atom> setAtoms;
 	protected final List<Rule> listRules;
+	protected final Predicate nomEDB;
+	protected final Predicate clsEDB;
+	protected final Predicate rolEDB;
+	protected final Predicate triple;
+	protected final Predicate subClassEDB;
+	protected final Predicate inst;
+	protected final Predicate topEDB;
+	protected final Predicate botEDB;
+	protected final Predicate subConjEDB;
+	protected final Predicate subExEDB;
+	protected final Predicate supExEDB;
+	protected final Predicate subSelfEDB;
+	protected final Predicate supSelfEDB;
+	protected final Predicate self;
 	protected final Predicate nom;
 	protected final Predicate cls;
 	protected final Predicate rol;
-	protected final Predicate triple;
 	protected final Predicate subClass;
-	protected final Predicate inst;
 	protected final Predicate top;
 	protected final Predicate bot;
 	protected final Predicate subConj;
@@ -108,7 +120,6 @@ public class Normalize {
 	protected final Predicate supEx;
 	protected final Predicate subSelf;
 	protected final Predicate supSelf;
-	protected final Predicate self;
 	protected final Variable v;
 	protected final Variable w;
 	protected final Variable x;
@@ -125,12 +136,24 @@ public class Normalize {
         setFacts = new HashSet<>();
         setAtoms = new HashSet<>();
         listRules = new ArrayList<>();
+        nomEDB = Expressions.makePredicate("nomEDB",1);
+        clsEDB = Expressions.makePredicate("clsEDB",1);
+        rolEDB = Expressions.makePredicate("rolEDB", 1);
+        triple = Expressions.makePredicate("triple", 3);
+        subClassEDB = Expressions.makePredicate("subclassEDB", 2);
+        inst = Expressions.makePredicate("inst", 2);
+        topEDB = Expressions.makePredicate("topEDB", 1);
+        botEDB = Expressions.makePredicate("botEDB", 1);
+        subConjEDB = Expressions.makePredicate("subconjEDB", 3);
+        subExEDB = Expressions.makePredicate("subexEDB", 3);
+        supExEDB = Expressions.makePredicate("supexEDB", 4);
+        subSelfEDB = Expressions.makePredicate("subselfEDB", 2);
+        supSelfEDB = Expressions.makePredicate("supselfEDB", 2);
+        self = Expressions.makePredicate("self", 2);
         nom = Expressions.makePredicate("nom",1);
         cls = Expressions.makePredicate("cls",1);
         rol = Expressions.makePredicate("rol", 1);
-        triple = Expressions.makePredicate("triple", 3);
         subClass = Expressions.makePredicate("subclass", 2);
-        inst = Expressions.makePredicate("inst", 2);
         top = Expressions.makePredicate("top", 1);
         bot = Expressions.makePredicate("bot", 1);
         subConj = Expressions.makePredicate("subconj", 3);
@@ -138,7 +161,6 @@ public class Normalize {
         supEx = Expressions.makePredicate("supex", 4);
         subSelf = Expressions.makePredicate("subself", 2);
         supSelf = Expressions.makePredicate("supself", 2);
-        self = Expressions.makePredicate("self", 2);
         v = Expressions.makeVariable("v");
         w = Expressions.makeVariable("w");
         x = Expressions.makeVariable("x");
@@ -242,6 +264,27 @@ public class Normalize {
 		
 	}
 	public void rules() {
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(subClass, x,y),
+				Expressions.makeAtom(subClassEDB, x,y)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(nom, x), 
+				Expressions.makeAtom(nomEDB, x)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(top, x), 
+				Expressions.makeAtom(topEDB, x)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(bot, x), 
+				Expressions.makeAtom(botEDB, x)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(cls, x), 
+				Expressions.makeAtom(clsEDB, x)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(subConj, x,y,z), 
+				Expressions.makeAtom(subConjEDB, x,y,z)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(subEx, x,y,z), 
+				Expressions.makeAtom(subExEDB, x,y,z)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(supEx, w,x,y,z), 
+				Expressions.makeAtom(supExEDB, w,x,y,z)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(subSelf, x,y), 
+				Expressions.makeAtom(subSelfEDB, x,y)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(supSelf, x,y), 
+				Expressions.makeAtom(supSelfEDB, x,y)));
+		
 		// nom(x) :- subClass(x,x)
 		listRules.add(Expressions.makeRule(Expressions.makeAtom(nom, x), 
 				Expressions.makeAtom(inst, x,x)));
@@ -408,11 +451,11 @@ public class Normalize {
 				// A subsumes B
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
 				//subclass fact A is a subset of B
-				setFacts.add(Expressions.makeAtom(subClass, 
+				setFacts.add(Expressions.makeAtom(subClassEDB, 
 						Expressions.makeConstant(axiom.getSubClass().toString()), 
 						Expressions.makeConstant(axiom.getSuperClass().toString())));
-				setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiom.getSubClass().toString())));
-				setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiom.getSuperClass().toString())));
+				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSubClass().toString())));
+				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSuperClass().toString())));
 				
 			} else if (axiom.getSuperClass().isClassExpressionLiteral() && 
 					axiom.getSubClass() instanceof OWLObjectSomeValuesFrom && 
@@ -424,11 +467,11 @@ public class Normalize {
 					n_axioms.add(axiom);
 					//Exists.R.B subsumes A
 					//subEx(R,B,A)
-					setFacts.add(Expressions.makeAtom(subEx, Expressions.makeConstant(((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty().toString()), 
+					setFacts.add(Expressions.makeAtom(subExEDB, Expressions.makeConstant(((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty().toString()), 
 							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString()),
 							Expressions.makeConstant(axiom.getSuperClass().toString())));
-					setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString())));
-					setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiom.getSuperClass().toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSuperClass().toString())));
 				} else {
 					// Exists.R.C subsumes A
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getClassFromObjectSomeValuesFrom(
@@ -439,13 +482,13 @@ public class Normalize {
 							(OWLObjectSomeValuesFrom)addFreshClassName(freshConceptNumber), 
 							axiom.getSuperClass()));
 					//subEx(R,X,A) where X-> new concept
-					setFacts.add(Expressions.makeAtom(subEx, 
+					setFacts.add(Expressions.makeAtom(subExEDB, 
 							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getProperty().toString()),
 							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
 							Expressions.makeConstant(axiom.getSuperClass().toString())
 							));
-					setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())));
-					setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiom.getSuperClass().toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSuperClass().toString())));
 				
 					freshConceptNumber++;
 					
@@ -456,13 +499,13 @@ public class Normalize {
 				// A subsumes Exists.R.C
 				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSuperClass()).isClassExpressionLiteral() ) {
 					n_axioms.add(axiom);
-					setFacts.add(Expressions.makeAtom(supEx, 
+					setFacts.add(Expressions.makeAtom(supExEDB, 
 							Expressions.makeConstant(axiom.getSubClass().toString()),
 							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getProperty().toString()),
 							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getFiller().toString()),
 							Expressions.makeConstant("aux"+auxnum)
 							));
-					setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiom.getSubClass().toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSubClass().toString())));
 					auxnum++;
 					
 				} else {
@@ -471,7 +514,7 @@ public class Normalize {
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), 
 							addSomeValuesFromToFreshClassName((OWLObjectSomeValuesFrom) axiom.getSuperClass(), 
 									freshConceptNumber)));
-					setFacts.add(Expressions.makeAtom(supEx,
+					setFacts.add(Expressions.makeAtom(supExEDB,
 							Expressions.makeConstant(axiom.getSubClass().toString()),
 							Expressions.makeConstant(getPropertyfromClassExpression((OWLObjectSomeValuesFrom)axiom.getSuperClass()).toString()),
 							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
@@ -490,10 +533,10 @@ public class Normalize {
 				
 			} else if (axiom.getSubClass().isTopEntity() && axiom.getSuperClass().isClassExpressionLiteral()) {
 				//Top subsumes A
-				setFacts.add(Expressions.makeAtom(top, Expressions.makeConstant(axiom.getSuperClass().toString())));				
+				setFacts.add(Expressions.makeAtom(topEDB, Expressions.makeConstant(axiom.getSuperClass().toString())));				
 			} else if (axiom.getSuperClass().isBottomEntity() && axiom.getSubClass().isClassExpressionLiteral()) {
 				//A subsumes Bot
-				setFacts.add(Expressions.makeAtom(bot, Expressions.makeConstant(axiom.getSubClass().toString())));
+				setFacts.add(Expressions.makeAtom(botEDB, Expressions.makeConstant(axiom.getSubClass().toString())));
 				
 			} else if (axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral() 
 					&& axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
@@ -525,7 +568,7 @@ public class Normalize {
 				if (allClassNames[0]==allClassNames[1]==true) {
 					//A and B subsumes X
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
-					setFacts.add(Expressions.makeAtom(subConj, 
+					setFacts.add(Expressions.makeAtom(subConjEDB, 
 							Expressions.makeConstant(axiConj.toArray()[0].toString()),
 							Expressions.makeConstant(axiConj.toArray()[1].toString()),
 							Expressions.makeConstant(axiom.getSuperClass().toString())
@@ -622,8 +665,9 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectPropertyRangeAxiom arg0) {
-			throw new IllegalArgumentException(
-					"Not an OWL 2 EL axiom ! "+arg0.toString()+" Object Property Range Axiom !");
+			
+			//throw new IllegalArgumentException(
+			//		"Not an OWL 2 EL axiom ! "+arg0.toString()+" Object Property Range Axiom !");
 		}
 
 		@Override
@@ -631,14 +675,14 @@ public class Normalize {
 			n_axioms.add(axiom);
 			Set<OWLIndividual> indi = new HashSet<>();
 			axiom.individualsInSignature().forEach(x -> indi.add(x));
-			setFacts.add(Expressions.makeAtom(subEx,
+			setFacts.add(Expressions.makeAtom(subExEDB,
 					Expressions.makeConstant(axiom.getProperty().toString()),
 					Expressions.makeConstant(indi.toArray()[0].toString()),					
 					Expressions.makeConstant(indi.toArray()[1].toString())
 					));
-			setFacts.add(Expressions.makeAtom(nom, Expressions.makeConstant(indi.toArray()[0].toString())));
-			setFacts.add(Expressions.makeAtom(nom, Expressions.makeConstant(indi.toArray()[1].toString())));
-			setFacts.add(Expressions.makeAtom(rol, Expressions.makeConstant(axiom.getProperty().toString())));
+			setFacts.add(Expressions.makeAtom(nomEDB, Expressions.makeConstant(indi.toArray()[0].toString())));
+			setFacts.add(Expressions.makeAtom(nomEDB, Expressions.makeConstant(indi.toArray()[1].toString())));
+			setFacts.add(Expressions.makeAtom(rolEDB, Expressions.makeConstant(axiom.getProperty().toString())));
 		}
 
 		@Override
@@ -648,8 +692,10 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLSubObjectPropertyOfAxiom arg0) {
+			
 			// TODO Auto-generated method stub
-			System.out.println("Sub Object Property Of Axiom");
+			System.out.println("Sub Object Property Of Axiom"+"----------sub----"+arg0.getSubProperty().toString()+
+					"--------super-------"+arg0.getSuperProperty().toString());
 		}
 
 		@Override
@@ -684,24 +730,24 @@ public class Normalize {
 			if (axiom.getClassExpression().isClassExpressionLiteral() && 
 					axiom.getClassExpression().asConjunctSet().size()==1) {
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));
-				setFacts.add(Expressions.makeAtom(subClass, 
+				setFacts.add(Expressions.makeAtom(subClassEDB, 
 						Expressions.makeConstant(axiom.getIndividual().toString()),
 						Expressions.makeConstant(axiom.getClassExpression().toString())
 						));
-				setFacts.add(Expressions.makeAtom(nom, Expressions.makeConstant(axiom.getIndividual().toString())));
-				setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiom.getClassExpression().toString())));
+				setFacts.add(Expressions.makeAtom(nomEDB, Expressions.makeConstant(axiom.getIndividual().toString())));
+				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getClassExpression().toString())));
 				
 			} else {
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), 
 						axiom.getClassExpression()));
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), 
 						axiom.getIndividual()));
-				setFacts.add(Expressions.makeAtom(subClass, 
+				setFacts.add(Expressions.makeAtom(subClassEDB, 
 						Expressions.makeConstant(axiom.getIndividual().toString()),
 						Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())
 						));
-				setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())));
-				setFacts.add(Expressions.makeAtom(nom, Expressions.makeConstant(axiom.getIndividual().toString())));
+				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())));
+				setFacts.add(Expressions.makeAtom(nomEDB, Expressions.makeConstant(axiom.getIndividual().toString())));
 				freshConceptNumber++;					
 			}		
 		}
@@ -782,7 +828,6 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectIntersectionOf ce) {
-			
 			 throw new IllegalArgumentException
 			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  object intersection of !  ");
 		}
