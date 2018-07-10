@@ -1,19 +1,11 @@
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.vlog4j.core.reasoner.Algorithm;
-import org.semanticweb.vlog4j.core.reasoner.Reasoner;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.VLog4jException;
 
 //Main class upload ontology here
@@ -42,7 +34,6 @@ public class InferenceForOWLELMain {
 	 */
 	public static void main(String []args) throws VLog4jException, IOException{
 		System.out.println();
-		InferenceForOWLELMain elmain = new InferenceForOWLELMain();
 		StopWatch timer = new StopWatch();
 		timer.start("Start EL-Ontology reasoning! ");
 		String file = args[0];
