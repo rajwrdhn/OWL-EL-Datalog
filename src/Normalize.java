@@ -339,14 +339,14 @@ public class Normalize {
 				Expressions.makeAtom(inst, x,y)
 		),
 			Expressions.makeConjunction(Expressions.makeAtom(self, x,v))));
-		
+		//inst(x,y) , nom(y) , inst(x,z) :- inst(y,z)
 		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
 				Expressions.makeAtom(inst, x,y),
 				Expressions.makeAtom(nom, y),
 				Expressions.makeAtom(inst, x,z)
 		),
 			Expressions.makeConjunction(Expressions.makeAtom(inst, y,z))));
-
+		//inst(x,y) , nom(y) , inst(x,z) :- inst(x,z)
 		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
 				Expressions.makeAtom(inst, x,y),
 				Expressions.makeAtom(nom, y),
@@ -354,7 +354,7 @@ public class Normalize {
 		),
 			Expressions.makeConjunction(Expressions.makeAtom(inst, x,z))));
 		
-
+		//inst(x,y) , nom(y) , triple(z,v,x) :- triple(z,v,y)
 		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
 				Expressions.makeAtom(inst, x,y),
 				Expressions.makeAtom(nom, y),
