@@ -44,6 +44,7 @@ import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLFunctionalDataPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLFunctionalObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLHasKeyAxiom;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLInverseFunctionalObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
@@ -98,13 +99,18 @@ public class Normalize {
 	protected final Set<Atom> setAtoms;
 	protected final List<Rule> listRules;
 	protected final Predicate nom;
+	protected final Predicate cls;
 	protected final Predicate triple;
 	protected final Predicate subClass;
+	protected final Predicate inst;
 	protected final Predicate top;
 	protected final Predicate bot;
 	protected final Predicate subConj;
 	protected final Predicate subEx;
-	protected final Predicate supEx; 
+	protected final Predicate supEx;
+	protected final Predicate subSelf;
+	protected final Predicate supSelf;
+	protected final Predicate self;
 	protected final Variable v;
 	protected final Variable w;
 	protected final Variable x;
@@ -122,13 +128,18 @@ public class Normalize {
         setAtoms = new HashSet<>();
         listRules = new ArrayList<>();
         nom = Expressions.makePredicate("nom",1);
+        cls = Expressions.makePredicate("cls",1);
         triple = Expressions.makePredicate("triple", 3);
         subClass = Expressions.makePredicate("subclass", 2);
+        inst = Expressions.makePredicate("inst", 2);
         top = Expressions.makePredicate("top", 1);
         bot = Expressions.makePredicate("bot", 1);
         subConj = Expressions.makePredicate("subconj", 3);
         subEx = Expressions.makePredicate("subex", 3);
         supEx = Expressions.makePredicate("supex", 4);
+        subSelf = Expressions.makePredicate("subself", 2);
+        supSelf = Expressions.makePredicate("supself", 2);
+        self = Expressions.makePredicate("self", 2);
         v = Expressions.makeVariable("v");
         w = Expressions.makeVariable("w");
         x = Expressions.makeVariable("x");
@@ -249,14 +260,107 @@ public class Normalize {
 	public void rules() {
 		// nom(x) :- subClass(x,x)
 		listRules.add(Expressions.makeRule(Expressions.makeAtom(nom, x), 
-				Expressions.makeAtom(subClass, x,x)));
-		//
+				Expressions.makeAtom(inst, x,x)));
+		//nom(x), triple(x,y,x) :- self(x,y)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(nom, x),
+				Expressions.makeAtom(triple, x,y,x)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(self, x,y))));
+		//top(x), inst(y,z) :- inst (y,x)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(top, x),
+				Expressions.makeAtom(inst, y,z)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, y,x))));
+		//bot(z) , inst (x,z) , inst (v,w) , cls(y) :- inst (v,y)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(bot, z),
+				Expressions.makeAtom(inst, x,z),
+				Expressions.makeAtom(inst, v,w),
+				Expressions.makeAtom(cls, y)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, v,y))));
 		//rule subclass (A,B) , subclass(B,C) :- subclass (A,C)   
 		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
 					Expressions.makeAtom(subClass, x,y),
-					Expressions.makeAtom(subClass, y,z)
+					Expressions.makeAtom(inst, y,z)
 			),
-				Expressions.makeConjunction(Expressions.makeAtom(subClass, x,z))));
+				Expressions.makeConjunction(Expressions.makeAtom(inst, x,z))));
+		//subConj(x,y,z) , inst(v,x) , inst(v,y) :- inst(v,z)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(subConj, x,y,z),
+				Expressions.makeAtom(inst, v,x),
+				Expressions.makeAtom(inst, v,y)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, v,z))));
+		//subConj(x,y,z) , inst(v,x) , inst(v,y) :- inst(v,z)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(subConj, x,y,z),
+				Expressions.makeAtom(inst, v,x),
+				Expressions.makeAtom(inst, v,y)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, v,z))));
+		//subEx(v,y,z) , triple(x,v,w) , inst(w,y) :- inst(x,z)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(subEx, v,y,z),
+				Expressions.makeAtom(triple, x,v,w),
+				Expressions.makeAtom(inst, w,y)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, x,z))));
+		//subEx(v,y,z) , self(x,v) , inst(x,y) :- inst(x,z)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(subEx, v,y,z),
+				Expressions.makeAtom(self, x,v),
+				Expressions.makeAtom(inst, x,y)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, x,z))));
+		//supEx(v,w,y,z) , inst(x,v) :- triple(z,y)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(supEx, v,w,y,z),
+				Expressions.makeAtom(inst, x,v)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, z,y))));
+		//supEx(v,w,x,y) , inst(z,v) :- inst(y,x)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(supEx, v,w,x,y),
+				Expressions.makeAtom(inst, z,v)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, y,x))));
+		//subSelf(v,z) , self(x,v) :- inst(x,z)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(subSelf, v,z),
+				Expressions.makeAtom(self, x,v)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, x,z))));
+		//supSelf(y,v) , inst(x,y) :- self(x,v)
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(supSelf, y,v),
+				Expressions.makeAtom(inst, x,y)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(self, x,v))));
+		
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(inst, x,y),
+				Expressions.makeAtom(nom, y),
+				Expressions.makeAtom(inst, x,z)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, y,z))));
+
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(inst, x,y),
+				Expressions.makeAtom(nom, y),
+				Expressions.makeAtom(inst, x,z)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(inst, x,z))));
+		
+
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(inst, x,y),
+				Expressions.makeAtom(nom, y),
+				Expressions.makeAtom(triple, z,v,x)
+		),
+			Expressions.makeConjunction(Expressions.makeAtom(triple, z,v,y))));
 	}
 	/*
 	 * 
@@ -322,6 +426,9 @@ public class Normalize {
 				setFacts.add(Expressions.makeAtom(subClass, 
 						Expressions.makeConstant(axiom.getSubClass().toString()), 
 						Expressions.makeConstant(axiom.getSuperClass().toString())));
+				setFacts.add(Expressions.makeAtom(inst, 
+						Expressions.makeConstant(axiom.getSubClass().toString()), 
+						Expressions.makeConstant(axiom.getSuperClass().toString())));
 			} else if (axiom.getSuperClass().isClassExpressionLiteral() && 
 					axiom.getSubClass() instanceof OWLObjectSomeValuesFrom && 
 					!axiom.getSubClass().isAnonymous() && 
@@ -334,9 +441,13 @@ public class Normalize {
 					//subEx(R,B,A)
 					setFacts.add(Expressions.makeAtom(subEx, Expressions.makeConstant(((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty().toString()), 
 							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString()),
-							Expressions.makeConstant(axiom.getSuperClass().toString())));					
+							Expressions.makeConstant(axiom.getSuperClass().toString())));
+					setFacts.add(Expressions.makeAtom(triple,  
+							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString()),
+							Expressions.makeConstant(((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty().toString()),
+							Expressions.makeConstant(axiom.getSuperClass().toString())));
 				} else {
-					// C subsumes A
+					// Exists.R.C subsumes A
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getClassFromObjectSomeValuesFrom(
 							(OWLObjectSomeValuesFrom)axiom.getSubClass()), 
 							addFreshClassName(freshConceptNumber)));
@@ -345,11 +456,11 @@ public class Normalize {
 							(OWLObjectSomeValuesFrom)addFreshClassName(freshConceptNumber), 
 							axiom.getSuperClass()));
 					//subEx(R,X,A) where X-> new concept
-					setFacts.add(Expressions.makeAtom(subClass, 
-							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString()),
+					setFacts.add(Expressions.makeAtom(subEx, 
+							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getProperty().toString()),
 							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
 							Expressions.makeConstant(axiom.getSuperClass().toString())
-							));					
+							));
 					freshConceptNumber++;
 					
 				}
@@ -407,14 +518,16 @@ public class Normalize {
 				setFacts.add(Expressions.makeAtom(bot, Expressions.makeConstant(axiom.getSubClass().toString())));
 				inputStringTranslation.add("{bot("+axiom.getSubClass()+")}");
 				
-			} else if (axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
+			} else if (axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral() 
+					&& axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
 				//A subsumes C and D 
 				Iterator<OWLClassExpression> itr = axiom.getSuperClass().asConjunctSet().iterator();				
 				while(itr.hasNext()) {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), itr.next()));
 				}
 				
-			} else if (axiom.getSuperClass().isClassExpressionLiteral() && !axiom.getSubClass().isClassExpressionLiteral() && axiom.getSubClass().isAnonymous() && axiom.getSubClass().asConjunctSet().size()>1) {
+			} else if (axiom.getSuperClass().isClassExpressionLiteral() && !axiom.getSubClass().isClassExpressionLiteral() 
+					&& axiom.getSubClass().isAnonymous() && axiom.getSubClass().asConjunctSet().size()>1) {
 				//C and D subsumes B 
 				Iterator<OWLClassExpression> itr = axiom.getSubClass().asConjunctSet().iterator();
 				int i = axiom.getSubClass().asConjunctSet().size();
@@ -442,16 +555,20 @@ public class Normalize {
 							));					
 				} else {
 					v_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptNumber)));
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getConjunctClassExpression(axiom.getSubClass(), addFreshClassName(freshConceptNumber), itr.next()), axiom.getSuperClass()));
+					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getConjunctClassExpression(axiom.getSubClass(), 
+							addFreshClassName(freshConceptNumber), itr.next()), axiom.getSuperClass()));
 					freshConceptNumber++;
 					
 				}
 			} else {
 				
-				System.out.println("This is left!! subclass ----------" + axiom.getSubClass().toString() +"          super-------"+axiom.getSuperClass().toString());
-				if (axiom.getSubClass().isAnonymous() && axiom.getSuperClass().isClassExpressionLiteral() && axiom.getSubClass().asConjunctSet().size() ==1) {
+				System.out.println("This is left!! subclass ----------" + axiom.getSubClass().toString() +
+						"          super-------"+axiom.getSuperClass().toString());
+				if (axiom.getSubClass().isAnonymous() && axiom.getSuperClass().isClassExpressionLiteral() 
+						&& axiom.getSubClass().asConjunctSet().size() ==1) {
 					normalizeClassExpression(axiom.getSubClass());
-				} else if (axiom.getSuperClass().isAnonymous() && axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().asConjunctSet().size() ==1) {
+				} else if (axiom.getSuperClass().isAnonymous() && axiom.getSubClass().isClassExpressionLiteral() 
+						&& axiom.getSuperClass().asConjunctSet().size() ==1) {
 					normalizeClassExpression(axiom.getSuperClass());
 				} else {
 					throw new IllegalAccessError("Not a OWL-EL Axiom!!");
@@ -460,7 +577,9 @@ public class Normalize {
 		}
 		@Override
 		public void visit(OWLNegativeObjectPropertyAssertionAxiom arg0) {
-			throw new IllegalAccessError("Annotation Negative Object Property Assertion Axiom Exception !");
+			//throw new IllegalAccessError("Annotation Negative Object Property Assertion Axiom Exception !");
+			throw new IllegalArgumentException("The axiom "+arg0+" contains Negative Object property, "
+					+ "which is not allowed in OWL 2 EL. ");
 			//A negative object property assertion NegativeObjectPropertyAssertion( OPE a1 a2 ) 
 			//states that the individual a1 is not connected by the object property expression OPE to the individual a2.
 			//not in OWL 2 EL.
@@ -504,30 +623,38 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLDifferentIndividualsAxiom arg0) {
-			System.out.println("Different Individuals Axiom");
+			throw new IllegalArgumentException(
+					"Not an OWL 2 EL axiom ! "+arg0.toString()+" Different Individuals Axiom !");
 		}
 
 		@Override
 		public void visit(OWLDisjointDataPropertiesAxiom arg0) {
-			throw new IllegalAccessError("Disjoint Data Properties Axiom Exception !");			
+			throw new IllegalArgumentException(
+					"Not an OWL 2 EL axiom ! "+arg0.toString()+" Disjoint data Property Axiom !");
 		}
 
 		@Override
 		public void visit(OWLDisjointObjectPropertiesAxiom arg0) {
-			throw new IllegalAccessError("Disjoint Object Properties Axiom exception !");
+			throw new IllegalArgumentException(
+					"Not an OWL 2 EL axiom ! "+arg0.toString()+" Disjoint Object Property Axiom !");
 		}
 
 		@Override
 		public void visit(OWLObjectPropertyRangeAxiom arg0) {
-			System.out.println("Object Property Range Axiom ");
+			throw new IllegalArgumentException(
+					"Not an OWL 2 EL axiom ! "+arg0.toString()+" Object Property Range Axiom !");
 		}
 
 		@Override
 		public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-			// TODO Check
 			n_axioms.add(axiom);
-			
-			System.out.println("ObjectProperty Assertion Axiom:"+ axiom.toString());
+			Set<OWLIndividual> indi = new HashSet<>();
+			axiom.individualsInSignature().forEach(x -> indi.add(x));
+			setFacts.add(Expressions.makeAtom(subEx,
+					Expressions.makeConstant(axiom.getProperty().toString()),
+					Expressions.makeConstant(indi.toArray()[0].toString()),					
+					Expressions.makeConstant(indi.toArray()[1].toString())
+					));
 		}
 
 		@Override
@@ -668,42 +795,42 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectIntersectionOf ce) {
-			// TODO Auto-generated method stub
-			v_classExpression.add(ce);
-			OWLClassExpressionVisitor.super.visit(ce);
+			
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  object intersection of !  ");
 		}
 
 		@Override
 		public void visit(OWLObjectUnionOf ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  object union of !  ");	
 		}
 
 		@Override
 		public void visit(OWLObjectComplementOf ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  object complement of !  ");	
 		}
 
 		@Override
 		public void visit(OWLObjectSomeValuesFrom ce) {
 			// TODO Auto-generated method stub
 			System.out.println(ce.toString());
-			v_classExpression.add(ce);
-			
+			v_classExpression.add(ce);			
 		}
 
 		@Override
 		public void visit(OWLObjectAllValuesFrom ce) {
-			// TODO Auto-generated method stub
-			 throw new IllegalAccessError("Not a OWL-EL Expression"+ ce.toString());
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " for all values from !");
 		}
 
 		@Override
 		public void visit(OWLObjectHasValue ce) {
 			// TODO Auto-generated method stub
 			System.out.println(ce.toString());
-			v_classExpression.add(ce);
+			ce.getFiller();
+			v_classExpression.add(ce.asSomeValuesFrom());
 		}
 
 		@Override
@@ -711,71 +838,67 @@ public class Normalize {
 			// TODO Auto-generated method stub
 			ce.getFiller();
 			ce.getCardinality();
-			ce.getProperty();
+			ce.getProperty().asObjectPropertyExpression();
 			v_classExpression.add(ce);
 		}
 
 		@Override
 		public void visit(OWLObjectExactCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  exact cardinality !  ");				
 		}
 
 		@Override
-		public void visit(OWLObjectMaxCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+		public void visit(OWLObjectMaxCardinality ce) {			
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  max cardinality !  ");	
 		}
 
 		@Override
-		public void visit(OWLObjectHasSelf ce) {
-			// TODO Auto-generated method stub
-			System.out.println(ce.toString());
-			v_classExpression.add(ce);
+		public void visit(OWLObjectHasSelf ce) {			
+			ce.getProperty();
 		}
 
 		@Override
 		public void visit(OWLObjectOneOf ce) {
-			// TODO Auto-generated method stub
-			System.out.println(ce.toString());
-			v_classExpression.add(ce);
+			throw new IllegalArgumentException(
+					"Not OWL 2 EL Expression !!  "+ce.toString()+" Object one of !");
 		}
 
 		@Override
 		public void visit(OWLDataSomeValuesFrom ce) {
-			// TODO Auto-generated method stub
-			System.out.println(ce.toString());
-			OWLClassExpressionVisitor.super.visit(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  data some values from !  ");				
 		}
 
 		@Override
 		public void visit(OWLDataAllValuesFrom ce) {
-			// TODO Auto-generated method stub
-			//v_classExpression.add(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data all values from !  ");					
 		}
 
 		@Override
 		public void visit(OWLDataHasValue ce) {
-			// TODO Auto-generated method stub
-			//v_classExpression.add(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data has value !  ");				
 		}
 
 		@Override
 		public void visit(OWLDataMinCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data min cardinality !  ");				
 		}
 
 		@Override
 		public void visit(OWLDataExactCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data exact cardinality !  ");				
 		}
 
 		@Override
 		public void visit(OWLDataMaxCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			 throw new IllegalArgumentException
+			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data max cardinality !  ");				
 		}
 		
 	}
