@@ -6,7 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import javax.management.Descriptor;
+
+import org.semanticweb.owlapi.model.ClassExpressionType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
@@ -14,9 +18,11 @@ import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomVisitor;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLClassExpressionVisitor;
+import org.semanticweb.owlapi.model.OWLClassExpressionVisitorEx;
 import org.semanticweb.owlapi.model.OWLDataAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLDataExactCardinality;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -46,6 +52,7 @@ import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
@@ -61,6 +68,8 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
+import org.semanticweb.owlapi.model.OWLObjectVisitor;
+import org.semanticweb.owlapi.model.OWLObjectVisitorEx;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -91,7 +100,11 @@ public class Normalize {
     protected final Set<OWLAxiom> n_axioms;
     protected final Set<OWLClassExpression> v_classExpression;
     protected final Optional<IRI> v_IRI;
-	protected final Set<String> inputStringTranslation;
+    protected long freshConceptNumber;
+    protected long auxnum;
+    //protected final ClassExpressionNormalize v_ClassExpressionNormalize;
+    //protected final ClassExpressionNormalizer v_ClassExpressionNormalizer;
+	//protected final Set<String> inputStringTranslation;
 	protected final Set<Atom> setFacts;
 	protected final Set<Atom> setAtoms;
 	protected final List<Rule> listRules;
@@ -131,8 +144,12 @@ public class Normalize {
         v_IRI = ontID.getOntologyIRI();
         v_axioms= new HashSet<>();
         n_axioms= new HashSet<>();
-        inputStringTranslation = new HashSet<>();
+        //inputStringTranslation = new HashSet<>();
         v_classExpression = new HashSet<>();
+        //v_ClassExpressionNormalize = new ClassExpressionNormalize();
+        //v_ClassExpressionNormalizer = new ClassExpressionNormalizer(null);
+        freshConceptNumber = 1;
+        auxnum = 1;
         setFacts = new HashSet<>();
         setAtoms = new HashSet<>();
         listRules = new ArrayList<>();
@@ -223,25 +240,7 @@ public class Normalize {
 	public OWLObjectSomeValuesFrom addSomeValuesFromToFreshClassName(OWLObjectSomeValuesFrom expr, long conceptNumber) {
 		return v_factory.getOWLObjectSomeValuesFrom(expr.getProperty(), addFreshClassName(conceptNumber));
 	}
-	/**
-	 * gets the property "R" from "Exists.R.C"
-	 */
-	public OWLObjectPropertyExpression getPropertyfromClassExpression(OWLObjectSomeValuesFrom expr) {		
-		return expr.getProperty();
-	}
-	/**
-	 * Return the Class from Existentially quantified Class Expression
-	 */
-	public OWLClassExpression getClassFromObjectSomeValuesFrom(OWLObjectSomeValuesFrom expr) {
-		
-		return expr.getFiller();
-	}
-	/**
-	 * Return the Class from Self Restriction Class Expression
-	 */
-	public OWLClassExpression getClassFromObjectSomeValuesFrom(OWLObjectHasSelf expr) {
-		return expr;
-	}
+
 	
 	public OWLClassExpression getConjunctClassExpression(OWLClassExpression expr1, OWLClassExpression expr2, OWLClassExpression rem) {
 		Set<OWLClassExpression> ex = new HashSet<>() ;
@@ -250,19 +249,121 @@ public class Normalize {
 		ex.remove(rem);		
 		return v_factory.getOWLObjectIntersectionOf(ex);
 	}
-	
+
 	/**
-	 * class Expression Visitor
+	 * ClassExpression Visitor
 	 * @param ce
 	 */
-	public void normalizeClassExpression(OWLClassExpression ce) {
+	public void normalizesubClassExpressionAxiom(OWLClassExpression subClassExpr, OWLClassExpression superClassExpr) {
 		//clear the set of class expression
 		v_classExpression.clear();
-		
-		ClassExpressionNormalizer ceVisitor = new ClassExpressionNormalizer();
-		ce.accept(ceVisitor);
-		
+		if (subClassExpr.isTopEntity() && superClassExpr.isClassExpressionLiteral()) {
+			//Top subsumes A
+			setFacts.add(Expressions.makeAtom(topEDB, Expressions.makeConstant(superClassExpr.toString())));				
+		} else if (superClassExpr.isBottomEntity() && subClassExpr.isClassExpressionLiteral()) {
+			//A subsumes Bot
+			setFacts.add(Expressions.makeAtom(botEDB, Expressions.makeConstant(subClassExpr.toString())));
+			
+		} else if (subClassExpr.isClassExpressionLiteral() && superClassExpr.isClassExpressionLiteral()) {
+			if (subClassExpr instanceof OWLObjectComplementOf || superClassExpr instanceof OWLObjectComplementOf) {
+				throw new IllegalArgumentException("Complement of a named class is not OWL 2 EL !");
+			} else {
+				// A subsumes B
+				n_axioms.add(v_factory.getOWLSubClassOfAxiom(subClassExpr, superClassExpr));
+				//subclass fact A is a subset of B
+				setFacts.add(Expressions.makeAtom(subClassEDB, 
+						Expressions.makeConstant(subClassExpr.toString()), 
+						Expressions.makeConstant(superClassExpr.toString())));
+				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(subClassExpr.toString())));
+				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(superClassExpr.toString())));
+			}	
+		} else if (subClassExpr.isClassExpressionLiteral() && !superClassExpr.isClassExpressionLiteral()
+				&& superClassExpr.asConjunctSet().size() >= 1 ) {
+			BoolVisitor boolvisitor = new BoolVisitor();
+			boolean subbool = subClassExpr.accept(boolvisitor);
+			boolean supbool = superClassExpr.accept(boolvisitor);
+			if(!subbool && !supbool) {
+				throw new IllegalArgumentException("Not OWL 2 EL !");
+			} else {
+					// A subsumes ClassExpression 
+					ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(false,true,subClassExpr);
+					
+					for (OWLClassExpression ce:superClassExpr.asConjunctSet()) {
+						if (ce.isClassExpressionLiteral()) {
+							if (ce instanceof OWLObjectComplementOf) {
+								throw new IllegalArgumentException("Complement Class Name Exception !!");
+							} else {
+								n_axioms.add(v_factory.getOWLSubClassOfAxiom(subClassExpr, ce));
+								setFacts.add(Expressions.makeAtom(subClassEDB, 
+										Expressions.makeConstant(subClassExpr.toString()), 
+										Expressions.makeConstant(ce.toString())));
+								setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(subClassExpr.toString())));
+								setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(ce.toString())));								
+							}
+						} else {
+							
+							ce.accept(ceVisitor);
+						}
+				}
+			}
+		} else if(subClassExpr.isAnonymous() && superClassExpr.isAnonymous()) {
+			BoolVisitor boolvisitor = new BoolVisitor();
+			boolean subbool = subClassExpr.accept(boolvisitor);
+			boolean supbool = superClassExpr.accept(boolvisitor);
+			// ClassExpr subsumes ClassExpr
+			if (subbool && supbool) {
+				v_axioms.add(v_factory.getOWLSubClassOfAxiom(subClassExpr, addFreshClassName(freshConceptNumber)));
+				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), superClassExpr));
+				freshConceptNumber++;
+			} else {
+				throw new IllegalArgumentException("C subsumes D");
+			}
+		} else if (superClassExpr.isClassExpressionLiteral() && !subClassExpr.isClassExpressionLiteral()
+				&& subClassExpr.asConjunctSet().size() >=1 ) {
+			BoolVisitor boolvisitor = new BoolVisitor();
+			boolean subbool = subClassExpr.accept(boolvisitor);
+			boolean supbool = superClassExpr.accept(boolvisitor);
+			
+			if(!subbool && !supbool) {
+				throw new IllegalArgumentException("Not OWL 2 EL !");
+			} else {
+				// ClassExpression subsumes A 
+				ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(true,false,superClassExpr);
+				//int index = subClassExpr.asConjunctSet().size();
+				Set<OWLClassExpression> descriptions = subClassExpr.asConjunctSet(); 
+				if (descriptions.size() == 1) {
+					subClassExpr.accept(ceVisitor);
+				} else if (descriptions.size() == 2) {
+					
+				} else {
+					
+				}
+	/*			for (OWLClassExpression ce:descriptions) {
+					if (ce.isClassExpressionLiteral()) {
+						if (ce instanceof OWLObjectComplementOf) {
+							throw new IllegalArgumentException("Complement Class Name Exception !!");
+						} else {
+							n_axioms.add(v_factory.getOWLSubClassOfAxiom(subClassExpr, ce));
+							setFacts.add(Expressions.makeAtom(subClassEDB, 
+									Expressions.makeConstant(subClassExpr.toString()), 
+									Expressions.makeConstant(ce.toString())));
+							setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(subClassExpr.toString())));
+							setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(ce.toString())));								
+						}
+					} else {
+						
+						ce.accept(ceVisitor);
+					}
+				}*/
+			}
+		} else {
+			throw new IllegalAccessError("Not OWL 2 EL !! sub----" + subClassExpr.toString() + " "
+					+ "----super    "+superClassExpr.toString());
+		}
 	}
+	/**
+	 * Datalog Rules
+	 */
 	public void rules() {
 		listRules.add(Expressions.makeRule(Expressions.makeAtom(subClass, x,y),
 				Expressions.makeAtom(subClassEDB, x,y)));
@@ -404,16 +505,15 @@ public class Normalize {
 	 * Visitor Class for Axioms in the Ontology.
 	 */
 	protected class AxiomVisitor implements OWLAxiomVisitor {
-		
-        protected long freshConceptNumber;
-        protected long auxnum;
+		protected final List<OWLClassExpression[]> v_expressionList;
+ 
 		protected long i ;
 		protected boolean cNameBool;
 		protected boolean[] allClassNames;
 		protected boolean allClassExpr;
 		protected final Set<OWLClassExpression> axiConj;
 		public AxiomVisitor() {
-			freshConceptNumber =1;
+			v_expressionList = new ArrayList<>();
 			cNameBool = false;
 			allClassExpr = false;
 			i=0;
@@ -445,158 +545,11 @@ public class Normalize {
 		}
 
 		@Override
-		public void visit(OWLSubClassOfAxiom axiom) {			
-
-			if(axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
-				// A subsumes B
-				n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
-				//subclass fact A is a subset of B
-				setFacts.add(Expressions.makeAtom(subClassEDB, 
-						Expressions.makeConstant(axiom.getSubClass().toString()), 
-						Expressions.makeConstant(axiom.getSuperClass().toString())));
-				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSubClass().toString())));
-				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSuperClass().toString())));
-				
-			} else if (axiom.getSuperClass().isClassExpressionLiteral() && 
-					axiom.getSubClass() instanceof OWLObjectSomeValuesFrom && 
-					!axiom.getSubClass().isAnonymous() && 
-					!axiom.getSubClass().isClassExpressionLiteral() && 
-					axiom.getSubClass().asConjunctSet().size()==1) {
-				//Exists.R.C subsumes A
-				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSubClass()).isClassExpressionLiteral()){
-					n_axioms.add(axiom);
-					//Exists.R.B subsumes A
-					//subEx(R,B,A)
-					setFacts.add(Expressions.makeAtom(subExEDB, Expressions.makeConstant(((OWLObjectSomeValuesFrom) axiom.getSubClass()).getProperty().toString()), 
-							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString()),
-							Expressions.makeConstant(axiom.getSuperClass().toString())));
-					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getFiller().toString())));
-					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSuperClass().toString())));
-				} else {
-					// Exists.R.C subsumes A
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getClassFromObjectSomeValuesFrom(
-							(OWLObjectSomeValuesFrom)axiom.getSubClass()), 
-							addFreshClassName(freshConceptNumber)));
-					//Exists.R.X subsumes A
-					n_axioms.add(v_factory.getOWLSubClassOfAxiom(
-							(OWLObjectSomeValuesFrom)addFreshClassName(freshConceptNumber), 
-							axiom.getSuperClass()));
-					//subEx(R,X,A) where X-> new concept
-					setFacts.add(Expressions.makeAtom(subExEDB, 
-							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSubClass()).getProperty().toString()),
-							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
-							Expressions.makeConstant(axiom.getSuperClass().toString())
-							));
-					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())));
-					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSuperClass().toString())));
-				
-					freshConceptNumber++;
-					
-				}
-			
-			} else if (axiom.getSuperClass() instanceof OWLObjectSomeValuesFrom 
-					&& axiom.getSubClass().isClassExpressionLiteral()) {
-				// A subsumes Exists.R.C
-				if (getClassFromObjectSomeValuesFrom( (OWLObjectSomeValuesFrom)axiom.getSuperClass()).isClassExpressionLiteral() ) {
-					n_axioms.add(axiom);
-					setFacts.add(Expressions.makeAtom(supExEDB, 
-							Expressions.makeConstant(axiom.getSubClass().toString()),
-							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getProperty().toString()),
-							Expressions.makeConstant(((OWLObjectSomeValuesFrom)axiom.getSuperClass()).getFiller().toString()),
-							Expressions.makeConstant("aux"+auxnum)
-							));
-					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getSubClass().toString())));
-					auxnum++;
-					
-				} else {
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), 
-							getClassFromObjectSomeValuesFrom((OWLObjectSomeValuesFrom)axiom.getSuperClass())));
-					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), 
-							addSomeValuesFromToFreshClassName((OWLObjectSomeValuesFrom) axiom.getSuperClass(), 
-									freshConceptNumber)));
-					setFacts.add(Expressions.makeAtom(supExEDB,
-							Expressions.makeConstant(axiom.getSubClass().toString()),
-							Expressions.makeConstant(getPropertyfromClassExpression((OWLObjectSomeValuesFrom)axiom.getSuperClass()).toString()),
-							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
-							Expressions.makeConstant("aux"+auxnum)							
-							));
-					auxnum++;
-					freshConceptNumber++;
-					
-				}
-				
-			} else if (axiom.getSubClass().isAnonymous() && axiom.getSuperClass().isAnonymous()) {
-				// C subsumes D
-				v_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), addFreshClassName(freshConceptNumber)));
-				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), axiom.getSuperClass()));
-				freshConceptNumber++;
-				
-			} else if (axiom.getSubClass().isTopEntity() && axiom.getSuperClass().isClassExpressionLiteral()) {
-				//Top subsumes A
-				setFacts.add(Expressions.makeAtom(topEDB, Expressions.makeConstant(axiom.getSuperClass().toString())));				
-			} else if (axiom.getSuperClass().isBottomEntity() && axiom.getSubClass().isClassExpressionLiteral()) {
-				//A subsumes Bot
-				setFacts.add(Expressions.makeAtom(botEDB, Expressions.makeConstant(axiom.getSubClass().toString())));
-				
-			} else if (axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral() 
-					&& axiom.getSuperClass().isAnonymous() && axiom.getSuperClass().asConjunctSet().size()> 1) {
-				//A subsumes C and D 
-				Iterator<OWLClassExpression> itr = axiom.getSuperClass().asConjunctSet().iterator();				
-				while(itr.hasNext()) {
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), itr.next()));
-				}
-				
-			} else if (axiom.getSuperClass().isClassExpressionLiteral() && !axiom.getSubClass().isClassExpressionLiteral() 
-					&& axiom.getSubClass().isAnonymous() && axiom.getSubClass().asConjunctSet().size()>1) {
-				//C and D subsumes B 
-				Iterator<OWLClassExpression> itr = axiom.getSubClass().asConjunctSet().iterator();
-				int i = axiom.getSubClass().asConjunctSet().size();
-				//Set<OWLAxiom> tmpaxm = new HashSet<>();
-				if (i==2) {
-					while (itr.hasNext()) {
-						if (itr.next().isClassExpressionLiteral()) {
-							allClassNames[i-1] = true;
-							axiConj.add(itr.next());
-							i--;
-						}
-						else {
-							allClassNames[i-1] = false;
-							i--;
-						}
-					}
-				}
-				if (allClassNames[0]==allClassNames[1]==true) {
-					//A and B subsumes X
-					n_axioms.add(v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(), axiom.getSuperClass()));
-					setFacts.add(Expressions.makeAtom(subConjEDB, 
-							Expressions.makeConstant(axiConj.toArray()[0].toString()),
-							Expressions.makeConstant(axiConj.toArray()[1].toString()),
-							Expressions.makeConstant(axiom.getSuperClass().toString())
-							));			
-					setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiConj.toArray()[0].toString())));
-					setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiConj.toArray()[1].toString())));
-					setFacts.add(Expressions.makeAtom(cls, Expressions.makeConstant(axiom.getSuperClass().toString())));
-				} else {
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptNumber)));
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(getConjunctClassExpression(axiom.getSubClass(), 
-							addFreshClassName(freshConceptNumber), itr.next()), axiom.getSuperClass()));
-					freshConceptNumber++;
-					
-				}
+		public void visit(OWLSubClassOfAxiom axiom) {
+			if(!axiom.getSubClass().isBottomEntity() || !axiom.getSuperClass().isTopEntity() ) {
+				normalizesubClassExpressionAxiom(axiom.getSubClass(), axiom.getSuperClass());
 			} else {
-				
-				System.out.println("This is left!! subclass ----------" + axiom.getSubClass().toString() +
-						"          super-------"+axiom.getSuperClass().toString());
-				throw new IllegalAccessError("Not a OWL-EL Axiom!!");
-/*				if (axiom.getSubClass().isAnonymous() && axiom.getSuperClass().isClassExpressionLiteral() 
-						&& axiom.getSubClass().asConjunctSet().size() ==1) {
-					normalizeClassExpression(axiom.getSubClass());
-				} else if (axiom.getSuperClass().isAnonymous() && axiom.getSubClass().isClassExpressionLiteral() 
-						&& axiom.getSuperClass().asConjunctSet().size() ==1) {
-					normalizeClassExpression(axiom.getSuperClass());
-				} else {
-					throw new IllegalAccessError("Not a OWL-EL Axiom!!");
-				}*/
+				//Empty Set
 			}
 		}
 		@Override
@@ -604,8 +557,8 @@ public class Normalize {
 			//throw new IllegalAccessError("Annotation Negative Object Property Assertion Axiom Exception !");
 			throw new IllegalArgumentException("The axiom "+arg0+" contains Negative Object property, "
 					+ "which is not allowed in OWL 2 EL. ");
-			//A negative object property assertion NegativeObjectPropertyAssertion( OPE a1 a2 ) 
-			//states that the individual a1 is not connected by the object property expression OPE to the individual a2.
+			//A negative ce_bool property assertion NegativeObjectPropertyAssertion( OPE a1 a2 ) 
+			//states that the individual a1 is not connected by the ce_bool property expression OPE to the individual a2.
 			//not in OWL 2 EL.
 		}
 
@@ -630,8 +583,10 @@ public class Normalize {
 		}
 
 		@Override
-		public void visit(OWLObjectPropertyDomainAxiom arg0) {
-			System.out.println("Object Property Domain Axiom"+ arg0);
+		public void visit(OWLObjectPropertyDomainAxiom axiom) {
+			System.out.println("Object Property Domain Axiom"+ axiom.getProperty().toString() +"---domain---"
+		+ axiom.getDomain().toString());
+			//ObjectPropertyDomain := 'ObjectPropertyDomain' '(' ObjectPropertyExpression ClassExpression ')'
 		}
 
 		@Override
@@ -691,11 +646,15 @@ public class Normalize {
 		}
 
 		@Override
-		public void visit(OWLSubObjectPropertyOfAxiom arg0) {
-			
+		public void visit(OWLSubObjectPropertyOfAxiom axiom) {
+			//subRole()
+			axiom.getSubProperty();
+			axiom.getSuperProperty();
+			n_axioms.add(axiom);
+			//setFacts.add(Expressions.makeAtom(subRoleEDB, terms));
 			// TODO Auto-generated method stub
-			System.out.println("Sub Object Property Of Axiom"+"----------sub----"+arg0.getSubProperty().toString()+
-					"--------super-------"+arg0.getSuperProperty().toString());
+			System.out.println("Sub Object Property Of Axiom"+"----------sub----"+axiom.getSubProperty().toString()+
+					"--------super-------"+axiom.getSuperProperty().toString());
 		}
 
 		@Override
@@ -820,120 +779,258 @@ public class Normalize {
 			
 		}
 	}
-	protected class ClassExpressionNormalizer implements OWLClassExpressionVisitor {
+	
+	
+	protected class ClassExpressionNormalize implements OWLClassExpressionVisitor{
 		
-		public ClassExpressionNormalizer() {
-			// TODO Auto-generated constructor stub
+		protected final boolean boolSub;
+		protected final boolean boolSuper;
+		protected final OWLClassExpression owlClassName;
+		public ClassExpressionNormalize(boolean sub, boolean sup, OWLClassExpression ceName) {
+			// boolSub is true when it is not a named class else false. similar for boolSuper.
+			boolSub = sub;
+			boolSuper = sup;
+			owlClassName = ceName;
 		}
-
+		
+		public void visit(OWLClass ce) {
+			ce.isClassExpressionLiteral();			
+		}
+			
 		@Override
 		public void visit(OWLObjectIntersectionOf ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  object intersection of !  ");
+			if (boolSub) {
+				v_axioms.add(v_factory.getOWLSubClassOfAxiom(ce, addFreshClassName(freshConceptNumber)));
+				freshConceptNumber++;
+			} else if (boolSuper) {
+				v_axioms.add(v_factory.getOWLSubClassOfAxiom(owlClassName, ce));
+			}
 		}
 
 		@Override
 		public void visit(OWLObjectUnionOf ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  object union of !  ");	
+			throw new IllegalArgumentException("OWLObjectUnionOf not OWL 2 EL ! " + ce.toString()  );
 		}
 
 		@Override
-		public void visit(OWLObjectComplementOf ce) {			
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  object complement of !  ");	
+		public void visit(OWLObjectComplementOf ce) {
+			throw new IllegalArgumentException("OWLObjectComplementOf not OWL 2 EL ! " + ce.toString()  );
 		}
 
 		@Override
 		public void visit(OWLObjectSomeValuesFrom ce) {
-			// TODO Auto-generated method stub
-			System.out.println(ce.toString());
-			v_classExpression.add(ce);			
+			if(boolSuper) {
+				if (!ce.getFiller().isClassExpressionLiteral()) {
+					v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), 
+							ce.getFiller()));
+					n_axioms.add(v_factory.getOWLSubClassOfAxiom(owlClassName, 
+							v_factory.getOWLObjectSomeValuesFrom(ce.getProperty(), addFreshClassName(freshConceptNumber))));
+					setFacts.add(Expressions.makeAtom(supExEDB,
+							Expressions.makeConstant(owlClassName.toString()),
+							Expressions.makeConstant(ce.getProperty().toString()),
+							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
+							Expressions.makeConstant("aux"+auxnum)							
+							));
+					auxnum++;
+					freshConceptNumber++;
+				} else {
+					//A subsumes Exists.R. B
+					if (ce.getFiller() instanceof OWLObjectComplementOf) {
+						throw new IllegalArgumentException("OWLObjectComplementOf not OWL 2 EL ! " + ce.toString()  );
+					}else {
+						n_axioms.add(v_factory.getOWLSubClassOfAxiom(owlClassName, 
+								v_factory.getOWLObjectSomeValuesFrom(ce.getProperty(), addFreshClassName(freshConceptNumber))));
+						setFacts.add(Expressions.makeAtom(supExEDB,
+								Expressions.makeConstant(owlClassName.toString()),
+								Expressions.makeConstant(ce.getProperty().toString()),
+								Expressions.makeConstant(ce.getFiller().toString()),
+								Expressions.makeConstant("aux"+auxnum)							
+								));
+						auxnum++;
+					}
+				}
+			} else if (boolSub) {
+				if(!ce.getFiller().isClassExpressionLiteral()) {
+					// Exists.R.C subsumes A
+					//C subsumes X
+					v_axioms.add(v_factory.getOWLSubClassOfAxiom(ce.getFiller(), addFreshClassName(freshConceptNumber)));
+					//Exists.R.X subsumes A
+					n_axioms.add(v_factory.getOWLSubClassOfAxiom(
+							v_factory.getOWLObjectSomeValuesFrom(ce.getProperty(), addFreshClassName(freshConceptNumber)), 
+							owlClassName));
+					//subEx(R,X,A) where X-> new concept
+					setFacts.add(Expressions.makeAtom(subExEDB, 
+							Expressions.makeConstant(ce.getProperty().toString()),
+							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
+							Expressions.makeConstant(owlClassName.toString())
+							));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(owlClassName.toString())));				
+					freshConceptNumber++;
+				} else {
+					n_axioms.add(v_factory.getOWLSubClassOfAxiom(ce, owlClassName));
+					//Exists.R.B subsumes A
+					//subEx(R,B,A)
+					setFacts.add(Expressions.makeAtom(subExEDB, Expressions.makeConstant(ce.getProperty().toString()), 
+							Expressions.makeConstant(ce.getFiller().toString()),
+							Expressions.makeConstant(owlClassName.toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(ce.getFiller().toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(owlClassName.toString())));
+				}
+			}
 		}
 
 		@Override
 		public void visit(OWLObjectAllValuesFrom ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " for all values from !");
+			throw new IllegalArgumentException("All Values From not in OWL 2 EL ! " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLObjectHasValue ce) {
-			// TODO Auto-generated method stub
-			System.out.println(ce.toString());
-			ce.getFiller();
-			v_classExpression.add(ce.asSomeValuesFrom());
+			//TODO
+			visit((OWLObjectSomeValuesFrom)ce.asSomeValuesFrom());
 		}
 
 		@Override
 		public void visit(OWLObjectMinCardinality ce) {
 			// TODO Auto-generated method stub
-			ce.getFiller();
-			ce.getCardinality();
-			ce.getProperty().asObjectPropertyExpression();
-			v_classExpression.add(ce);
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
 		public void visit(OWLObjectExactCardinality ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  exact cardinality !  ");				
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
-		public void visit(OWLObjectMaxCardinality ce) {			
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  max cardinality !  ");	
+		public void visit(OWLObjectMaxCardinality ce) {
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
-		public void visit(OWLObjectHasSelf ce) {			
-			ce.getProperty();
-			
+		public void visit(OWLObjectHasSelf ce) {
+			if(boolSuper) {
+				n_axioms.add(v_factory.getOWLSubClassOfAxiom(owlClassName, ce));
+				setFacts.add(Expressions.makeAtom(supSelfEDB,
+						Expressions.makeConstant(owlClassName.toString()),
+						Expressions.makeConstant(ce.getProperty().toString())						
+						));
+			} else if (boolSub) {
+				n_axioms.add(v_factory.getOWLSubClassOfAxiom(ce, owlClassName));
+				setFacts.add(Expressions.makeAtom(supSelfEDB,
+						Expressions.makeConstant(ce.getProperty().toString()),
+						Expressions.makeConstant(owlClassName.toString())						
+						));
+			}
 		}
 
 		@Override
 		public void visit(OWLObjectOneOf ce) {
-			
-			throw new IllegalArgumentException(
-					"Not OWL 2 EL Expression !!  "+ce.toString()+" Object one of !");
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
 		public void visit(OWLDataSomeValuesFrom ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ "  data some values from !  ");				
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
 		public void visit(OWLDataAllValuesFrom ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data all values from !  ");					
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
 		public void visit(OWLDataHasValue ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data has value !  ");				
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
 		public void visit(OWLDataMinCardinality ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data min cardinality !  ");				
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
 		public void visit(OWLDataExactCardinality ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data exact cardinality !  ");				
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
 
 		@Override
 		public void visit(OWLDataMaxCardinality ce) {
-			 throw new IllegalArgumentException
-			 ("Not a OWL 2 EL Expression !! "+ ce.toString()+ " data max cardinality !  ");				
+			// TODO Auto-generated method stub
+			OWLClassExpressionVisitor.super.visit(ce);
 		}
-		
+
+
 	}
+    
+	protected class BoolVisitor implements OWLClassExpressionVisitorEx<Boolean> {
+
+        public Boolean visit(OWLClass ce_bool) {
+            if (ce_bool.isOWLThing())
+                return Boolean.FALSE;
+            else if (ce_bool.isOWLNothing())
+                return Boolean.FALSE;
+            else
+                return Boolean.TRUE;
+        }
+        public Boolean visit(OWLObjectIntersectionOf ce_bool) {
+            return Boolean.TRUE;
+        }
+        public Boolean visit(OWLObjectUnionOf ce_bool) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLObjectComplementOf ce_bool) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLObjectOneOf ce_bool) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLObjectSomeValuesFrom ce_bool) {
+            return Boolean.TRUE;
+        }
+        public Boolean visit(OWLObjectAllValuesFrom ce_bool) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLObjectHasValue ce_bool) {
+            return Boolean.TRUE;
+        }
+        public Boolean visit(OWLObjectHasSelf ce_bool) {
+            return Boolean.TRUE;
+        }
+        public Boolean visit(OWLObjectMinCardinality ce_bool) {
+            return ce_bool.getCardinality()>0;
+        }
+        public Boolean visit(OWLObjectMaxCardinality ce_bool) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLObjectExactCardinality ce_bool) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLDataSomeValuesFrom desc) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLDataAllValuesFrom desc) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLDataHasValue desc) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLDataMinCardinality desc) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLDataMaxCardinality desc) {
+            return Boolean.FALSE;
+        }
+        public Boolean visit(OWLDataExactCardinality desc) {
+            return Boolean.FALSE;
+        }
+    }
 }
