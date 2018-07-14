@@ -122,6 +122,7 @@ public class Normalize {
 	protected final Predicate supExEDB;
 	protected final Predicate subSelfEDB;
 	protected final Predicate supSelfEDB;
+	protected final Predicate subRoleEDB;
 	protected final Predicate self;
 	protected final Predicate nom;
 	protected final Predicate cls;
@@ -134,6 +135,7 @@ public class Normalize {
 	protected final Predicate supEx;
 	protected final Predicate subSelf;
 	protected final Predicate supSelf;
+	protected final Predicate subRole;
 	protected final Variable v;
 	protected final Variable w;
 	protected final Variable x;
@@ -168,6 +170,7 @@ public class Normalize {
 		supExEDB = Expressions.makePredicate("supexEDB", 4);
 		subSelfEDB = Expressions.makePredicate("subselfEDB", 2);
 		supSelfEDB = Expressions.makePredicate("supselfEDB", 2);
+		subRoleEDB = Expressions.makePredicate("subroleEDB", 2);
 		self = Expressions.makePredicate("self", 2);
 		nom = Expressions.makePredicate("nom",1);
 		cls = Expressions.makePredicate("cls",1);
@@ -180,6 +183,7 @@ public class Normalize {
 		supEx = Expressions.makePredicate("supex", 4);
 		subSelf = Expressions.makePredicate("subself", 2);
 		supSelf = Expressions.makePredicate("supself", 2);
+		subRole = Expressions.makePredicate("subrole", 2);
 		v = Expressions.makeVariable("v");
 		w = Expressions.makeVariable("w");
 		x = Expressions.makeVariable("x");
