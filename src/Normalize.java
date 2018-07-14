@@ -213,8 +213,8 @@ public class Normalize {
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
 		AxiomVisitor axmVisitor = new AxiomVisitor();
 		for (OWLAxiom axiom : axioms) {
-			del_axioms.add(axiom);
-			axiom.accept(axmVisitor);		
+			axiom.accept(axmVisitor);	
+			del_axioms.add(axiom);	
 		}
 		for (OWLAxiom axiom : del_axioms ) {
 			v_axioms.remove(axiom);
