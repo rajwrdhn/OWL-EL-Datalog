@@ -2,15 +2,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
-
-import javax.management.Descriptor;
-
-import org.semanticweb.owlapi.model.ClassExpressionType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
@@ -18,11 +12,9 @@ import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomVisitor;
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLClassExpressionVisitor;
-import org.semanticweb.owlapi.model.OWLClassExpressionVisitorEx;
 import org.semanticweb.owlapi.model.OWLDataAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLDataExactCardinality;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -52,7 +44,6 @@ import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
@@ -64,12 +55,9 @@ import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
 import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
-import org.semanticweb.owlapi.model.OWLObjectVisitor;
-import org.semanticweb.owlapi.model.OWLObjectVisitorEx;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
@@ -210,7 +198,7 @@ public class Normalize {
 		callReasoner();
 		//return n_axioms;
 	}
-	
+
 	/**
 	 * Visit all Axioms in the initial Ontology and normalize the axioms
 	 */
@@ -273,18 +261,28 @@ public class Normalize {
 	 */
 	public void normalizesubClassExpressionAxiom(OWLClassExpression subClassExpr, OWLClassExpression superClassExpr) {
 
-		if (subClassExpr.isTopEntity() && superClassExpr.isClassExpressionLiteral()) {
-			//Top subsumes A
-			setFacts.add(Expressions.makeAtom(topEDB, Expressions.makeConstant(superClassExpr.toString())));				
+		if (subClassExpr.isTopEntity() && superClassExpr.isClassExpressionLiteral() ) {
+			//TODO what if the super classexpression is a conjunction of CEs ? Can it be?
+			//Top subsumes A 
+			if (superClassExpr instanceof OWLObjectComplementOf) {
+				throw new IllegalArgumentException("Complement of a named class is not OWL 2 EL !");
+			} else {
+				setFacts.add(Expressions.makeAtom(topEDB, Expressions.makeConstant(superClassExpr.toString())));				
+			}
 		} else if (superClassExpr.isBottomEntity() && subClassExpr.isClassExpressionLiteral()) {
+			//TODO what if the sub classexpression is a conjunction of CEs? Can it be?
 			//A subsumes Bot
-			setFacts.add(Expressions.makeAtom(botEDB, Expressions.makeConstant(subClassExpr.toString())));
+			if (subClassExpr instanceof OWLObjectComplementOf) {
+				throw new IllegalArgumentException("Complement of a named class is not OWL 2 EL !");
+			} else {
+				setFacts.add(Expressions.makeAtom(botEDB, Expressions.makeConstant(subClassExpr.toString())));
+			}
 
 		} else if (subClassExpr.isClassExpressionLiteral() && superClassExpr.isClassExpressionLiteral()) {
 			if (subClassExpr instanceof OWLObjectComplementOf || superClassExpr instanceof OWLObjectComplementOf) {
 				throw new IllegalArgumentException("Complement of a named class is not OWL 2 EL !");
 			} else {
-				// A subsumes B
+				// A subsumes B 
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(subClassExpr, superClassExpr));
 				//subclass fact A is a subset of B
 				setFacts.add(Expressions.makeAtom(subClassEDB, 
@@ -353,40 +351,44 @@ public class Normalize {
 			} else {
 				// ClassExpression subsumes A 
 				setCurrentClassExpression(superClassExpr);
-				ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(true,false);
 				//C and D subsumes B
 				Set<OWLClassExpression> descriptions = subClassExpr.asConjunctSet(); 
-				Iterator<OWLClassExpression> itr = descriptions.iterator();
-				OWLClassExpression cls = itr.next();
-				descriptions.remove(cls);
-				while(itr.hasNext()) {
-
+				Set<OWLClassExpression> new_descriptions = new HashSet<>();
+				int n = descriptions.size() % 2;
+				int i = 0;
+				for (OWLClassExpression ce: descriptions) {
+					if(i==n)
+						break;
+					new_descriptions.add(ce);
+					descriptions.remove(ce);
+					i++;
 				}
 				//classname and classname
-				if (itr.next().isClassExpressionLiteral() && 
+				if (v_factory.getOWLObjectIntersectionOf(new_descriptions).isClassExpressionLiteral() && 
 						v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()) {
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(
-							itr.next(), v_factory.getOWLObjectIntersectionOf(descriptions)), 
+							v_factory.getOWLObjectIntersectionOf(new_descriptions), 
+							v_factory.getOWLObjectIntersectionOf(descriptions)), 
 							getCurrentClassExpression()));
 					setFacts.add(Expressions.makeAtom(subConjEDB, 
-							Expressions.makeConstant(itr.next().toString()),
+							Expressions.makeConstant(v_factory.getOWLObjectIntersectionOf(new_descriptions).toString()),
 							Expressions.makeConstant(v_factory.getOWLObjectIntersectionOf(descriptions).toString()),
-							Expressions.makeConstant(getCurrentClassExpression().toString())));
-				} else if (itr.next().isClassExpressionLiteral() 
+							Expressions.makeConstant(superClassExpr.toString())));
+				} else if (v_factory.getOWLObjectIntersectionOf(new_descriptions).isClassExpressionLiteral() 
 						&& !v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()){ //A and D 
+					//TODO add v_axioms, classEDB
 					setFacts.add(Expressions.makeAtom(subConjEDB, 
-							Expressions.makeConstant(itr.next().toString()),
+							Expressions.makeConstant(v_factory.getOWLObjectIntersectionOf(new_descriptions).toString()),
 							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
 							Expressions.makeConstant(getCurrentClassExpression().toString())));
-					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
 					freshConceptNumber++;
-				} else if (!itr.next().isClassExpressionLiteral() 
+				} else if (!v_factory.getOWLObjectIntersectionOf(new_descriptions).isClassExpressionLiteral() 
 						&& v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()) { //D and A
+					//TODO add v_axioms ,classEDB
 					setFacts.add(Expressions.makeAtom(subConjEDB, 
 							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
 							Expressions.makeConstant( v_factory.getOWLObjectIntersectionOf(descriptions).toString()),
 							Expressions.makeConstant(getCurrentClassExpression().toString())));
-					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
 					freshConceptNumber++;
 
 				}else { //C and D
@@ -394,8 +396,8 @@ public class Normalize {
 							addFreshClassName(freshConceptNumber),v_factory.getOWLObjectIntersectionOf(descriptions)), 
 							getCurrentClassExpression()
 							));
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptNumber)));
-					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
+					v_axioms.add(v_factory.getOWLSubClassOfAxiom(
+							v_factory.getOWLObjectIntersectionOf(new_descriptions), addFreshClassName(freshConceptNumber)));
 					freshConceptNumber++;					
 				}
 			}
@@ -419,6 +421,8 @@ public class Normalize {
 				Expressions.makeAtom(botEDB, x)));
 		listRules.add(Expressions.makeRule(Expressions.makeAtom(cls, x), 
 				Expressions.makeAtom(clsEDB, x)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(rol, x), 
+				Expressions.makeAtom(rolEDB, x)));
 		listRules.add(Expressions.makeRule(Expressions.makeAtom(subConj, x,y,z), 
 				Expressions.makeAtom(subConjEDB, x,y,z)));
 		listRules.add(Expressions.makeRule(Expressions.makeAtom(subEx, x,y,z), 
@@ -429,6 +433,8 @@ public class Normalize {
 				Expressions.makeAtom(subSelfEDB, x,y)));
 		listRules.add(Expressions.makeRule(Expressions.makeAtom(supSelf, x,y), 
 				Expressions.makeAtom(supSelfEDB, x,y)));
+		listRules.add(Expressions.makeRule(Expressions.makeAtom(subRole, x,y),
+				Expressions.makeAtom(subRoleEDB, x,y)));
 
 		// nom(x) :- subClass(x,x)
 		listRules.add(Expressions.makeRule(Expressions.makeAtom(nom, x), 
@@ -533,6 +539,17 @@ public class Normalize {
 				Expressions.makeAtom(triple, z,v,x)
 				),
 				Expressions.makeConjunction(Expressions.makeAtom(triple, z,v,y))));
+		//role rules (13) (14) from paper
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(subRole, v,w),
+				Expressions.makeAtom(triple, x,v,y)
+				),
+				Expressions.makeConjunction(Expressions.makeAtom(triple, x,w,y))));		
+		listRules.add(Expressions.makeRule(Expressions.makeConjunction(
+				Expressions.makeAtom(subRole, v,w),
+				Expressions.makeAtom(self, x,y)
+				),
+				Expressions.makeConjunction(Expressions.makeAtom(self, x,w))));
 	}
 	/*
 	 * 
