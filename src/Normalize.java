@@ -98,6 +98,7 @@ public class Normalize {
 	protected final OWLDataFactory v_factory;
 	protected final Set<OWLAxiom> v_axioms;
 	protected final Set<OWLAxiom> n_axioms;
+	protected final Set<OWLAxiom> del_axioms;
 	protected static OWLClassExpression v_classExpression;
 	protected final Optional<IRI> v_IRI;
 	protected static long freshConceptNumber;
@@ -144,6 +145,7 @@ public class Normalize {
 		v_IRI = ontID.getOntologyIRI();
 		v_axioms= new HashSet<>();
 		n_axioms= new HashSet<>();
+		del_axioms = new HashSet<>();
 		//inputStringTranslation = new HashSet<>();
 		v_classExpression = null;
 		//v_ClassExpressionNormalize = new ClassExpressionNormalize();
@@ -204,25 +206,21 @@ public class Normalize {
 		callReasoner();
 		//return n_axioms;
 	}
+	
 	/**
 	 * Visit all Axioms in the initial Ontology and normalize the axioms
 	 */
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
 		AxiomVisitor axmVisitor = new AxiomVisitor();
-		Set<OWLAxiom> new_v_axioms = new HashSet<>();
-		new_v_axioms.addAll(axioms);		
-
-
 		for (OWLAxiom axiom : axioms) {
-			axiom.accept(axmVisitor);
-			//new_v_axioms.remove(axiom);
+			del_axioms.add(axiom);
+			axiom.accept(axmVisitor);		
 		}
-		for (OWLAxiom axiom : new_v_axioms ) {
+		for (OWLAxiom axiom : del_axioms ) {
 			v_axioms.remove(axiom);
 		}
-
 		if (v_axioms.isEmpty()) {
-			System.out.println("Normalisation complete!!");
+			System.out.println("Complete!!");
 		} else {
 			visitAxioms(v_axioms);
 		}
@@ -297,34 +295,111 @@ public class Normalize {
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(subClassExpr, addFreshClassName(freshConceptNumber)));
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), superClassExpr));
 				freshConceptNumber++;
-			} else {
-				throw new IllegalArgumentException("C subsumes D");
 			}
 		} else if (subClassExpr.isClassExpressionLiteral() && !superClassExpr.isClassExpressionLiteral()
-				&& superClassExpr.asConjunctSet().size() >= 1 ) {
+				&& superClassExpr.asConjunctSet().size() ==1) {
+			if(subClassExpr instanceof OWLObjectComplementOf) {
+				throw new IllegalArgumentException("Not OWL 2 EL !");
+			} else {
+				setCurrentClassExpression(superClassExpr);
+				ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(true,false);
+				superClassExpr.accept(ceVisitor);
+			}
+		} else if (superClassExpr.isClassExpressionLiteral() && !subClassExpr.isClassExpressionLiteral()
+				&& subClassExpr.asConjunctSet().size() ==1) {
+			if(superClassExpr instanceof OWLObjectComplementOf) {
+				throw new IllegalArgumentException("Not OWL 2 EL !");
+			} else {
+				setCurrentClassExpression(subClassExpr);
+				ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(false,true);
+				subClassExpr.accept(ceVisitor);
+			}
+		} else if (subClassExpr.isClassExpressionLiteral() && !superClassExpr.isClassExpressionLiteral()
+				&& superClassExpr instanceof OWLObjectIntersectionOf ) {
 			if(subClassExpr instanceof OWLObjectComplementOf) {
 				throw new IllegalArgumentException("Not OWL 2 EL !");
 			} else {
 				// A subsumes ClassExpression 
 				setCurrentClassExpression(subClassExpr);
-				ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(false,true,subClassExpr,null);
-				superClassExpr.accept(ceVisitor);
+				ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(false,true);
+				// A subsumes ClassExpression 
+				//ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(false,true,subClassExpr,null);
+
+				for (OWLClassExpression ce1 : superClassExpr.asConjunctSet()) {
+					if (ce1 instanceof OWLObjectComplementOf) {
+						throw new IllegalArgumentException("Complement Class Name Exception !!");
+					} else {
+						if(ce1.isClassExpressionLiteral()) {
+							n_axioms.add(v_factory.getOWLSubClassOfAxiom(getCurrentClassExpression(), ce1));
+							setFacts.add(Expressions.makeAtom(subClassEDB, 
+									Expressions.makeConstant(getCurrentClassExpression().toString()), 
+									Expressions.makeConstant(ce1.toString())));
+							setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(getCurrentClassExpression().toString())));
+							setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(ce1.toString())));								
+						} else {
+							ce1.accept(ceVisitor);
+						}
+					} 
+				}				
 			}
 		}  else if (superClassExpr.isClassExpressionLiteral() && !subClassExpr.isClassExpressionLiteral()
-				&& subClassExpr.asConjunctSet().size() >=1 ) {
+				&& subClassExpr instanceof OWLObjectIntersectionOf ) {
 			if(superClassExpr instanceof OWLObjectComplementOf) {
 				throw new IllegalArgumentException("Not OWL 2 EL !");
 			} else {
 				// ClassExpression subsumes A 
 				setCurrentClassExpression(superClassExpr);
-				ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(true,false,superClassExpr,null);
-				subClassExpr.accept(ceVisitor);
-				//int index = subClassExpr.asConjunctSet().size();
+				ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(true,false);
+				//C and D subsumes B
+				Set<OWLClassExpression> descriptions = subClassExpr.asConjunctSet(); 
+				Iterator<OWLClassExpression> itr = descriptions.iterator();
+				OWLClassExpression cls = itr.next();
+				descriptions.remove(cls);
+				while(itr.hasNext()) {
+
+				}
+				//classname and classname
+				if (itr.next().isClassExpressionLiteral() && 
+						v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()) {
+					n_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(
+							itr.next(), v_factory.getOWLObjectIntersectionOf(descriptions)), 
+							getCurrentClassExpression()));
+					setFacts.add(Expressions.makeAtom(subConjEDB, 
+							Expressions.makeConstant(itr.next().toString()),
+							Expressions.makeConstant(v_factory.getOWLObjectIntersectionOf(descriptions).toString()),
+							Expressions.makeConstant(getCurrentClassExpression().toString())));
+				} else if (itr.next().isClassExpressionLiteral() 
+						&& !v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()){ //A and D 
+					setFacts.add(Expressions.makeAtom(subConjEDB, 
+							Expressions.makeConstant(itr.next().toString()),
+							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
+							Expressions.makeConstant(getCurrentClassExpression().toString())));
+					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
+					freshConceptNumber++;
+				} else if (!itr.next().isClassExpressionLiteral() 
+						&& v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()) { //D and A
+					setFacts.add(Expressions.makeAtom(subConjEDB, 
+							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
+							Expressions.makeConstant( v_factory.getOWLObjectIntersectionOf(descriptions).toString()),
+							Expressions.makeConstant(getCurrentClassExpression().toString())));
+					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
+					freshConceptNumber++;
+
+				}else { //C and D
+					v_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(
+							addFreshClassName(freshConceptNumber),v_factory.getOWLObjectIntersectionOf(descriptions)), 
+							getCurrentClassExpression()
+							));
+					v_axioms.add(v_factory.getOWLSubClassOfAxiom(itr.next(), addFreshClassName(freshConceptNumber)));
+					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
+					freshConceptNumber++;					
+				}
 			}
 		} else {
 			throw new IllegalAccessError("Not OWL 2 EL !! sub----" + subClassExpr.toString() + " "
 					+ "----super    "+superClassExpr.toString());
 		}
+
 	}
 	/**
 	 * Datalog Rules
@@ -540,6 +615,7 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectPropertyDomainAxiom axiom) {
+			//TODO
 			System.out.println("Object Property Domain Axiom"+ axiom.getProperty().toString() +"---domain---"
 					+ axiom.getDomain().toString());
 			//ObjectPropertyDomain := 'ObjectPropertyDomain' '(' ObjectPropertyExpression ClassExpression ')'
@@ -547,38 +623,35 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLEquivalentObjectPropertiesAxiom arg0) {
-			System.out.println("Equivalent Object Properties Axiom");
+			v_axioms.addAll(arg0.asSubObjectPropertyOfAxioms());
 		}
 
 		@Override
-		public void visit(OWLNegativeDataPropertyAssertionAxiom arg0) {
-			throw new IllegalAccessError("Negative Data Property Assertion Axiom Exception !");
-
+		public void visit(OWLNegativeDataPropertyAssertionAxiom axiom) {
+			throw new IllegalArgumentException("Negative Data Property Assertion Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLDifferentIndividualsAxiom arg0) {
+		public void visit(OWLDifferentIndividualsAxiom axiom) {
 			throw new IllegalArgumentException(
-					"Not an OWL 2 EL axiom ! "+arg0.toString()+" Different Individuals Axiom !");
+					"Not an OWL 2 EL axiom ! "+axiom.toString()+" Different Individuals Axiom !");
 		}
 
 		@Override
-		public void visit(OWLDisjointDataPropertiesAxiom arg0) {
+		public void visit(OWLDisjointDataPropertiesAxiom axiom) {
 			throw new IllegalArgumentException(
-					"Not an OWL 2 EL axiom ! "+arg0.toString()+" Disjoint data Property Axiom !");
+					"Not an OWL 2 EL axiom ! "+axiom.toString()+" Disjoint data Property Axiom !");
 		}
 
 		@Override
-		public void visit(OWLDisjointObjectPropertiesAxiom arg0) {
+		public void visit(OWLDisjointObjectPropertiesAxiom axiom) {
 			throw new IllegalArgumentException(
-					"Not an OWL 2 EL axiom ! "+arg0.toString()+" Disjoint Object Property Axiom !");
+					"Not an OWL 2 EL axiom ! "+axiom.toString()+" Disjoint Object Property Axiom !");
 		}
 
 		@Override
 		public void visit(OWLObjectPropertyRangeAxiom arg0) {
-
-			//throw new IllegalArgumentException(
-			//		"Not an OWL 2 EL axiom ! "+arg0.toString()+" Object Property Range Axiom !");
+			throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+arg0.toString()+" Object Property Range Axiom !");
 		}
 
 		@Override
@@ -597,62 +670,64 @@ public class Normalize {
 		}
 
 		@Override
-		public void visit(OWLFunctionalObjectPropertyAxiom arg0) {
-			throw new IllegalAccessError("Functional Object Property Axiom Exception !");
+		public void visit(OWLFunctionalObjectPropertyAxiom axiom) {
+			throw new IllegalArgumentException("Functional Object Property Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
 		public void visit(OWLSubObjectPropertyOfAxiom axiom) {
-			//subRole()
+			//subRole(R,T)
 			axiom.getSubProperty();
 			axiom.getSuperProperty();
 			n_axioms.add(axiom);
 			//setFacts.add(Expressions.makeAtom(subRoleEDB, terms));
-			// TODO Auto-generated method stub
+			//setFacts.add(Expressions.makeAtom(predicate, terms))
 			System.out.println("Sub Object Property Of Axiom"+"----------sub----"+axiom.getSubProperty().toString()+
 					"--------super-------"+axiom.getSuperProperty().toString());
 		}
 
 		@Override
-		public void visit(OWLDisjointUnionAxiom arg0) {
-			throw new IllegalAccessError("Disjoint Union Axiom Exception !");
+		public void visit(OWLDisjointUnionAxiom axiom) {
+			throw new IllegalArgumentException("Disjoint Union Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLSymmetricObjectPropertyAxiom arg0) {
-			// TODO Auto-generated method stub
-			System.out.println("Symmetric Object Property Axiom");
+		public void visit(OWLSymmetricObjectPropertyAxiom axiom) {
+			throw new IllegalArgumentException("Symmetric Object Property Axiom" + axiom.toString());
 		}
 
 		@Override
 		public void visit(OWLDataPropertyRangeAxiom arg0) {
 			throw new IllegalAccessError("Data Property Range Axiom Exception !");
-
 		}
 
 		@Override
-		public void visit(OWLFunctionalDataPropertyAxiom arg0) {
-			throw new IllegalAccessError("Functional Data Property Axiom Exception !");
+		public void visit(OWLFunctionalDataPropertyAxiom axiom) {
+			throw new IllegalArgumentException("Functional Data Property Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
 		public void visit(OWLEquivalentDataPropertiesAxiom axiom) {
-			throw new IllegalAccessError("Equivalent Data Properties Axiom Exception !");
+			throw new IllegalArgumentException("Equivalent Data Properties Axiom Exception !" + axiom.toString());
 		}
 		@Override
 		public void visit(OWLClassAssertionAxiom axiom) {
-
+			//X(a)
 			if (axiom.getClassExpression().isClassExpressionLiteral() && 
-					axiom.getClassExpression().asConjunctSet().size()==1) {
-				n_axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));
-				setFacts.add(Expressions.makeAtom(subClassEDB, 
-						Expressions.makeConstant(axiom.getIndividual().toString()),
-						Expressions.makeConstant(axiom.getClassExpression().toString())
-						));
-				setFacts.add(Expressions.makeAtom(nomEDB, Expressions.makeConstant(axiom.getIndividual().toString())));
-				setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getClassExpression().toString())));
-
+					!axiom.getClassExpression().isAnonymous()) {
+				if (axiom.getClassExpression() instanceof OWLObjectComplementOf) {
+					throw new IllegalArgumentException("Object Complement of !" + axiom.toString());
+				} else {
+					n_axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));
+					setFacts.add(Expressions.makeAtom(subClassEDB, 
+							Expressions.makeConstant(axiom.getIndividual().toString()),
+							Expressions.makeConstant(axiom.getClassExpression().toString())
+							));
+					setFacts.add(Expressions.makeAtom(nomEDB, Expressions.makeConstant(axiom.getIndividual().toString())));
+					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(axiom.getClassExpression().toString())));
+				}
 			} else {
+				//C(a)
 				v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), 
 						axiom.getClassExpression()));
 				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), 
@@ -674,65 +749,59 @@ public class Normalize {
 		}
 
 		@Override
-		public void visit(OWLDataPropertyAssertionAxiom arg0) {
-			throw new IllegalAccessError("Data Property Assertion Axiom Exception !");
+		public void visit(OWLDataPropertyAssertionAxiom axiom) {
+			throw new IllegalArgumentException("Data Property Assertion Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLTransitiveObjectPropertyAxiom arg0) {
-			throw new IllegalAccessError("Transitive Object Property Axiom Exception !");
+		public void visit(OWLTransitiveObjectPropertyAxiom axiom) {
+			throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLIrreflexiveObjectPropertyAxiom arg0) {
-			throw new IllegalAccessError("Irreflexive Object Property Axiom Exception !");
+		public void visit(OWLIrreflexiveObjectPropertyAxiom axiom) {
+			throw new IllegalArgumentException("Irreflexive Object Property Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLSubDataPropertyOfAxiom arg0) {
-			throw new IllegalAccessError("Sub Data Property Of Axiom Exception !");
+		public void visit(OWLSubDataPropertyOfAxiom axiom) {
+			throw new IllegalArgumentException("Sub Data Property Of Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLInverseFunctionalObjectPropertyAxiom arg0) {
-			throw new IllegalAccessError("Inverse Functional Object Property Axiom Exception !");
-
+		public void visit(OWLInverseFunctionalObjectPropertyAxiom axiom) {
+			throw new IllegalArgumentException("Inverse Functional Object Property Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLSameIndividualAxiom arg0) {
-			throw new IllegalAccessError("Same Individual Axiom Exception !");
+		public void visit(OWLSameIndividualAxiom axiom) {
+			//TODO
+			//throw new IllegalAccessError("Same Individual Axiom Exception !");
 		}
 
 		@Override
-		public void visit(OWLSubPropertyChainOfAxiom arg0) {
-			System.out.println("Sub Property Chain Of Axiom");
+		public void visit(OWLSubPropertyChainOfAxiom axiom) {
+			throw new IllegalArgumentException("Sub Property Chain Of Axiom" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLInverseObjectPropertiesAxiom arg0) {
-			try {
-				throw new IllegalAccessException("Inverse Object Properties Axiom Exception !");
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		public void visit(OWLInverseObjectPropertiesAxiom axiom) {
+			throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLHasKeyAxiom arg0) {
-			throw new IllegalAccessError("Has Key Axiom Exception !");
+		public void visit(OWLHasKeyAxiom axiom) {
+			throw new IllegalArgumentException("Has Key Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(OWLDatatypeDefinitionAxiom arg0) {
-			throw new IllegalAccessError("Data Type Definition Axiom Exception !");
+		public void visit(OWLDatatypeDefinitionAxiom axiom) {
+			throw new IllegalArgumentException("Data Type Definition Axiom Exception !" + axiom.toString());
 		}
 
 		@Override
-		public void visit(SWRLRule arg0) {
-			throw new IllegalAccessError("SWRL rule Exception !");
-
+		public void visit(SWRLRule axiom) {
+			throw new IllegalArgumentException("SWRL rule Exception !" + axiom.toString());
 		}
 	}
 
@@ -741,63 +810,15 @@ public class Normalize {
 
 		protected final boolean boolSub;
 		protected final boolean boolSuper;
-		protected final OWLClassExpression owlClassName;
-		protected final OWLClassExpression clsExpr;
-		public ClassExpressionNormalize(boolean sub, boolean sup, OWLClassExpression ceName, OWLClassExpression ceExpression) {
+		public ClassExpressionNormalize(boolean sub, boolean sup) {
 			// boolSub is true when it is not a named class else false. similar for boolSuper.
 			boolSub = sub;
 			boolSuper = sup;
-			owlClassName = ceName;
-			clsExpr = ceExpression;
 		}
-
 
 		@Override
 		public void visit(OWLObjectIntersectionOf ce) {
-			if (boolSuper) {
-				//superexpression is not a named class but subexpression is.
-				if(getCurrentClassExpression() instanceof OWLObjectComplementOf) {
-					throw new IllegalArgumentException("Not OWL 2 EL !");
-				} else {
-					// A subsumes ClassExpression 
-					//ClassExpressionNormalize ceVisitor = new ClassExpressionNormalize(false,true,subClassExpr,null);
-
-					for (OWLClassExpression ce1 : ce.asConjunctSet()) {
-						if (ce1 instanceof OWLObjectComplementOf) {
-							throw new IllegalArgumentException("Complement Class Name Exception !!");
-						} else {
-							n_axioms.add(v_factory.getOWLSubClassOfAxiom(getCurrentClassExpression(), ce1));
-							setFacts.add(Expressions.makeAtom(subClassEDB, 
-									Expressions.makeConstant(getCurrentClassExpression().toString()), 
-									Expressions.makeConstant(ce.toString())));
-							setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(getCurrentClassExpression().toString())));
-							setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(ce.toString())));								
-						} 
-					}
-				}
-			} else if (boolSub) {
-				//subexpression is not a named class but superexpression is.
-				//C and D subsumes B
-				Set<OWLClassExpression> descriptions = ce.asConjunctSet(); 
-				Iterator<OWLClassExpression> itr = descriptions.iterator();
-				OWLClassExpression cls = itr.next();
-				descriptions.remove(cls);
-				//A and D
-				if (itr.next().isClassExpressionLiteral() && 
-						v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()) {
-					n_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(
-							itr.next(), v_factory.getOWLObjectIntersectionOf(descriptions)), 
-							getCurrentClassExpression()));
-				} else if (itr.next().isClassExpressionLiteral() 
-						&& !v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()){ //A and D 
-
-				} else if (!itr.next().isClassExpressionLiteral() 
-						&& v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()) { //D and A
-
-				}else { //C and D
-
-				}
-			}
+			//TODO Done
 		}
 
 		@Override
@@ -815,8 +836,6 @@ public class Normalize {
 			if(boolSuper) {
 				if (!ce.getFiller().isClassExpressionLiteral()) {
 					//A subsumes Exists.R. C
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), 
-							ce.getFiller()));
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(getCurrentClassExpression(), 
 							v_factory.getOWLObjectSomeValuesFrom(ce.getProperty(), addFreshClassName(freshConceptNumber))));
 					setFacts.add(Expressions.makeAtom(supExEDB,
@@ -825,6 +844,8 @@ public class Normalize {
 							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
 							Expressions.makeConstant("aux"+auxnum)							
 							));
+					//class
+					//role
 					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
 					auxnum++;
 					freshConceptNumber++;
@@ -841,6 +862,8 @@ public class Normalize {
 								Expressions.makeConstant(ce.getFiller().toString()),
 								Expressions.makeConstant("aux"+auxnum)							
 								));
+						//class
+						//role
 						auxnum++;
 					}
 				}
@@ -848,7 +871,8 @@ public class Normalize {
 				if(!ce.getFiller().isClassExpressionLiteral()) {
 					// Exists.R.C subsumes A
 					//C subsumes X
-					v_axioms.add(v_factory.getOWLSubClassOfAxiom(ce.getFiller(), addFreshClassName(freshConceptNumber)));
+					if (ce.getFiller() instanceof OWLObjectIntersectionOf)
+						v_axioms.add(v_factory.getOWLSubClassOfAxiom(ce.getFiller(), addFreshClassName(freshConceptNumber)));
 					//Exists.R.X subsumes A
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(
 							v_factory.getOWLObjectSomeValuesFrom(ce.getProperty(), addFreshClassName(freshConceptNumber)), 
@@ -859,6 +883,7 @@ public class Normalize {
 							Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString()),
 							Expressions.makeConstant(getCurrentClassExpression().toString())
 							));
+					//role
 					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())));
 					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(getCurrentClassExpression().toString())));				
 					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
@@ -870,6 +895,7 @@ public class Normalize {
 					setFacts.add(Expressions.makeAtom(subExEDB, Expressions.makeConstant(ce.getProperty().toString()), 
 							Expressions.makeConstant(ce.getFiller().toString()),
 							Expressions.makeConstant(getCurrentClassExpression().toString())));
+					//role
 					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(ce.getFiller().toString())));
 					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(getCurrentClassExpression().toString())));
 				}
@@ -878,31 +904,28 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectAllValuesFrom ce) {
-			throw new IllegalArgumentException("All Values From not in OWL 2 EL ! " + ce.toString());
+			throw new IllegalArgumentException("OWLObjectAllValuesFrom " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLObjectHasValue ce) {
-			//TODO
+			//TODO cross check
 			visit((OWLObjectSomeValuesFrom)ce.asSomeValuesFrom());
 		}
 
 		@Override
 		public void visit(OWLObjectMinCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLObjectMinCardinality" + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLObjectExactCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLObjectExactCardinality " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLObjectMaxCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLObjectMaxCardinality " + ce.toString());
 		}
 
 		@Override
@@ -913,55 +936,52 @@ public class Normalize {
 						Expressions.makeConstant(getCurrentClassExpression().toString()),
 						Expressions.makeConstant(ce.getProperty().toString())						
 						));
+				//class
+				//role
 			} else if (boolSub) {
 				n_axioms.add(v_factory.getOWLSubClassOfAxiom(ce, getCurrentClassExpression()));
 				setFacts.add(Expressions.makeAtom(supSelfEDB,
 						Expressions.makeConstant(ce.getProperty().toString()),
 						Expressions.makeConstant(getCurrentClassExpression().toString())						
 						));
+				//class
+				//role
 			}
 		}
 
 		@Override
 		public void visit(OWLObjectOneOf ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLObjectOneOf " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLDataSomeValuesFrom ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLDataSomeValuesFrom " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLDataAllValuesFrom ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLDataAllValuesFrom " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLDataHasValue ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLDataHasValue " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLDataMinCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLDataMinCardinality " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLDataExactCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLDataExactCardinality " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLDataMaxCardinality ce) {
-			// TODO Auto-generated method stub
-			OWLClassExpressionVisitor.super.visit(ce);
+			throw new IllegalStateException("OWLDataMaxCardinality " + ce.toString());
 		}
 	}
 }
