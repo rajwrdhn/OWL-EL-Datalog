@@ -953,6 +953,7 @@ public class Normalize {
 		@Override
 		public void visit(OWLObjectHasValue ce) {
 			//TODO cross check. Will casting work? ObjectSomeValuesFrom( OPE ObjectOneOf( a ) )
+			//or directly put it in setFacts
 			v_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectSomeValuesFrom(ce.getProperty(), (OWLClassExpression) ce.getFiller()), 
 					getCurrentClassExpression()
 					));
@@ -960,16 +961,20 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectMinCardinality ce) {
+			//TODO ObjectMinCardinality( 1 OPE CE ). OWLObjectSomeValuesFrom
+			ce.getCardinality();
 			throw new IllegalStateException("OWLObjectMinCardinality" + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLObjectExactCardinality ce) {
+			ce.getCardinality();
 			throw new IllegalStateException("OWLObjectExactCardinality " + ce.toString());
 		}
 
 		@Override
 		public void visit(OWLObjectMaxCardinality ce) {
+			ce.getCardinality();
 			throw new IllegalStateException("OWLObjectMaxCardinality " + ce.toString());
 		}
 
@@ -1005,6 +1010,7 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectOneOf ce) {
+			//TODO 
 			throw new IllegalStateException("OWLObjectOneOf " + ce.toString());
 		}
 
