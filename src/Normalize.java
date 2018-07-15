@@ -681,8 +681,11 @@ public class Normalize {
 		}
 
 		@Override
-		public void visit(OWLObjectPropertyRangeAxiom arg0) {
-			throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+arg0.toString()+" Object Property Range Axiom !");
+		public void visit(OWLObjectPropertyRangeAxiom axiom) {
+			//TODO
+			//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
+			System.out.println("Object Property Range Axiom"+ axiom.getProperty().toString() +"---range---"
+					+ axiom.getRange().toString());
 		}
 
 		@Override
