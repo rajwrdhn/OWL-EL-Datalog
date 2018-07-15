@@ -646,7 +646,7 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectPropertyDomainAxiom axiom) {
-			//TODO
+			//TODO SubClassOf( ObjectSomeValuesFrom( OPE owl:Thing ) CE )
 			System.out.println("Object Property Domain Axiom"+ axiom.getProperty().toString() +"---domain---"
 					+ axiom.getDomain().toString());
 			//ObjectPropertyDomain := 'ObjectPropertyDomain' '(' ObjectPropertyExpression ClassExpression ')'
@@ -682,7 +682,7 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectPropertyRangeAxiom axiom) {
-			//TODO
+			//TODO SubClassOf( owl:Thing ObjectAllValuesFrom( OPE CE ) )
 			//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
 			System.out.println("Object Property Range Axiom"+ axiom.getProperty().toString() +"---range---"
 					+ axiom.getRange().toString());
