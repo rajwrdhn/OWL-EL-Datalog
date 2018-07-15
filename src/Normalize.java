@@ -952,8 +952,10 @@ public class Normalize {
 
 		@Override
 		public void visit(OWLObjectHasValue ce) {
-			//TODO cross check. Will casting work?
-			visit((OWLObjectSomeValuesFrom)ce.asSomeValuesFrom());
+			//TODO cross check. Will casting work? ObjectSomeValuesFrom( OPE ObjectOneOf( a ) )
+			v_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectSomeValuesFrom(ce.getProperty(), (OWLClassExpression) ce.getFiller()), 
+					getCurrentClassExpression()
+					));
 		}
 
 		@Override
