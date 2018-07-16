@@ -7,7 +7,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.VLog4jException;
-
+import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 //Main class upload ontology here
 public class InferenceForOWLELMain {
 	
@@ -39,6 +39,7 @@ public class InferenceForOWLELMain {
 		String file = args[0];
 		try {
 			loadOntology(file);
+			
 			
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();

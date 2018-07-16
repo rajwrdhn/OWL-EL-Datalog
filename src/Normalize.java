@@ -73,6 +73,7 @@ import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
+import org.semanticweb.vlog4j.core.model.api.QueryResult;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
@@ -81,6 +82,8 @@ import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
+import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
+
 
 public class Normalize {
 	protected final OWLDataFactory v_factory;
@@ -181,6 +184,7 @@ public class Normalize {
 	public void getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		onto.axioms().forEach(x -> v_axioms.add(x));
 		//v_axioms.addAll((Collection<? extends OWLAxiom>) onto.axioms());
+		v_axioms.remove(null);
 		if(v_axioms.isEmpty()) {
 			System.out.println("No Axioms in the Ontology!!");
 		} else {
@@ -203,6 +207,7 @@ public class Normalize {
 		for (OWLAxiom axiom : del_axioms ) {
 			v_axioms.remove(axiom);
 		}
+		v_axioms.remove(null);
 		if (v_axioms.isEmpty()) {
 			System.out.println("Complete!!");
 		} else {
@@ -243,7 +248,7 @@ public class Normalize {
 	 */
 	public void normalizesubClassExpressionAxiom(OWLClassExpression subClassExpr, OWLClassExpression superClassExpr) {
 
-		if (subClassExpr.isTopEntity() && superClassExpr.isClassExpressionLiteral() ) {
+		if (subClassExpr.isTopEntity() || subClassExpr.isOWLThing() && superClassExpr.isClassExpressionLiteral() ) {
 			//TODO what if the super classexpression is a conjunction of CEs ? Can it be?
 			//Top subsumes A 
 			if (superClassExpr instanceof OWLObjectComplementOf) {
@@ -251,7 +256,7 @@ public class Normalize {
 			} else {
 				setFacts.add(Expressions.makeAtom(topEDB, Expressions.makeConstant(superClassExpr.toString())));				
 			}
-		} else if (superClassExpr.isBottomEntity() && subClassExpr.isClassExpressionLiteral()) {
+		} else if (superClassExpr.isBottomEntity() || superClassExpr.isOWLNothing() && subClassExpr.isClassExpressionLiteral()) {
 			//TODO what if the sub classexpression is a conjunction of CEs? Can it be?
 			//A subsumes Bot
 			if (subClassExpr instanceof OWLObjectComplementOf) {
@@ -566,10 +571,34 @@ public class Normalize {
 	 */
 	public void callReasoner() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Reasoner reasoner = Reasoner.getInstance();
+
 		reasoner.addRules(listRules);
 		reasoner.addFacts(setFacts);
 		reasoner.load();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
+		reasoner.setReasoningTimeout(1);
+		System.out.println("Starting Skolem Chase with 1 second timeout.");
+
+		/* Indeed, the Skolem Chase did not terminate before timeout. */
+		boolean skolemChaseFinished = reasoner.reason();
+		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
+		System.out.println(
+				"Answers to query " + Expressions.makeAtom(inst, x,y) + " after reasoning with the Skolem Chase for 1 second:");
+		printOutQueryAnswers(Expressions.makeAtom(subEx, x,y,z), reasoner);
+		reasoner.close();
+
+	}
+
+	private void printOutQueryAnswers(Atom queryAtom, Reasoner reasoner) throws ReasonerStateException {
+		// TODO Auto-generated method stub
+		System.out.println();
+		System.out.println("Answers to query " + queryAtom + " before materialisation:");
+		try (QueryResultIterator answersBeforeMaterialisation = reasoner.answerQuery(queryAtom, true)) {
+			while (answersBeforeMaterialisation.hasNext()) {
+				System.out.println(" - " + answersBeforeMaterialisation.next());
+			}
+			System.out.println();
+		}
 	}
 
 	/*
@@ -885,7 +914,7 @@ public class Normalize {
 					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant("aux"+auxnum)));
 					setFacts.add(Expressions.makeAtom(rolEDB, Expressions.makeConstant(ce.getProperty().toString())));
 					setFacts.add(Expressions.makeAtom(clsEDB, Expressions.makeConstant(getCurrentClassExpression().toString())));
-		
+
 					setCurrentClassExpression(addFreshClassName(freshConceptNumber));
 					auxnum++;
 					freshConceptNumber++;
