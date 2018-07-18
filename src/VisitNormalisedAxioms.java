@@ -36,6 +36,9 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
+import org.semanticweb.vlog4j.core.model.api.Constant;
+import org.semanticweb.vlog4j.core.model.api.Predicate;
+import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxiomVisitor{
 	@Override
@@ -142,6 +145,7 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 
 	@Override
 	public void visit(OWLSubObjectPropertyOfAxiom axiom) {
+		String predicatename = axiom.toString();
 		
 	}
 
@@ -172,14 +176,19 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 
 	@Override
 	public void visit(OWLClassAssertionAxiom axiom) {
-		// TODO Auto-generated method stub
-		OWLAxiomVisitor.super.visit(axiom);
+		String predicatename = axiom.toString();
+		Predicate predicate = Expressions.makePredicate(predicatename, 2);
+		Constant c1 = Expressions.makeConstant(axiom.getClassExpression().toString());
+		Constant c2 = Expressions.makeConstant(axiom.getIndividual().toString());
+		addClassNamesEDB(axiom.getClassExpression().toString());
+		addNominalsEDB(axiom.getIndividual().toString());
+		addToSubClassEDB(predicate);
+		addToSubClassFacts(predicate, c1, c2);
 	}
 
 	@Override
 	public void visit(OWLEquivalentClassesAxiom axiom) {
-		// TODO Auto-generated method stub
-		OWLAxiomVisitor.super.visit(axiom);
+		//Normalised
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Variable;
@@ -53,15 +54,31 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 
 	}
 
-	public void visitNormalisedAxioms(Collection<? extends OWLAxiom> normalizedAxioms) {
+	public void visitNormalisedAxiomsHash(Collection<? extends OWLAxiom> normalizedAxioms) {
 		VisitNormalisedAxioms v_normalizedAxiomVisitor = new VisitNormalisedAxioms();
 		for (OWLAxiom axiom: normalizedAxioms) {
 			axiom.accept(v_normalizedAxiomVisitor);
 		}
 	}
-	/*
-	 * 
-	 */
+	
+	public void addToSubClassFacts(Predicate predicate, Constant c1, Constant c2) {
+		Atom a = Expressions.makeAtom(predicate, c1, c2);
+		//Add Atoms
+		v_s_Facts.add(a);
+	}
+	
+	public void addToSubClassEDB(Predicate predicate) {
+		v_s_subClassEDB.add(predicate);
+	}
+	
+	public void addNominalsEDB(String predicatename) {
+		v_s_nomEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
+	public void addClassNamesEDB(String predicatename) {
+		v_s_clsEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
 	public void callReasoner() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Reasoner reasoner = Reasoner.getInstance();
 		reasoner.addRules(v_l_Rules);
