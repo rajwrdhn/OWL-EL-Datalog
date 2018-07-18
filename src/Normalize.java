@@ -21,8 +21,9 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 public class Normalize {
 
-	protected final Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<>();
-	protected static int v_Iterable_KeyForMap = 0;
+	protected static Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<Integer,Set<OWLAxiom>>();
+	protected static int v_Iterable_KeyForMap = 1;
+	protected static Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<OWLAxiom>();
 
 	protected final Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
 
@@ -50,7 +51,17 @@ public class Normalize {
 	 * @throws ReasonerStateException 
 	 */
 	public void getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
-		onto.axioms().forEach(x -> v_Iterable_MapAxioms.get(v_Iterable_KeyForMap).add(x));
+		Set<OWLAxiom> asi = new HashSet<>();
+		
+		onto.axioms().forEach(x -> asi.add(x));
+		
+		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
+		/*onto.axioms().forEach(x -> {
+            if (x != null) {
+            	v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
+            } //else 
+        });*/
+		//map.values().removeIf(Objects::isNull);
 		//k_axioms.addAll((Collection<? extends OWLAxiom>) onto.axioms());
 		if(v_Iterable_MapAxioms.isEmpty()) {
 			System.out.println("No Axioms in the Ontology!!");
@@ -58,7 +69,7 @@ public class Normalize {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap));
 		}
 
-		//return n_axioms;
+		//return v_Normalised_Axioms;
 	}
 
 	/**
@@ -66,11 +77,13 @@ public class Normalize {
 	 */
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
 		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
-
+		
 		for (OWLAxiom axiom : axioms) {
 			axiom.accept(axmVisitor);
 		}
 		v_Iterable_KeyForMap++;
+		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, v_For_FurtherNormalisation);
+		v_For_FurtherNormalisation.clear();
 		if (v_Iterable_MapAxioms.get(v_Iterable_KeyForMap).isEmpty()) {
 			System.out.println("Normalisation Complete!! ");
 		} else {
@@ -81,9 +94,14 @@ public class Normalize {
 	public void crunchCleanNormalisedAxiomFromMap(int keyA) {		
 		v_Iterable_MapAxioms.remove(keyA);		
 	}
-
+	
+	//NOt working as map is not initialised
 	public void addAxiomToMap(int number, OWLAxiom axiom) {
-		v_Iterable_MapAxioms.get(number).add(axiom);		
+		if (v_Iterable_MapAxioms.containsKey(number)) {
+			v_Iterable_MapAxioms.get(number).add(axiom);
+		} else {
+			System.out.println("Okay !!");
+		}
 	}
 
 	public boolean isNonComplementOFNamedClass(OWLClassExpression ce) {

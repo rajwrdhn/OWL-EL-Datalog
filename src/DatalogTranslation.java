@@ -20,7 +20,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 
-public class DatalogTranslation extends InferenceForOWLELMain{
+public class DatalogTranslation {
 	protected final Set<OWLAxiom> v__s_normalisedAxioms = new HashSet<>();
 
 	protected final Set<Atom> v_s_Facts = new HashSet<>();

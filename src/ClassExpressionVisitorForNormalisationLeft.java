@@ -181,110 +181,68 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLObjectAllValuesFrom ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		ce.asSomeValuesFrom();
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		
 	}
 
 	@Override
 	public void visit(OWLObjectExactCardinality ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLObjectMaxCardinality ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLObjectHasSelf ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		
 	}
 
 	@Override
 	public void visit(OWLObjectOneOf ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLDataSomeValuesFrom ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLDataAllValuesFrom ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLDataHasValue ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLDataMinCardinality ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLDataExactCardinality ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLDataMaxCardinality ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		throw new IllegalStateException();
 	}
 
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return super.equals(obj);
-	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		return super.clone();
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		// TODO Auto-generated method stub
-		super.finalize();
-	}
 
 }
