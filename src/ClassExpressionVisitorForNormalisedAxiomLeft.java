@@ -21,7 +21,7 @@ import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 
 public class ClassExpressionVisitorForNormalisedAxiomLeft extends DatalogTranslation implements OWLClassExpressionVisitor {
 
-	protected final OWLClassExpression super_class_of_axiom; 
+	protected OWLClassExpression super_class_of_axiom; 
 	public ClassExpressionVisitorForNormalisedAxiomLeft(OWLClassExpression subClassExprOfAxm) {
 		super_class_of_axiom = subClassExprOfAxm;
 	}

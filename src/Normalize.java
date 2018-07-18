@@ -26,14 +26,14 @@ public class Normalize {
 	
 	protected Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<OWLAxiom>();
 
-	protected final Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
+	public Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
 
 	protected OWLDataFactory v_factory;
 
 	protected long v_counter_FreshConcept = 0;
 
 
-	public static OWLClassExpression v_classExpression;
+	public OWLClassExpression v_classExpression;
 	protected static long freshConceptNumber;
 	protected static long auxnum;
 	//constructor

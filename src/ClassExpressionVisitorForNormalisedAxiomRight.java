@@ -22,7 +22,7 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 
 public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTranslation implements OWLClassExpressionVisitor {
-	protected final OWLClassExpression sub_class_of_axiom; 
+	protected OWLClassExpression sub_class_of_axiom; 
 	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm) {
 		// TODO Auto-generated constructor stub
 		sub_class_of_axiom = subClassExprOfAxm;

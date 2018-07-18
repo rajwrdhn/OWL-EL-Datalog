@@ -21,33 +21,33 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 
 public class DatalogTranslation {
-	protected final Set<OWLAxiom> v__s_normalisedAxioms = new HashSet<>();
+	protected Set<OWLAxiom> v__s_normalisedAxioms = new HashSet<>();
 
-	protected final Set<Atom> v_s_Facts = new HashSet<>();
-	protected final List<Rule> v_l_Rules = new ArrayList<>();
+	protected Set<Atom> v_s_Facts = new HashSet<>();
+	protected List<Rule> v_l_Rules = new ArrayList<>();
 
-	protected final Set<Predicate> v_s_nomEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_clsEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_rolEDB = new HashSet<>();	
-	protected final Set<Predicate> v_s_subClassEDB = new HashSet<>();	
-	protected final Set<Predicate> v_s_topEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_botEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_subConjEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_subExEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_supExEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_subSelfEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_supSelfEDB = new HashSet<>();
-	protected final Set<Predicate> v_s_subRoleEDB = new HashSet<>();
+	protected Set<Predicate> v_s_nomEDB = new HashSet<>();
+	protected Set<Predicate> v_s_clsEDB = new HashSet<>();
+	protected Set<Predicate> v_s_rolEDB = new HashSet<>();	
+	protected Set<Predicate> v_s_subClassEDB = new HashSet<>();	
+	protected Set<Predicate> v_s_topEDB = new HashSet<>();
+	protected Set<Predicate> v_s_botEDB = new HashSet<>();
+	protected Set<Predicate> v_s_subConjEDB = new HashSet<>();
+	protected Set<Predicate> v_s_subExEDB = new HashSet<>();
+	protected Set<Predicate> v_s_supExEDB = new HashSet<>();
+	protected Set<Predicate> v_s_subSelfEDB = new HashSet<>();
+	protected Set<Predicate> v_s_supSelfEDB = new HashSet<>();
+	protected Set<Predicate> v_s_subRoleEDB = new HashSet<>();
 
-	protected final Predicate v_P_triple =Expressions.makePredicate("triple", 3);
-	protected final Predicate v_P_inst = Expressions.makePredicate("inst", 2);
+	protected Predicate v_P_triple =Expressions.makePredicate("triple", 3);
+	protected Predicate v_P_inst = Expressions.makePredicate("inst", 2);
 	protected final Predicate v_P_self = Expressions.makePredicate("self", 2);
 
-	protected final Variable v = Expressions.makeVariable("v");
-	protected final Variable w = Expressions.makeVariable("w");
-	protected final Variable x = Expressions.makeVariable("x");
-	protected final Variable y = Expressions.makeVariable("y");
-	protected final Variable z = Expressions.makeVariable("z");
+	protected Variable v = Expressions.makeVariable("v");
+	protected Variable w = Expressions.makeVariable("w");
+	protected Variable x = Expressions.makeVariable("x");
+	protected Variable y = Expressions.makeVariable("y");
+	protected Variable z = Expressions.makeVariable("z");
 
 
 	public DatalogTranslation() {
