@@ -67,7 +67,7 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 			ClassExpressionVisitorForNormalisedAxiomRight ce_visit = new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSuperClass()); 
 			axiom.getSuperClass().accept(ce_visit);
 		} else {
-			ClassExpressionVisitorForNormalisedAxiomRight ce_visit = new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSuperClass()); 
+			ClassExpressionVisitorForNormalisedAxiomLeft ce_visit = new ClassExpressionVisitorForNormalisedAxiomLeft(axiom.getSubClass()); 
 			axiom.getSubClass().accept(ce_visit);
 		}
 	}

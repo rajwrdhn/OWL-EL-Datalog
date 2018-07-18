@@ -67,6 +67,18 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 		v_s_Facts.add(a);
 	}
 	
+	public void addToSubExFacts(Predicate predicate, Constant c1, Constant c2,Constant c3) {
+		Atom a = Expressions.makeAtom(predicate, c1, c2, c3);
+		//Add Atoms
+		v_s_Facts.add(a);
+	}
+	
+	public void addToSubSupSelfFacts(Predicate predicate, Constant c1, Constant c2) {
+		Atom a = Expressions.makeAtom(predicate, c1, c2);
+		//Add Atoms
+		v_s_Facts.add(a);
+	}
+	
 	public void addToSubClassEDB(Predicate predicate) {
 		v_s_subClassEDB.add(predicate);
 	}
