@@ -21,15 +21,16 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 public class Normalize {
 
-	protected static Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<Integer,Set<OWLAxiom>>();
-	protected static int v_Iterable_KeyForMap = 1;
-	protected static Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<OWLAxiom>();
+	protected Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<Integer,Set<OWLAxiom>>();
+	protected int v_Iterable_KeyForMap = 1;
+	
+	protected Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<OWLAxiom>();
 
 	protected final Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
 
-	protected final OWLDataFactory v_factory;
+	protected OWLDataFactory v_factory;
 
-	protected static long v_counter_Fresh_Concept = 0;
+	protected long v_counter_FreshConcept = 0;
 
 
 	public static OWLClassExpression v_classExpression;

@@ -88,12 +88,14 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 			v_Normalised_Axioms.add(axiom);					
 		} else if(!axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
 			//C subsumes D
-			OWLClassExpression new_classExpression = addFreshClassName(v_counter_Fresh_Concept);
+			OWLClassExpression new_classExpression = addFreshClassName(v_counter_FreshConcept);
 			OWLAxiom new_Axiom_forsupcls = v_factory.getOWLSubClassOfAxiom(new_classExpression, axiom.getSuperClass());
 			OWLAxiom new_Axiom_forsubcls = v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(),new_classExpression);
 			addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsubcls);
 			addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsupcls);
-			v_counter_Fresh_Concept++;
+			//v_For_FurtherNormalisation.add(new_Axiom_forsubcls);
+			//v_For_FurtherNormalisation.add(new_Axiom_forsupcls);
+			v_counter_FreshConcept++;
 		} else if (this.isNonComplementOFNamedClass(axiom.getSubClass())) {
 			ClassExpressionVisitorForNormalisationRight ceVisitor = new ClassExpressionVisitorForNormalisationRight(this.v_factory);
 			//set the named class for use
