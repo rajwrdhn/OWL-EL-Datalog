@@ -178,12 +178,15 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 	public void visit(OWLClassAssertionAxiom axiom) {
 		String predicatename = axiom.toString();
 		Predicate predicate = Expressions.makePredicate(predicatename, 2);
+		
 		Constant c1 = Expressions.makeConstant(axiom.getClassExpression().toString());
 		Constant c2 = Expressions.makeConstant(axiom.getIndividual().toString());
+		
 		addClassNamesEDB(axiom.getClassExpression().toString());
 		addNominalsEDB(axiom.getIndividual().toString());
 		addToSubClassEDB(predicate);
-		addToSubClassFacts(predicate, c1, c2);
+		
+		addToDoubleConstantFacts(predicate, c1, c2);
 	}
 
 	@Override

@@ -18,36 +18,52 @@ import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
 import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
+import org.semanticweb.vlog4j.core.model.api.Constant;
+import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 
 public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTranslation implements OWLClassExpressionVisitor {
 	protected OWLClassExpression sub_class_of_axiom; 
+	protected long auxnum = 0;
 	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm) {
-		// TODO Auto-generated constructor stub
 		sub_class_of_axiom = subClassExprOfAxm;
 	}
 	@Override
 	public void visit(OWLClass ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
 		if(ce.isBottomEntity()) {
-			v_s_botEDB.add(Expressions.makePredicate(sub_class_of_axiom.toString(), 1));
-			//v_s_Facts.add(Expressions.makeAtom(predicate, terms))
+			String predicatename = ce.toString() + sub_class_of_axiom.toString();
+			super.addBotEDB(predicatename);
 		} else if (ce.isOWLNamedIndividual()) {
-			//v_s_subClassEDB.add(Expressions.makePredicate(name, arity));
-			//v_s_Facts.add(Expressions.makeAtom(predicate, terms))
+			String predicatename = sub_class_of_axiom.toString() + ce.toString();
+			Predicate predicate = Expressions.makePredicate(predicatename, 2);
+			
+			Constant c1 = Expressions.makeConstant(ce.toString());
+			Constant c2 = Expressions.makeConstant(sub_class_of_axiom.toString());
+			
+			addClassNamesEDB(sub_class_of_axiom.toString());
+			addNominalsEDB(ce.toString());
+			addToSubClassEDB(predicate);
+			
+			addToDoubleConstantFacts(predicate, c2, c1);
 		} else {
-			v_s_clsEDB.add(Expressions.makePredicate(sub_class_of_axiom.toString(), 1));
-			v_s_clsEDB.add(Expressions.makePredicate(ce.toString(), 1));
-			v_s_subClassEDB.add(Expressions.makePredicate(sub_class_of_axiom.toString()+ce.toString(), 2));
+			String predicatename = sub_class_of_axiom.toString() + ce.toString();
+			Predicate predicate = Expressions.makePredicate(predicatename, 2);
+			
+			Constant c1 = Expressions.makeConstant(ce.toString());
+			Constant c2 = Expressions.makeConstant(sub_class_of_axiom.toString());
+			
+			addClassNamesEDB(sub_class_of_axiom.toString());
+			addClassNamesEDB(ce.toString());			
+			addToSubClassEDB(predicate);
+			
+			addToDoubleConstantFacts(predicate, c2, c1);
 		}
 	}
 
 	@Override
 	public void visit(OWLObjectIntersectionOf ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		//Normalised
 	}
 
 	@Override
@@ -62,7 +78,21 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTransl
 
 	@Override
 	public void visit(OWLObjectSomeValuesFrom ce) {
-		// setfacts 
+		
+		String predicatename = sub_class_of_axiom.toString() + ce.toString();
+		Predicate predicate = Expressions.makePredicate(predicatename, 2);
+		
+		Constant c1 = Expressions.makeConstant(ce.getFiller().toString());
+		Constant c2 = Expressions.makeConstant(sub_class_of_axiom.toString());
+		Constant c3 = Expressions.makeConstant(ce.getProperty().toString());
+		Constant c4 = Expressions.makeConstant("aux"+auxnum);
+		auxnum++;
+		
+		addClassNamesEDB(sub_class_of_axiom.toString());
+		addClassNamesEDB(ce.getFiller().toString());		
+		addToSupExEDB(predicate);
+		
+		addToFourConstantFacts(predicate, c2, c3, c1, c4);
 	}
 
 	@Override
@@ -72,12 +102,12 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTransl
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-
+		//Normalised
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
-
+		//Normalised
 	}
 
 	@Override
@@ -92,7 +122,17 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTransl
 
 	@Override
 	public void visit(OWLObjectHasSelf ce) {
-		//setfacts
+		String predicatename = sub_class_of_axiom.toString() + ce.getProperty().toString();
+		Predicate predicate = Expressions.makePredicate(predicatename, 2);
+		
+		Constant c1 = Expressions.makeConstant(ce.getProperty().toString());
+		Constant c2 = Expressions.makeConstant(sub_class_of_axiom.toString());
+		
+		addClassNamesEDB(sub_class_of_axiom.toString());
+		addrolesEDB(predicatename);
+		addToSupExEDB(predicate);
+		
+		addToDoubleConstantFacts(predicate, c2, c1);
 	}
 
 	@Override
@@ -112,7 +152,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTransl
 
 	@Override
 	public void visit(OWLDataHasValue ce) {
-		throw new IllegalStateException();
+		//Normalised
 	}
 
 	@Override

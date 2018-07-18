@@ -54,33 +54,75 @@ public class DatalogTranslation {
 
 	}
 
-	public void visitNormalisedAxiomsHash(Collection<? extends OWLAxiom> normalizedAxioms) {
+	public void visitNormalisedAxiomsHash(Collection<? extends OWLAxiom> normalizedAxioms) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		VisitNormalisedAxioms v_normalizedAxiomVisitor = new VisitNormalisedAxioms();
 		for (OWLAxiom axiom: normalizedAxioms) {
 			axiom.accept(v_normalizedAxiomVisitor);
 		}
+		
+		DatalogRules dlogrules = new DatalogRules();
+		dlogrules.makeRules();
+		callReasoner();
 	}
 	
-	public void addToSubClassFacts(Predicate predicate, Constant c1, Constant c2) {
+	//Facts
+	public void addToDoubleConstantFacts(Predicate predicate, Constant c1, Constant c2) {
 		Atom a = Expressions.makeAtom(predicate, c1, c2);
 		//Add Atoms
 		v_s_Facts.add(a);
 	}
 	
-	public void addToSubExFacts(Predicate predicate, Constant c1, Constant c2,Constant c3) {
+	public void addToFourConstantFacts(Predicate predicate, Constant c1, Constant c2, Constant c3, Constant c4) {
+		Atom a = Expressions.makeAtom(predicate, c1, c2, c3, c4);
+		//Add Atoms
+		v_s_Facts.add(a);
+	}
+	
+	public void addToThreeConstantFacts(Predicate predicate, Constant c1, Constant c2,Constant c3) {
 		Atom a = Expressions.makeAtom(predicate, c1, c2, c3);
 		//Add Atoms
 		v_s_Facts.add(a);
 	}
 	
-	public void addToSubSupSelfFacts(Predicate predicate, Constant c1, Constant c2) {
-		Atom a = Expressions.makeAtom(predicate, c1, c2);
-		//Add Atoms
-		v_s_Facts.add(a);
-	}
-	
+	//EDB Predicates
 	public void addToSubClassEDB(Predicate predicate) {
 		v_s_subClassEDB.add(predicate);
+	}
+	
+	public void addToSubConjEDB(Predicate predicate) {
+		v_s_subConjEDB.add(predicate);
+	}
+	
+	public void addToSubExEDB(Predicate predicate) {
+		v_s_subExEDB.add(predicate);
+	}
+	
+	public void addToSupExEDB(Predicate predicate) {
+		v_s_supExEDB.add(predicate);
+	}
+	
+	public void addToSubSelfEDB(Predicate predicate) {
+		v_s_subSelfEDB.add(predicate);
+	}
+	
+	public void addToSupSelfEDB(Predicate predicate) {
+		v_s_subSelfEDB.add(predicate);
+	}
+	
+	public void addToSubRoleEDB(Predicate predicate) {
+		v_s_subRoleEDB.add(predicate);
+	}
+	
+	public void addTopEDB(String predicatename) {
+		v_s_topEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
+	public void addBotEDB(String predicatename) {
+		v_s_botEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
+	public void addrolesEDB(String predicatename) {
+		v_s_rolEDB.add(Expressions.makePredicate(predicatename, 1));
 	}
 	
 	public void addNominalsEDB(String predicatename) {
