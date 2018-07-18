@@ -27,7 +27,7 @@ public class Normalize {
 	protected final Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
 
 	protected final OWLDataFactory v_factory;
-	
+
 	protected static long v_counter_Fresh_Concept = 0;
 
 
@@ -82,31 +82,31 @@ public class Normalize {
 		v_Iterable_MapAxioms.remove(keyA);		
 	}
 
-	public void addAxiomToMap (int number, OWLAxiom axiom) {
+	public void addAxiomToMap(int number, OWLAxiom axiom) {
 		v_Iterable_MapAxioms.get(number).add(axiom);		
 	}
-	
+
 	public boolean isNonComplementOFNamedClass(OWLClassExpression ce) {
 		if (ce instanceof OWLObjectComplementOf) {
 			throw new IllegalStateException();
 		}
 		return ce.isClassExpressionLiteral();
 	}
-	
+
 	public boolean isNotNamedClass(OWLClassExpression ce) {
 		return !ce.isClassExpressionLiteral();
 	}
-	
+
 	public OWLAxiom addAxiomOfConjunctSubClass(OWLClassExpression ce1, OWLClassExpression ce2, OWLClassExpression ce3) {
 		//ce1 and ce2 subsumes ce3
 		return v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(ce1,ce2),ce3);
 	}
-	
+
 	public OWLAxiom addSubClassAxiom(OWLClassExpression ce1, OWLClassExpression ce2) {
 		//ce1 subsumes ce2
 		return v_factory.getOWLSubClassOfAxiom(ce1, ce2);
 	}
-	
+
 	public OWLAxiom addSomevaluesFromAxiom(OWLClassExpression ce1, OWLObject obj,OWLClassExpression ce2) {		
 		return v_factory.getOWLSubClassOfAxiom(ce1, v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce2));
 	}

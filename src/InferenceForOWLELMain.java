@@ -9,10 +9,10 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.VLog4jException;
 //Main class upload ontology here
 public class InferenceForOWLELMain {
-	
+
 	//Normalize norm = new Normalize(factory);
-	
-	
+
+
 	public InferenceForOWLELMain() {
 
 	}

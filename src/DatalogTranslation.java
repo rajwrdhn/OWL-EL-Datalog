@@ -95,7 +95,7 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 	protected final Set<Predicate> v_s_subSelfEDB = new HashSet<>();
 	protected final Set<Predicate> v_s_supSelfEDB = new HashSet<>();
 	protected final Set<Predicate> v_s_subRoleEDB = new HashSet<>();
-	
+
 	protected final Predicate v_P_triple =Expressions.makePredicate("triple", 3);
 	protected final Predicate v_P_inst = Expressions.makePredicate("inst", 2);
 	protected final Predicate v_P_self = Expressions.makePredicate("self", 2);
@@ -106,7 +106,7 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 	protected final Variable y = Expressions.makeVariable("y");
 	protected final Variable z = Expressions.makeVariable("z");
 
-	
+
 	public DatalogTranslation() {
 
 	}
@@ -272,7 +272,7 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 		Reasoner reasoner = Reasoner.getInstance();
 		reasoner.addRules(v_l_Rules);
 		reasoner.addFacts(v_s_Facts);
-		
+
 		reasoner.load();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
 		reasoner.setReasoningTimeout(1);
@@ -299,7 +299,7 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 			System.out.println();
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @author raj
@@ -314,12 +314,12 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 
 		@Override
 		public void visit(OWLSubAnnotationPropertyOfAxiom axiom) {
-			
+
 		}
 
 		@Override
 		public void visit(OWLAnnotationPropertyDomainAxiom axiom) {
-			
+
 		}
 
 		@Override
@@ -515,11 +515,11 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 		public void visit(OWLClass ce) {
 			// TODO 
 			if(ce.isTopEntity()) {
-				
+
 			} else if (ce.isOWLNamedIndividual()) {
-				
+
 			} else {
-				
+
 			}
 		}
 
@@ -550,12 +550,12 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 
 		@Override
 		public void visit(OWLObjectHasValue ce) {
-			
+
 		}
 
 		@Override
 		public void visit(OWLObjectMinCardinality ce) {
-			
+
 		}
 
 		@Override
@@ -660,12 +660,12 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 
 		@Override
 		public void visit(OWLObjectHasValue ce) {
-			
+
 		}
 
 		@Override
 		public void visit(OWLObjectMinCardinality ce) {
-			
+
 		}
 
 		@Override
@@ -723,5 +723,4 @@ public class DatalogTranslation extends InferenceForOWLELMain{
 		// TODO Auto-generated method stub
 
 	}
-
 }

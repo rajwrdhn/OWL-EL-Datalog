@@ -3,15 +3,15 @@ public class StopWatch {
 	protected String descrptionOfTask; 
 	/** For storing the time */
 	protected long time = 0;
-	
+
 	/** Is the watch running? */
 	protected boolean running = false;
-	
+
 	/** Constructor, no output */
 	public StopWatch()
 	{
 	}
-	
+
 	/** Start the stop watch (without task description) */
 	public StopWatch start()
 	{

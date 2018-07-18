@@ -11,7 +11,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
  *
  */
 public class VistableAxiomsMap extends Normalize {
-	
+
 	protected static Map<Integer, Set<OWLAxiom>> crunchMap = new HashMap<>();
 	protected static int v_iter_mapkey = 0 ;
 
@@ -23,9 +23,9 @@ public class VistableAxiomsMap extends Normalize {
 	public void crunchCleanNormalisedAxiomFromMap(int keyA) {		
 		this.v_Iterable_MapAxioms.remove(keyA);		
 	}
-	
+
 	public void addAxiomToMap (int number, OWLAxiom axiom) {
 		v_Iterable_MapAxioms.get(number).add(axiom);		
 	}
-	
+
 }
