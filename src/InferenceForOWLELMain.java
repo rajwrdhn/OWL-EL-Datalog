@@ -22,7 +22,7 @@ public class InferenceForOWLELMain {
 		OWLOntology onto = man.loadOntologyFromOntologyDocument(file);
 		OWLDataFactory factory = man.getOWLDataFactory();
 		OWLOntologyID ontID = onto.getOntologyID();		
-		Normalize norm = new Normalize(factory,ontID);	
+		Normalize norm = new Normalize(factory);	
 		norm.getFromOntology(onto);
 	}
 	/**
