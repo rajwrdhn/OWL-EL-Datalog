@@ -8,17 +8,10 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomVisitor;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLClassExpressionVisitor;
-import org.semanticweb.owlapi.model.OWLDataAllValuesFrom;
-import org.semanticweb.owlapi.model.OWLDataExactCardinality;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataHasValue;
-import org.semanticweb.owlapi.model.OWLDataMaxCardinality;
-import org.semanticweb.owlapi.model.OWLDataMinCardinality;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
-import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
@@ -37,20 +30,9 @@ import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
-import org.semanticweb.owlapi.model.OWLObjectComplementOf;
-import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
-import org.semanticweb.owlapi.model.OWLObjectHasSelf;
-import org.semanticweb.owlapi.model.OWLObjectHasValue;
-import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
-import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
-import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
-import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
-import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
 import org.semanticweb.owlapi.model.OWLSubAnnotationPropertyOfAxiom;
@@ -61,8 +43,6 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
-import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-
 
 	/*
 	 * Visitor Class for Axioms in the Ontology.
@@ -71,7 +51,7 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 		//protected final List<OWLClassExpression[]> v_expressionList;
 		protected static OWLClassExpression v_Right_Named_ClassExpression = null;
 		protected static OWLClassExpression v_Leftt_Named_ClassExpression = null;
-		protected static long v_counter_Fresh_Concept = 0;
+		
 		
 		public AxiomVisitorForNormalisation(OWLDataFactory factory) {
 			super(factory);
@@ -108,11 +88,11 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 				v_Normalised_Axioms.add(axiom);					
 			} else if(!axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
 				//C subsumes D
-				OWLClassExpression new_classExpression = this.addFreshClassName(v_counter_Fresh_Concept);
+				OWLClassExpression new_classExpression = addFreshClassName(v_counter_Fresh_Concept);
 				OWLAxiom new_Axiom_forsupcls = v_factory.getOWLSubClassOfAxiom(new_classExpression, axiom.getSuperClass());
 				OWLAxiom new_Axiom_forsubcls = v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(),new_classExpression);
-				this.addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsubcls);
-				this.addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsupcls);
+				addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsubcls);
+				addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsupcls);
 				v_counter_Fresh_Concept++;
 			} else if (this.isNonComplementOFNamedClass(axiom.getSubClass())) {
 					ClassExpressionVisitorForNormalisationRight ceVisitor = new ClassExpressionVisitorForNormalisationRight(this.v_factory);
@@ -136,12 +116,6 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 				System.out.println("sub------------"+axiom.getSubClass().toString()
 						+"          super----------"+axiom.getSuperClass().toString());
 			}
-
-/*			if(!axiom.getSubClass().isBottomEntity() || !axiom.getSuperClass().isTopEntity() ) {
-				this.normalizesubClassExpressionAxiom(axiom.getSubClass(), axiom.getSuperClass());
-			} else {
-				//Empty Set
-			}*/
 		}
 		@Override
 		public void visit(OWLNegativeObjectPropertyAssertionAxiom arg0) {
@@ -175,13 +149,22 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 		@Override
 		public void visit(OWLObjectPropertyDomainAxiom axiom) {
-			k_axioms.add(axiom.asOWLSubClassOfAxiom());
+			//TODO check?
+			addAxiomToMap(v_Iterable_KeyForMap+1, axiom.asOWLSubClassOfAxiom());
 		}
 
 		@Override
-		public void visit(OWLEquivalentObjectPropertiesAxiom arg0) {
+		public void visit(OWLEquivalentObjectPropertiesAxiom axiom) {
 			//TODO
-			k_axioms.addAll(arg0.asSubObjectPropertyOfAxioms());
+			Iterator<OWLSubObjectPropertyOfAxiom> iter = axiom.asSubObjectPropertyOfAxioms().iterator();
+			//It can be very big !
+			int i =10;
+			while (iter.hasNext()) {
+				v_Normalised_Axioms.add(iter.next());
+				i++;
+				if (i==10)
+					break;
+			}
 		}
 
 		@Override
@@ -209,28 +192,14 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 		@Override
 		public void visit(OWLObjectPropertyRangeAxiom axiom) {
-			//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
+			throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
 		}
 
 		@Override
 		public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-			//TODO
-		/*	n_axioms.add(axiom);
-			Set<OWLIndividual> indi = new HashSet<>();
-			axiom.individualsInSignature().forEach(x -> indi.add(x));
-			setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getProperty().toString()+indi.toArray()[0].toString()+indi.toArray()[1].toString(), 3),
-					Expressions.makeConstant(indi.toArray()[0].toString()),
-					Expressions.makeConstant(axiom.getProperty().toString()),										
-					Expressions.makeConstant(indi.toArray()[1].toString())
-					));
-			setFacts.add(Expressions.makeAtom(Expressions.makePredicate(indi.toArray()[0].toString(), 1), Expressions.makeConstant(indi.toArray()[0].toString())));
-			setFacts.add(Expressions.makeAtom(Expressions.makePredicate(indi.toArray()[1].toString(), 1), Expressions.makeConstant(indi.toArray()[1].toString())));
-			setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getProperty().toString(), 1), Expressions.makeConstant(axiom.getProperty().toString())));
-			rolEDB.add(Expressions.makePredicate(axiom.getProperty().toString()+"rule", 1));
-			rolEDB.add(Expressions.makePredicate(indi.toArray()[0].toString()+"rule", 1));
-			rolEDB.add(Expressions.makePredicate(indi.toArray()[1].toString()+"rule", 1));
-			subExEDB.add(Expressions.makePredicate(axiom.getProperty().toString()+indi.toArray()[0].toString()+indi.toArray()[1].toString()+"rule", 3));
-		*/}
+			if(axiom.individualsInSignature().count()==2)
+				v_Normalised_Axioms.add(axiom);
+		}
 
 		@Override
 		public void visit(OWLFunctionalObjectPropertyAxiom axiom) {
@@ -239,17 +208,9 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 		@Override
 		public void visit(OWLSubObjectPropertyOfAxiom axiom) {
-			//TODO only subRole(R,T) done if()
-			n_axioms.add(axiom);
-			setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getSubProperty().toString()+axiom.getSuperProperty().toString(), 2), 
-					Expressions.makeConstant(axiom.getSubProperty().toString()),
-					Expressions.makeConstant(axiom.getSuperProperty().toString())
-					));
-			setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getSubProperty().toString(), 1), Expressions.makeConstant(axiom.getSubProperty().toString())));
-			setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getSuperProperty().toString(), 1), Expressions.makeConstant(axiom.getSuperProperty().toString())));
-			subRoleEDB.add(Expressions.makePredicate(axiom.getSubProperty().toString()+axiom.getSuperProperty().toString()+"rule", 2));
-			rolEDB.add(Expressions.makePredicate(axiom.getSubProperty().toString()+"rule", 1));
-			rolEDB.add(Expressions.makePredicate(axiom.getSuperProperty().toString()+"rule", 1));
+			//TODO only subRole(R,T) done if() 
+			if (axiom.objectPropertiesInSignature().count() ==2)
+				v_Normalised_Axioms.add(axiom);
 		}
 
 		@Override
@@ -278,46 +239,27 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 		}
 		@Override
 		public void visit(OWLClassAssertionAxiom axiom) {
-			//X(a)
-			if (axiom.getClassExpression().isClassExpressionLiteral() && 
-					!axiom.getClassExpression().isAnonymous()) {
-				if (axiom.getClassExpression() instanceof OWLObjectComplementOf) {
-					throw new IllegalArgumentException("Object Complement of !" + axiom.toString());
-				} else {
-					n_axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));
-					setFacts.add(Expressions.makeAtom(Expressions.makePredicate(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()).toString(), 2), 
-							Expressions.makeConstant(axiom.getIndividual().toString()),
-							Expressions.makeConstant(axiom.getClassExpression().toString())
-							));
-					setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getIndividual().toString(), 1), Expressions.makeConstant(axiom.getIndividual().toString())));
-					setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getClassExpression().toString(), 1), Expressions.makeConstant(axiom.getClassExpression().toString())));
-					clsEDB.add(Expressions.makePredicate(axiom.getClassExpression().toString()+"rule", 1));
-					nomEDB.add(Expressions.makePredicate(axiom.getIndividual().toString()+"rule", 1));
-					subClassEDB.add(Expressions.makePredicate(axiom.getIndividual().toString()+axiom.getClassExpression().toString()+"rule", 2));
-				}
+			//TODO
+			if (isNonComplementOFNamedClass(axiom.getClassExpression())) {
+				v_Normalised_Axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));	
 			} else {
-				//C(a)
-				k_axioms.add(v_factory.getOWLSubClassOfAxiom(addFreshClassName(freshConceptNumber), 
-						axiom.getClassExpression()));
-				n_axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), 
-						axiom.getIndividual()));
-				setFacts.add(Expressions.makeAtom(Expressions.makePredicate(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), axiom.getIndividual()).toString(), 2), 
-						Expressions.makeConstant(axiom.getIndividual().toString()),
-						Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())
-						));
-				setFacts.add(Expressions.makeAtom(Expressions.makePredicate(addFreshClassName(freshConceptNumber).toString(), 1), Expressions.makeConstant(addFreshClassName(freshConceptNumber).toString())));
-				setFacts.add(Expressions.makeAtom(Expressions.makePredicate(axiom.getIndividual().toString(), 1), Expressions.makeConstant(axiom.getIndividual().toString())));
-				clsEDB.add(Expressions.makePredicate(addFreshClassName(freshConceptNumber).toString()+"rule", 1));
-				nomEDB.add(Expressions.makePredicate(axiom.getIndividual().toString()+"rule", 1));
-				subClassEDB.add(Expressions.makePredicate(axiom.getIndividual().toString()+addFreshClassName(freshConceptNumber).toString()+"rule", 2));			
-				freshConceptNumber++;					
-			}		
+				v_Normalised_Axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), axiom.getIndividual()));
+				addAxiomToMap(v_Iterable_KeyForMap+1, addSubClassAxiom(addFreshClassName(freshConceptNumber), axiom.getClassExpression()));
+				freshConceptNumber++;
+			}
 		}
 
 		@Override
 		public void visit(OWLEquivalentClassesAxiom axiom) {
-			//C equivalent to D
-			k_axioms.addAll(axiom.asOWLSubClassOfAxioms());
+			//TODO There can be many axioms here!
+			int i =10;
+			Iterator<OWLSubClassOfAxiom> iter = axiom.asOWLSubClassOfAxioms().iterator();
+			while (iter.hasNext()) {
+				addAxiomToMap(v_Iterable_KeyForMap+1, iter.next());
+				i++;
+				if (i==10)
+					break;
+			}
 		}
 
 		@Override
@@ -357,7 +299,7 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 		@Override
 		public void visit(OWLInverseObjectPropertiesAxiom axiom) {
-			//throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
+			throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
 		}
 
 		@Override

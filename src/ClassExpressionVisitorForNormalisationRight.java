@@ -46,6 +46,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 				addAxiomToMap(v_Iterable_KeyForMap+1, addSubClassAxiom(getCurrentClassExpression(), addFreshClassName(freshConceptNumber)));
 			}
 		}
+		v_Leftt_Named_ClassExpression = addFreshClassName(freshConceptNumber);
 		//NOW IT WILL GO
 	}
 
@@ -61,7 +62,8 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectSomeValuesFrom ce) {
-		v_Normalised_Axioms.add(addSomevaluesFromAxiom(v_Leftt_Named_ClassExpression, ce.getProperty(), addFreshClassName(freshConceptNumber)));
+		setCurrentClassExpression(v_Leftt_Named_ClassExpression);
+		v_Normalised_Axioms.add(addSomevaluesFromAxiom(getCurrentClassExpression(), ce.getProperty(), addFreshClassName(freshConceptNumber)));
 		addAxiomToMap(v_Iterable_KeyForMap+1, addSubClassAxiom(addFreshClassName(freshConceptNumber), ce));
 		v_Leftt_Named_ClassExpression = addFreshClassName(freshConceptNumber);
 		setCurrentClassExpression(addFreshClassName(freshConceptNumber));
@@ -75,18 +77,18 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		/*//TODO
-		k_axioms.add(v_factory.getOWLSubClassOfAxiom(ce.asSomeValuesFrom(), 
-				getCurrentClassExpression()
-				));*/
+		//TODO Cross Check? ce is an individual 
+		addAxiomToMap(v_Iterable_KeyForMap+1, v_factory.getOWLClassAssertionAxiom(getCurrentClassExpression(), ce.getFiller()));	
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
-		//OWLSubClassOfAxiom sub = new OWLSubClassOfAxiomImpl(subClass, superClass, annotations);
-		/*k_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectSomeValuesFrom(ce.getProperty(), (OWLClassExpression) ce.getFiller()), 
-				getCurrentClassExpression()
-				));*/
+		setCurrentClassExpression(v_Leftt_Named_ClassExpression);
+		v_Normalised_Axioms.add(addSomevaluesFromAxiom(getCurrentClassExpression(), ce.getProperty(), addFreshClassName(freshConceptNumber)));
+		addAxiomToMap(v_Iterable_KeyForMap+1, addSubClassAxiom(addFreshClassName(freshConceptNumber), ce.getFiller()));
+		v_Leftt_Named_ClassExpression = addFreshClassName(freshConceptNumber);
+		setCurrentClassExpression(addFreshClassName(freshConceptNumber));
+		freshConceptNumber++;
 	}
 
 	@Override
