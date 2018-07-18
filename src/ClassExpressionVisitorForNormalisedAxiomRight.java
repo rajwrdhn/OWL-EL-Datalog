@@ -33,7 +33,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTransl
 	public void visit(OWLClass ce) {
 		if(ce.isBottomEntity()) {
 			String predicatename = ce.toString() + sub_class_of_axiom.toString();
-			super.addBotEDB(predicatename);
+			addBotEDB(predicatename);
 		} else if (ce.isOWLNamedIndividual()) {
 			String predicatename = sub_class_of_axiom.toString() + ce.toString();
 			Predicate predicate = Expressions.makePredicate(predicatename, 2);

@@ -24,13 +24,11 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	public ClassExpressionVisitorForNormalisationRight(OWLDataFactory factory) {
 		super(factory);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void visit(OWLClass ce) {
-		// TODO Auto-generated method stub
-		OWLClassExpressionVisitor.super.visit(ce);
+		
 	}
 
 	@Override

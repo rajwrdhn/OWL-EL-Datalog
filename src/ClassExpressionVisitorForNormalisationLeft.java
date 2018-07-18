@@ -36,7 +36,6 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	protected static OWLClassExpression v_classExpression = null;  
 	public ClassExpressionVisitorForNormalisationLeft(OWLDataFactory factory) {
 		super(factory);
-		// TODO Auto-generated constructor stub
 	}
 
 	//A and B subsumes classexpression
