@@ -102,12 +102,10 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 		@Override
 		public void visit(OWLSubClassOfAxiom axiom) {
-			if (axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
-				if (axiom.getSubClass() instanceof OWLObjectComplementOf || axiom.getSuperClass() instanceof OWLObjectComplementOf) {
-					throw new IllegalArgumentException("Complement of a named class is not OWL 2 EL !");
-				} else { //this has to be added to normalised axioms here and not in the visitors of class Expression.  
-					v_Normalised_Axioms.add(axiom);
-				}		
+			if (this.isNonComplementOFNamedClass(axiom.getSubClass()) 
+					&& this.isNonComplementOFNamedClass(axiom.getSuperClass())) {
+				 //this has to be added to normalised axioms here and not in the visitors of class Expression.  
+				v_Normalised_Axioms.add(axiom);					
 			} else if(!axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
 				//C subsumes D
 				OWLClassExpression new_classExpression = this.addFreshClassName(v_counter_Fresh_Concept);
@@ -116,31 +114,34 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 				this.addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsubcls);
 				this.addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsupcls);
 				v_counter_Fresh_Concept++;
-			} else if (axiom.getSubClass().isClassExpressionLiteral()) {
-				if (axiom.getSubClass() instanceof OWLObjectComplementOf) {
-					throw new IllegalStateException();
-				} else {
+			} else if (this.isNonComplementOFNamedClass(axiom.getSubClass())) {
 					ClassExpressionVisitorForNormalisationRight ceVisitor = new ClassExpressionVisitorForNormalisationRight(this.v_factory);
 					//set the named class for use
 					v_Leftt_Named_ClassExpression = axiom.getSubClass();
 					axiom.getSuperClass().accept(ceVisitor);
-				}
-			} else {
-				if (axiom.getSuperClass() instanceof OWLObjectComplementOf) {
-					throw new IllegalStateException();
-				} else {
+			} else if (this.isNonComplementOFNamedClass(axiom.getSuperClass())){
 					ClassExpressionVisitorForNormalisationLeft ceVisitor = new ClassExpressionVisitorForNormalisationLeft(this.v_factory);
 					//set the named class for use
 					v_Right_Named_ClassExpression = axiom.getSubClass();
 					axiom.getSubClass().accept(ceVisitor);
-				}
-			} 
+			} else if (axiom.getSubClass().isOWLThing() && this.isNonComplementOFNamedClass(axiom.getSuperClass())) {
+				//Top subsumes A 
+				v_Normalised_Axioms.add(axiom);					
+			} else if (axiom.getSuperClass().isOWLNothing() && this.isNonComplementOFNamedClass(axiom.getSubClass())) {
+				//A subsumes Bot
+				v_Normalised_Axioms.add(axiom);
 
-			if(!axiom.getSubClass().isBottomEntity() || !axiom.getSuperClass().isTopEntity() ) {
+			} else {
+				//Empty Set
+				System.out.println("sub------------"+axiom.getSubClass().toString()
+						+"          super----------"+axiom.getSuperClass().toString());
+			}
+
+/*			if(!axiom.getSubClass().isBottomEntity() || !axiom.getSuperClass().isTopEntity() ) {
 				this.normalizesubClassExpressionAxiom(axiom.getSubClass(), axiom.getSuperClass());
 			} else {
 				//Empty Set
-			}
+			}*/
 		}
 		@Override
 		public void visit(OWLNegativeObjectPropertyAssertionAxiom arg0) {

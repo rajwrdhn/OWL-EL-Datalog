@@ -49,6 +49,7 @@ import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
@@ -58,8 +59,10 @@ import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectMaxCardinality;
 import org.semanticweb.owlapi.model.OWLObjectMinCardinality;
 import org.semanticweb.owlapi.model.OWLObjectOneOf;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
@@ -226,15 +229,6 @@ public class Normalize {
 		}
 	}
 
-	/*	public void newSetOfAxioms(Map<Integer,Set<OWLAxiom>> mymap) {
-
-		Iterator<OWLAxiom> iter = axioms.iterator();
-		while(iter.hasNext()) {
-			iter.next().accept(axmVisitor);
-			iter.remove();
-		}
-	}*/
-
 	public void crunchCleanNormalisedAxiomFromMap(int keyA) {		
 		v_Iterable_MapAxioms.remove(keyA);		
 	}
@@ -242,7 +236,31 @@ public class Normalize {
 	public void addAxiomToMap (int number, OWLAxiom axiom) {
 		v_Iterable_MapAxioms.get(number).add(axiom);		
 	}
-
+	
+	public boolean isNonComplementOFNamedClass(OWLClassExpression ce) {
+		if (ce instanceof OWLObjectComplementOf) {
+			throw new IllegalStateException();
+		}
+		return ce.isClassExpressionLiteral();
+	}
+	
+	public boolean isNotNamedClass(OWLClassExpression ce) {
+		return !ce.isClassExpressionLiteral();
+	}
+	
+	public OWLAxiom addAxiomOfConjunctSubClass(OWLClassExpression ce1, OWLClassExpression ce2, OWLClassExpression ce3) {
+		//ce1 and ce2 subsumes ce3
+		return v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(ce1,ce2),ce3);
+	}
+	
+	public OWLAxiom addSubClassAxiom(OWLClassExpression ce1, OWLClassExpression ce2) {
+		//ce1 subsumes ce2
+		return v_factory.getOWLSubClassOfAxiom(ce1, ce2);
+	}
+	
+	public OWLAxiom addSomevaluesFromAxiom(OWLClassExpression ce1, OWLObject obj,OWLClassExpression ce2) {		
+		return v_factory.getOWLSubClassOfAxiom(ce1, v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce2));
+	}
 	/**
 	 * Adds the fresh concept name
 	 */
@@ -271,10 +289,10 @@ public class Normalize {
 		return v_classExpression;
 	}
 
-	/**
+/*	*//**
 	 * ClassExpression Visitor for subclassOf Axioms
 	 * @param ce
-	 */
+	 *//*
 	public void normalizesubClassExpressionAxiom(OWLClassExpression subClassExpr, OWLClassExpression superClassExpr) {
 
 		if (subClassExpr.isOWLThing() && superClassExpr.isClassExpressionLiteral() ) {
@@ -455,7 +473,7 @@ public class Normalize {
 					n_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(new_descriptions),
 							superClassExpr));
 					freshConceptNumber++;
-				} /*else if (!v_factory.getOWLObjectIntersectionOf(new_descriptions).isClassExpressionLiteral() 
+				} else if (!v_factory.getOWLObjectIntersectionOf(new_descriptions).isClassExpressionLiteral() 
 						&& v_factory.getOWLObjectIntersectionOf(descriptions).isClassExpressionLiteral()) { //D and A
 					//TODO Done
 					setFacts.add(Expressions.makeAtom(subConjEDB, 
@@ -464,7 +482,7 @@ public class Normalize {
 							Expressions.makeConstant(getCurrentClassExpression().toString())));
 					freshConceptNumber++;
 
-				}*/else if(subClassExpr.asConjunctSet().size() > 1 || superClassExpr.asConjunctSet().size() > 1) { //C and D
+				}else if(subClassExpr.asConjunctSet().size() > 1 || superClassExpr.asConjunctSet().size() > 1) { //C and D
 					k_axioms.add(v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(
 							addFreshClassName(freshConceptNumber),v_factory.getOWLObjectIntersectionOf(descriptions)), 
 							superClassExpr
@@ -496,5 +514,5 @@ public class Normalize {
 					+ "----super    "+superClassExpr.toString());
 		}
 
-	}
+	}*/
 }

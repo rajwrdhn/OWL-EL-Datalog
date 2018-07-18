@@ -1,5 +1,9 @@
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLClassExpressionVisitor;
@@ -38,12 +42,79 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	
 	//A and B subsumes classexpression
 	
-	public void insertNormalisedConjunctionAsAxiom() {
-		
+	public void insertNormalisedConjunctionAsAxiom(OWLClassExpression sub_conj_ce) {
+		v_Normalised_Axioms.add(v_factory.getOWLSubClassOfAxiom(sub_conj_ce, v_Right_Named_ClassExpression));
 	}
 	
-	public void checkForNormalisedConjunct(OWLClassExpression sub) {
+	public boolean checkForNormalisedConjunct(OWLClassExpression sub_conj_ce) {
+		int i = sub_conj_ce.asConjunctSet().size();
+		boolean[] v_bool = new boolean[i];
+		Iterator<OWLClassExpression> iter = sub_conj_ce.asConjunctSet().iterator();
 		
+		while(iter.hasNext()) {
+			if(isNonComplementOFNamedClass(iter.next())) {
+				v_bool[i] = true;
+			}
+			i--;
+		}
+	
+		    for(boolean b : v_bool) {
+		    	if(!b) return false;
+		    } 
+		    return true;		
+	}
+	
+	public void normalizeConjunctof(OWLClassExpression sub_conj) {
+		Set<OWLClassExpression> descriptions = sub_conj.asConjunctSet(); 
+		Set<OWLClassExpression> new_descriptions = new HashSet<>();
+		int n = descriptions.size() % 2;
+		int i = 0;
+		for (OWLClassExpression ce: descriptions) {
+			if(i==n)
+				break;
+			new_descriptions.add(ce);
+			i++;
+		}
+		descriptions.removeAll(new_descriptions);
+		OWLClassExpression ce1 = getIntersectionOf(descriptions);
+		OWLClassExpression ce2 = getIntersectionOf(new_descriptions);
+		insertIntoAxiomMap(ce1, ce2);
+	}
+	
+	public void  insertIntoAxiomMap(OWLClassExpression ce1, OWLClassExpression ce2) {
+		if (isNonComplementOFNamedClass(ce1)) {
+			OWLAxiom axiom = v_factory.getOWLSubClassOfAxiom(
+					v_factory.getOWLObjectIntersectionOf(addFreshClassName(freshConceptNumber),ce1),getCurrentClassExpression());
+			v_Normalised_Axioms.add(axiom);
+			addAxiomToMap(v_Iterable_KeyForMap+1,
+					v_factory.getOWLSubClassOfAxiom(ce2, addFreshClassName(freshConceptNumber))
+					);
+			freshConceptNumber++;
+		} else if (isNotNamedClass(ce1) && isNotNamedClass(ce2)) {
+			OWLAxiom axiom = v_factory.getOWLSubClassOfAxiom(
+					v_factory.getOWLObjectIntersectionOf(addFreshClassName(freshConceptNumber),ce1),getCurrentClassExpression());
+			addAxiomToMap(v_Iterable_KeyForMap+1, axiom);
+			addAxiomToMap(v_Iterable_KeyForMap+1,
+					v_factory.getOWLSubClassOfAxiom(ce2, addFreshClassName(freshConceptNumber))
+					);
+			freshConceptNumber++;
+		} else {
+			OWLAxiom axiom = addAxiomOfConjunctSubClass(addFreshClassName(freshConceptNumber), ce2, getCurrentClassExpression());					
+			v_Normalised_Axioms.add(axiom);
+			addAxiomToMap(v_Iterable_KeyForMap+1,
+					addSubClassAxiom(ce1, addFreshClassName(freshConceptNumber))
+					);
+			freshConceptNumber++;
+		}
+	}
+	
+	public OWLClassExpression getIntersectionOf(Set<OWLClassExpression> ce_conjunct) {
+		
+		if (ce_conjunct.size() ==1) {
+			return ce_conjunct.iterator().next();
+		} else {
+			return v_factory.getOWLObjectIntersectionOf(ce_conjunct);
+		}	
 	}
 	
 	/**
@@ -55,6 +126,9 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLClass ce) {
+		if (ce.isOWLNamedIndividual()) {
+			v_Normalised_Axioms.add(v_factory.getOWLSubClassOfAxiom(ce, v_Right_Named_ClassExpression));
+		}
 /*		if(ce.isOWLNothing()) {
 			v_Normalised_Axioms.add(v_factory.getOWLSubClassOfAxiom(ce, v_Right_Named_ClassExpression));
 		} else {
@@ -68,13 +142,26 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 		boolean v_boolcheck = false;
 		Iterator<OWLClassExpression> iter = ce.asConjunctSet().iterator();
 		if (size == 2) {
-			while (iter.hasNext()) {
-				if (iter.next().isClassExpressionLiteral()) {
-					v_boolcheck = true;
+			if (this.checkForNormalisedConjunct(ce)) {
+				this.insertNormalisedConjunctionAsAxiom(ce);
+			} else {
+				setCurrentClassExpression(v_Right_Named_ClassExpression);
+				while(iter.hasNext()) {
+					if (isNonComplementOFNamedClass(iter.next())) {
+						v_Normalised_Axioms.add(v_factory.getOWLSubClassOfAxiom(
+								v_factory.getOWLObjectIntersectionOf(iter.next(),addFreshClassName(freshConceptNumber)), getCurrentClassExpression()));
+						setCurrentClassExpression(addFreshClassName(freshConceptNumber));
+					} else {
+						addAxiomToMap(v_Iterable_KeyForMap+1,
+								v_factory.getOWLSubClassOfAxiom(iter.next(), v_Right_Named_ClassExpression)
+								);
+					}
 				}
 			}
 		} else if (size>=3){
-			
+			normalizeConjunctof(ce);
+		} else {
+			System.out.println("visitor ce in left check ----"+ce);
 		}
 	}
 
