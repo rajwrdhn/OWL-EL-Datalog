@@ -334,7 +334,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLDataPropertyAssertionAxiom axiom) {
-		throw new IllegalArgumentException("Data Property Assertion Axiom Exception !" + axiom.toString());
+		//throw new IllegalArgumentException("Data Property Assertion Axiom Exception !" + axiom.toString());
 	}
 
 	@Override

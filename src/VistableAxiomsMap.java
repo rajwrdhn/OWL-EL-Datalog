@@ -1,5 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -8,11 +6,11 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 /**
  * Class for deleting and adding in HashMap
  * @author raj
- *
+ * Unused Class, Not required
  */
 public class VistableAxiomsMap extends Normalize {
 
-	protected static Map<Integer, Set<OWLAxiom>> crunchMap = new HashMap<>();
+	//protected static Map<Integer, Set<OWLAxiom>> crunchMap = new HashMap<>();
 	protected static int v_iter_mapkey = 0 ;
 
 	public VistableAxiomsMap(OWLDataFactory factory) {
@@ -24,8 +22,8 @@ public class VistableAxiomsMap extends Normalize {
 		this.v_Iterable_MapAxioms.remove(keyA);		
 	}
 
-	public void addAxiomToMap (int number, OWLAxiom axiom) {
-		v_Iterable_MapAxioms.get(number).add(axiom);		
+	public void addAxiomToMap (int number, Set<OWLAxiom> axioms) {
+		v_Iterable_MapAxioms.put(number, axioms);		
 	}
 
 }

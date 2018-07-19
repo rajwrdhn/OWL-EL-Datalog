@@ -77,7 +77,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectAllValuesFrom ce) {
-		//throw new IllegalStateException("OWLObjectAllValuesFrom " + ce.toString());
+		throw new IllegalStateException("OWLObjectAllValuesFrom " + ce.toString());
 	}
 
 	@Override

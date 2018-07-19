@@ -29,6 +29,7 @@ public class InferenceForOWLELMain {
 		OWLDataFactory factory = man.getOWLDataFactory();		
 		Normalize norm = new Normalize(factory);	
 		norm.getFromOntology(onto);
+		
 		//v_normalisedAxioms.addAll(norm.v_Normalised_Axioms);
 	}
 	

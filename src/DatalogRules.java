@@ -3,7 +3,7 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class DatalogRules extends DatalogTranslation{
 	public DatalogRules() {
-		// TODO Auto-generated constructor stub
+
 	}
 	
 	public void makeRules() {
