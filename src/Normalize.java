@@ -47,11 +47,13 @@ public class Normalize {
 		onto.logicalAxioms().forEach(x -> asi.add(x));
 		
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
-
+		
+		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
+		
 		if(v_Iterable_MapAxioms.isEmpty()) {
 			System.out.println("No Axioms in the Ontology!!");
 		} else {
-			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap));
+			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}
 
 		//return v_Normalised_Axioms;
@@ -60,16 +62,14 @@ public class Normalize {
 	/**
 	 * Visit all Axioms in the initial Ontology and normalize the axioms
 	 */
-	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
-		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
-
+	public void visitAxioms(Collection<? extends OWLAxiom> axioms, AxiomVisitorForNormalisation axmVisitor) throws OWLOntologyCreationException {
+		
 		axmVisitor.setCounterOfFreshNumber(v_counter+1);
 		
 		for (OWLAxiom axiom : axioms) {
 			System.out.println(axiom);
 			axiom.accept(axmVisitor);
 		}
-		//AxiomVisitorForNormalisation vsNorm = new AxiomVisitorForNormalisation(v_factory,v_counter_FreshConcept);
 		
 		for (OWLAxiom axiom : axmVisitor.getAxiomsForFurtherNorm()) {
 			System.out.println("for more norm"+ axiom);
@@ -81,6 +81,7 @@ public class Normalize {
 		}
 		
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, axmVisitor.getAxiomsForFurtherNorm());
+		
 		System.out.println("counter"+ v_counter);
 		v_counter = axmVisitor.getCounterOfFreshNumber();
 		System.out.println("counter"+ v_counter);
@@ -88,11 +89,9 @@ public class Normalize {
 		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty()) {			
 			System.out.println("Normalisation Complete!! ");
 		} else {
-			System.out.println("last round !!");
-			System.out.println(v_Iterable_KeyForMap);
 			axmVisitor.clear();
 			axmVisitor.removeNull();
-			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap));
+			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}
 	}
 
