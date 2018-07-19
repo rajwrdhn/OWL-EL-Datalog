@@ -1,4 +1,6 @@
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
@@ -30,6 +32,7 @@ import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
@@ -51,6 +54,113 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	//protected final List<OWLClassExpression[]> v_expressionList;
 	protected static OWLClassExpression v_Right_Named_ClassExpression = null;
 	protected static OWLClassExpression v_Leftt_Named_ClassExpression = null;
+	
+	//A and B subsumes classexpression
+	public void insertNormalisedConjunctionAsAxiom(OWLClassExpression sub_conj_ce) {
+		v_Normalised_Axioms.add(addSubClassAxiom(sub_conj_ce, v_Right_Named_ClassExpression));
+	}
+
+	// returns true if A and B subsumes X are normalised
+	public boolean checkForNormalisedConjunct(OWLClassExpression sub_conj_ce) {
+		int i = sub_conj_ce.asConjunctSet().size();
+		boolean[] v_bool = new boolean[i];
+		Iterator<OWLClassExpression> iter = sub_conj_ce.asConjunctSet().iterator();
+
+		while(iter.hasNext()) {
+			if(isNonComplementOFNamedClass(iter.next())) {
+				v_bool[i] = true;
+			}
+			i--;
+		}
+
+		for(boolean b : v_bool) {
+			if(!b) return false;
+		} 
+		return true;		
+	}
+
+	public void normalizeIntersectionOf(OWLClassExpression sub_conj) {
+		Set<OWLClassExpression> descriptions = sub_conj.asConjunctSet(); 
+		Set<OWLClassExpression> new_descriptions = new HashSet<>();
+		int n = descriptions.size() % 2;
+		int i = 0;
+		for (OWLClassExpression ce: descriptions) {
+			if(i==n)
+				break;
+			new_descriptions.add(ce);
+			i++;
+		}
+		descriptions.removeAll(new_descriptions);
+		OWLClassExpression ce1 = getIntersectionOf(descriptions);
+		OWLClassExpression ce2 = getIntersectionOf(new_descriptions);
+		insertIntoAxiomForNormalisation(ce1, ce2);
+	}
+
+	public void  insertIntoAxiomForNormalisation(OWLClassExpression ce1, OWLClassExpression ce2) {
+		OWLClassExpression new_ce = addFreshClassName(v_counter_FreshConcept);
+		
+		if (isNonComplementOFNamedClass(ce1)) {
+			OWLAxiom normaxiom = v_factory.getOWLSubClassOfAxiom(
+					v_factory.getOWLObjectIntersectionOf(new_ce, ce1),
+					v_Right_Named_ClassExpression);
+			
+			v_Normalised_Axioms.add(normaxiom);
+			
+			v_For_FurtherNormalisation.add(addSubClassAxiom(ce2, new_ce));
+			
+			v_counter_FreshConcept++;
+			
+		} else if (isNotNamedClass(ce1) && isNotNamedClass(ce2)) {
+			OWLAxiom non_normaxiom = v_factory.getOWLSubClassOfAxiom(
+					v_factory.getOWLObjectIntersectionOf(addFreshClassName(v_counter_FreshConcept),ce1),getCurrentClassExpression());
+			
+			v_For_FurtherNormalisation.add(non_normaxiom);
+			v_For_FurtherNormalisation.add(addSubClassAxiom(ce2, new_ce));
+
+			v_counter_FreshConcept++;
+		
+		} else {
+			OWLAxiom axiom = addAxiomOfConjunctSubClass(new_ce, ce2, v_Right_Named_ClassExpression);					
+			
+			v_Normalised_Axioms.add(axiom);
+			v_For_FurtherNormalisation.add(addSubClassAxiom(ce1,new_ce));
+			
+			v_counter_FreshConcept++;
+		}
+	}
+
+	public OWLClassExpression getIntersectionOf(Set<OWLClassExpression> ce_conjunct) {
+
+		if (ce_conjunct.size() ==1) {
+			return ce_conjunct.iterator().next();
+		} else {
+			return v_factory.getOWLObjectIntersectionOf(ce_conjunct);
+		}	
+	}
+	
+	public void visitorForIntersectionOf(OWLObjectIntersectionOf ce) {
+		int size = ce.asConjunctSet().size();
+		Iterator<OWLClassExpression> iter = ce.asConjunctSet().iterator();
+		if (size == 2) {
+			if (checkForNormalisedConjunct(ce)) {
+				insertNormalisedConjunctionAsAxiom(ce);
+			} else {
+				while(iter.hasNext()) {
+					if (isNonComplementOFNamedClass(iter.next())) {
+						v_Normalised_Axioms.add(v_factory.getOWLSubClassOfAxiom(
+								v_factory.getOWLObjectIntersectionOf(iter.next(),addFreshClassName(v_counter_FreshConcept)), 
+								v_Right_Named_ClassExpression));
+					} else {
+						v_For_FurtherNormalisation.add(v_factory.getOWLSubClassOfAxiom(iter.next(), v_Right_Named_ClassExpression));						
+					}
+				}
+			}
+		} else if (size>=3){
+			normalizeIntersectionOf(ce);
+		} else {
+			System.out.println("visitor Conjunct if left check ----"+ce.toString());
+		}
+	}
 
 
 	public AxiomVisitorForNormalisation(OWLDataFactory factory) {
@@ -82,43 +192,58 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubClassOfAxiom axiom) {
-		if (this.isNonComplementOFNamedClass(axiom.getSubClass()) 
-				&& this.isNonComplementOFNamedClass(axiom.getSuperClass())) {
-			//this has to be added to normalised axioms here and not in the visitors of class Expression.  
+		
+		if (isNonComplementOFNamedClass(axiom.getSubClass()) 
+				&& isNonComplementOFNamedClass(axiom.getSuperClass())) {
+
 			v_Normalised_Axioms.add(axiom);					
-		} else if(!axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
-			//C subsumes D
+		
+		} else if(isNotNamedClass(axiom.getSubClass()) && isNotNamedClass(axiom.getSuperClass())) {
+			
+			//C subsumes D -> C subsumes X and X subsumes D
 			OWLClassExpression new_classExpression = addFreshClassName(v_counter_FreshConcept);
+			
 			OWLAxiom new_Axiom_forsupcls = v_factory.getOWLSubClassOfAxiom(new_classExpression, axiom.getSuperClass());
 			OWLAxiom new_Axiom_forsubcls = v_factory.getOWLSubClassOfAxiom(axiom.getSubClass(),new_classExpression);
-			addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsubcls);
-			addAxiomToMap(v_Iterable_KeyForMap +1, new_Axiom_forsupcls);
-			//v_For_FurtherNormalisation.add(new_Axiom_forsubcls);
-			//v_For_FurtherNormalisation.add(new_Axiom_forsupcls);
+		
+			v_For_FurtherNormalisation.add(new_Axiom_forsubcls);
+			v_For_FurtherNormalisation.add(new_Axiom_forsupcls);
 			v_counter_FreshConcept++;
-		} else if (this.isNonComplementOFNamedClass(axiom.getSubClass())) {
+		
+		} else if (axiom.getSubClass() instanceof OWLObjectIntersectionOf && isNonComplementOFNamedClass(axiom.getSuperClass())) {
+			
+			v_Right_Named_ClassExpression= axiom.getSuperClass();
+			visitorForIntersectionOf((OWLObjectIntersectionOf)axiom.getSubClass());
+			
+		} else if (isNonComplementOFNamedClass(axiom.getSubClass())) {
+			
 			ClassExpressionVisitorForNormalisationRight ceVisitor = new ClassExpressionVisitorForNormalisationRight(this.v_factory);
+			
 			//set the named class for use
 			v_Leftt_Named_ClassExpression = axiom.getSubClass();
+			setCurrentClassExpression(v_Leftt_Named_ClassExpression);
 			axiom.getSuperClass().accept(ceVisitor);
-		} else if (this.isNonComplementOFNamedClass(axiom.getSuperClass())){
+		
+		} else if (isNonComplementOFNamedClass(axiom.getSuperClass())){
 			ClassExpressionVisitorForNormalisationLeft ceVisitor = new ClassExpressionVisitorForNormalisationLeft(this.v_factory);
 			//set the named class for use
 			v_Right_Named_ClassExpression = axiom.getSubClass();
+			setCurrentClassExpression(v_Right_Named_ClassExpression);
 			axiom.getSubClass().accept(ceVisitor);
-		} else if (axiom.getSubClass().isOWLThing() && this.isNonComplementOFNamedClass(axiom.getSuperClass())) {
+			
+		} else if (axiom.getSubClass().isOWLThing() && isNonComplementOFNamedClass(axiom.getSuperClass())) {
 			//Top subsumes A 
 			v_Normalised_Axioms.add(axiom);					
-		} else if (axiom.getSuperClass().isOWLNothing() && this.isNonComplementOFNamedClass(axiom.getSubClass())) {
+		} else if (axiom.getSuperClass().isOWLNothing() && isNonComplementOFNamedClass(axiom.getSubClass())) {
 			//A subsumes Bot
 			v_Normalised_Axioms.add(axiom);
-
 		} else {
 			//Empty Set
 			System.out.println("sub------------"+axiom.getSubClass().toString()
 					+"          super----------"+axiom.getSuperClass().toString());
 		}
 	}
+	
 	@Override
 	public void visit(OWLNegativeObjectPropertyAssertionAxiom arg0) {
 		//throw new IllegalAccessError("Annotation Negative Object Property Assertion Axiom Exception !");
@@ -151,13 +276,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyDomainAxiom axiom) {
-		//TODO check?
-		addAxiomToMap(v_Iterable_KeyForMap+1, axiom.asOWLSubClassOfAxiom());
+		v_For_FurtherNormalisation.add(axiom.asOWLSubClassOfAxiom());
 	}
 
 	@Override
 	public void visit(OWLEquivalentObjectPropertiesAxiom axiom) {
-		//TODO
 		Iterator<OWLSubObjectPropertyOfAxiom> iter = axiom.asSubObjectPropertyOfAxioms().iterator();
 		//It can be very big !
 		int i =10;
@@ -199,8 +322,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-		if(axiom.individualsInSignature().count()==2)
+		if(axiom.individualsInSignature().count()==2) {
 			v_Normalised_Axioms.add(axiom);
+		} else {
+			System.out.println("Individuals in Object property Assertion Axiom!"+axiom.individualsInSignature().count());
+		}
 	}
 
 	@Override
@@ -211,8 +337,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLSubObjectPropertyOfAxiom axiom) {
 		//TODO only subRole(R,T) done if() 
-		if (axiom.objectPropertiesInSignature().count() ==2)
+		if (axiom.objectPropertiesInSignature().count() ==2) {
 			v_Normalised_Axioms.add(axiom);
+		} else {
+			System.out.println("sub object property axiom - " + axiom.objectPropertiesInSignature().count());
+		}
 	}
 
 	@Override
@@ -241,23 +370,27 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	}
 	@Override
 	public void visit(OWLClassAssertionAxiom axiom) {
-		//TODO
 		if (isNonComplementOFNamedClass(axiom.getClassExpression())) {
+			//A(a)
 			v_Normalised_Axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));	
+		
 		} else {
-			v_Normalised_Axioms.add(v_factory.getOWLClassAssertionAxiom(addFreshClassName(freshConceptNumber), axiom.getIndividual()));
-			addAxiomToMap(v_Iterable_KeyForMap+1, addSubClassAxiom(addFreshClassName(freshConceptNumber), axiom.getClassExpression()));
-			freshConceptNumber++;
+			OWLClassExpression new_Expression =addFreshClassName(v_counter_FreshConcept);
+			v_counter_FreshConcept++;
+			//X(a)
+			v_Normalised_Axioms.add(v_factory.getOWLClassAssertionAxiom(new_Expression, axiom.getIndividual()));
+			//X :- C
+			v_For_FurtherNormalisation.add(addSubClassAxiom(new_Expression, axiom.getClassExpression()));
+			
 		}
 	}
 
 	@Override
 	public void visit(OWLEquivalentClassesAxiom axiom) {
-		//TODO There can be many axioms here!
 		int i =10;
 		Iterator<OWLSubClassOfAxiom> iter = axiom.asOWLSubClassOfAxioms().iterator();
 		while (iter.hasNext()) {
-			addAxiomToMap(v_Iterable_KeyForMap+1, iter.next());
+			v_For_FurtherNormalisation.add(iter.next());
 			i++;
 			if (i==10)
 				break;
