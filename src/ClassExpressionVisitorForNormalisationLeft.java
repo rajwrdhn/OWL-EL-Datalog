@@ -116,9 +116,6 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 				setCurrentClassExpression(newExpr);
 			}
 		}
-		
-		setCurrentClassExpression(addFreshClassName(v_counter_FreshConcept));
-		v_counter_FreshConcept++;
 	}
 	
 	public OWLClassExpression getIntersectionOf(Set<OWLClassExpression> ce_conjunct) {
@@ -133,9 +130,9 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	public void visit(OWLClass ce) {
 		if(ce.isOWLNothing()) {
 			v_Normalised_Axioms.add(addSubClassAxiom(ce, getCurrentClassExpression()));
-		} else if(ce.isOWLNamedIndividual()) {
-			v_Normalised_Axioms.add(addSubClassAxiom(ce, getCurrentClassExpression()));
-		} 
+		} else {
+			System.out.println("OWLObject classs clsExprNormLeft"+ce.getClassExpressionType());
+		}
 	}
 	
 	@Override
@@ -164,11 +161,11 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 			if (ce.getFiller() instanceof OWLObjectIntersectionOf) {
 				v_For_FurtherNormalisation.add(addSubClassAxiom(ce.getFiller(), new_Expr));
-				v_Normalised_Axioms.add(addSomevaluesFromAxiom(new_Expr, ce.getProperty(), getCurrentClassExpression()));
+				v_Normalised_Axioms.add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
 				setCurrentClassExpression(new_Expr);
 			} else {
 
-				v_Normalised_Axioms.add(addSomevaluesFromAxiom(new_Expr, ce.getProperty(), getCurrentClassExpression()));
+				v_Normalised_Axioms.add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
 				setCurrentClassExpression(new_Expr);
 			}
 		}
@@ -182,9 +179,7 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	@Override
 	public void visit(OWLObjectHasValue ce) {
 		// Exists R {o} subsumes A
-		//S subsumes Exists R {o}
-		// Exists R B subsumes B 
-		v_Normalised_Axioms.add(addSubClassAxiom(ce, getCurrentClassExpression()));
+		v_Normalised_Axioms.add(addSubClassAxiom((OWLClassExpression)ce.getFiller(), getCurrentClassExpression()));
 	}
 
 	@Override
@@ -199,11 +194,11 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 			if (ce.getFiller() instanceof OWLObjectIntersectionOf) {
 				v_For_FurtherNormalisation.add(addSubClassAxiom(ce.getFiller(), new_Expr));
-				v_Normalised_Axioms.add(addSomevaluesFromAxiom(new_Expr, ce.getProperty(), getCurrentClassExpression()));
+				v_Normalised_Axioms.add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
 				setCurrentClassExpression(new_Expr);
 			} else {
 
-				v_Normalised_Axioms.add(addSomevaluesFromAxiom(new_Expr, ce.getProperty(), getCurrentClassExpression()));
+				v_Normalised_Axioms.add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
 				setCurrentClassExpression(new_Expr);
 			}
 		}

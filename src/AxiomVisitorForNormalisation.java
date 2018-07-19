@@ -32,7 +32,6 @@ import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
@@ -51,12 +50,61 @@ import org.semanticweb.owlapi.model.SWRLRule;
  * Visitor Class for Axioms in the Ontology.
  */
 public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomVisitor {
+	
 	//protected final List<OWLClassExpression[]> v_expressionList;
 	protected static OWLClassExpression v_Right_Named_ClassExpression = null;
 	protected static OWLClassExpression v_Leftt_Named_ClassExpression = null;
+	
+	protected static OWLClassExpression v_classExpression = null;
+	
+	protected static Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<>();
+
+	protected static Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
+	
+	protected static int v_counter_FreshConcept = 0;
 
 	public AxiomVisitorForNormalisation(OWLDataFactory factory) {
 		super(factory);
+		//v_counter_FreshConcept = 0;
+	}
+	
+	/**
+	 * set the class expression to be used as super or sub class in ClassExpressionNormalize Visitor
+	 */
+	public void setCurrentClassExpression(OWLClassExpression ce) {
+		v_classExpression = ce;
+	}
+	
+	public void setCounterOfFreshNumber(int x) {
+		v_counter_FreshConcept= x;
+	}
+	public int getCounterOfFreshNumber() {
+		return v_counter_FreshConcept;
+	}
+
+	/** 
+	 * @return classExpression set in for ClassExpressionNormalize Visitor
+	 */
+	public OWLClassExpression getCurrentClassExpression() {
+		return v_classExpression;
+	}
+
+
+	
+	public Set<OWLAxiom> getNormalisedAxiom() {		
+		return v_Normalised_Axioms;
+	}
+	
+	public Set<OWLAxiom> getAxiomsForFurtherNorm() {
+		return v_For_FurtherNormalisation;
+	}
+	
+	public void clear() {
+		v_For_FurtherNormalisation.clear();
+	}
+	
+	public void removeNull() {
+		v_For_FurtherNormalisation.remove(null);
 	}
 
 	@Override
@@ -84,7 +132,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubClassOfAxiom axiom) {
-		
+		System.out.println(v_counter_FreshConcept);
 		if (isNonComplementOFNamedClass(axiom.getSubClass()) 
 				&& isNonComplementOFNamedClass(axiom.getSuperClass())) {
 
@@ -104,18 +152,24 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 		
 		} else if (isNonComplementOFNamedClass(axiom.getSubClass())) {
 			
-			ClassExpressionVisitorForNormalisationRight ceVisitor = new ClassExpressionVisitorForNormalisationRight(this.v_factory);
-			
+			ClassExpressionVisitorForNormalisationRight ceVisitor = new ClassExpressionVisitorForNormalisationRight(v_factory);
+			System.out.println("here !");
 			//set the named class for use
 			v_Leftt_Named_ClassExpression = axiom.getSubClass();
+			System.out.println("here !"+ v_Leftt_Named_ClassExpression);
 			setCurrentClassExpression(v_Leftt_Named_ClassExpression);
+			System.out.println("here !"+ getCurrentClassExpression().toString());
 			axiom.getSuperClass().accept(ceVisitor);
 		
 		} else if (isNonComplementOFNamedClass(axiom.getSuperClass())){
-			ClassExpressionVisitorForNormalisationLeft ceVisitor = new ClassExpressionVisitorForNormalisationLeft(this.v_factory);
+			
+			ClassExpressionVisitorForNormalisationLeft ceVisitor = new ClassExpressionVisitorForNormalisationLeft(v_factory);
+			
 			//set the named class for use
+			
 			v_Right_Named_ClassExpression = axiom.getSubClass();
 			setCurrentClassExpression(v_Right_Named_ClassExpression);
+			
 			axiom.getSubClass().accept(ceVisitor);
 			
 		} else {
@@ -147,7 +201,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLDisjointClassesAxiom axiom) {
-		throw new IllegalAccessError("Disjoint Class Axiom Exception !");
+		//throw new IllegalAccessError("Disjoint Class Axiom Exception !");
 	}
 
 	@Override
@@ -198,7 +252,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyRangeAxiom axiom) {
-		throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
+		//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
 	}
 
 	@Override
@@ -285,7 +339,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLTransitiveObjectPropertyAxiom axiom) {
-		throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
+		//throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
 	}
 
 	@Override
@@ -310,12 +364,12 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubPropertyChainOfAxiom axiom) {
-		throw new IllegalArgumentException("Sub Property Chain Of Axiom" + axiom.toString());
+		//throw new IllegalArgumentException("Sub Property Chain Of Axiom" + axiom.toString());
 	}
 
 	@Override
 	public void visit(OWLInverseObjectPropertiesAxiom axiom) {
-		throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
+		//throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
 	}
 
 	@Override

@@ -21,23 +21,17 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 public class Normalize {
 
-	protected Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<Integer,Set<OWLAxiom>>();
-	protected int v_Iterable_KeyForMap = 1;
+	protected Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<>();
+	protected static int v_Iterable_KeyForMap = 1;
+    
+	protected final OWLDataFactory v_factory;
 	
-	protected Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<OWLAxiom>();
-
-	public Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
-
-	protected OWLDataFactory v_factory;
-
-	protected long v_counter_FreshConcept = 0;
-
-
-	public OWLClassExpression v_classExpression = null;
-
+	protected static int v_counter;
+	
 	//constructor
 	public Normalize(OWLDataFactory factory) {
 		v_factory=factory;
+		v_counter = 0;
 	}
 
 	/**
@@ -50,16 +44,10 @@ public class Normalize {
 	public void getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Set<OWLAxiom> asi = new HashSet<>();
 		
-		onto.axioms().forEach(x -> asi.add(x));
+		onto.logicalAxioms().forEach(x -> asi.add(x));
 		
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
-		/*onto.axioms().forEach(x -> {
-            if (x != null) {
-            	v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
-            } //else 
-        });*/
-		//map.values().removeIf(Objects::isNull);
-		//k_axioms.addAll((Collection<? extends OWLAxiom>) onto.axioms());
+
 		if(v_Iterable_MapAxioms.isEmpty()) {
 			System.out.println("No Axioms in the Ontology!!");
 		} else {
@@ -74,16 +62,36 @@ public class Normalize {
 	 */
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
 		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
+
+		axmVisitor.setCounterOfFreshNumber(v_counter+1);
 		
 		for (OWLAxiom axiom : axioms) {
+			System.out.println(axiom);
 			axiom.accept(axmVisitor);
 		}
-		v_Iterable_KeyForMap++;
-		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, v_For_FurtherNormalisation);
-		v_For_FurtherNormalisation.clear();
-		if (v_Iterable_MapAxioms.get(v_Iterable_KeyForMap).isEmpty()) {
+		//AxiomVisitorForNormalisation vsNorm = new AxiomVisitorForNormalisation(v_factory,v_counter_FreshConcept);
+		
+		for (OWLAxiom axiom : axmVisitor.getAxiomsForFurtherNorm()) {
+			System.out.println("for more norm"+ axiom);
+		}
+		v_Iterable_KeyForMap = v_Iterable_KeyForMap + 1;
+		
+		for(OWLAxiom axiom: axmVisitor.getNormalisedAxiom()) {
+			System.out.println("normalised "+axiom);
+		}
+		
+		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, axmVisitor.getAxiomsForFurtherNorm());
+		System.out.println("counter"+ v_counter);
+		v_counter = axmVisitor.getCounterOfFreshNumber();
+		System.out.println("counter"+ v_counter);
+		
+		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty()) {			
 			System.out.println("Normalisation Complete!! ");
 		} else {
+			System.out.println("last round !!");
+			System.out.println(v_Iterable_KeyForMap);
+			axmVisitor.clear();
+			axmVisitor.removeNull();
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap));
 		}
 	}
@@ -93,9 +101,9 @@ public class Normalize {
 	}
 	
 	//NOt working as map is not initialised
-	public void addAxiomToMap(int number, OWLAxiom axiom) {
+	public void addAxiomsToMap(int number, Set<OWLAxiom> axioms) {
 		if (v_Iterable_MapAxioms.containsKey(number)) {
-			v_Iterable_MapAxioms.get(number).add(axiom);
+			v_Iterable_MapAxioms.put(number, axioms);
 		} else {
 			System.out.println("Okay !!");
 		}
@@ -122,9 +130,14 @@ public class Normalize {
 		return (OWLAxiom)v_factory.getOWLSubClassOfAxiom(ce1, ce2);
 	}
 
-	public OWLAxiom addSomevaluesFromAxiom(OWLClassExpression ce1, OWLObject obj,OWLClassExpression ce2) {		
-		return (OWLAxiom) v_factory.getOWLSubClassOfAxiom(ce1, v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce2));
+	public OWLAxiom addSomevaluesFromAxiomLeft(OWLClassExpression ce1, OWLObject obj,OWLClassExpression ce2) {		
+		return (OWLAxiom) v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce1), ce2);
 	}
+	
+	public OWLAxiom addSomevaluesFromAxiomRight(OWLClassExpression ce1, OWLObject obj,OWLClassExpression ce2) {		
+		return (OWLAxiom) v_factory.getOWLSubClassOfAxiom(ce1,v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce2));
+	}
+	
 	/**
 	 * Adds Fresh Class name to the existentially quantified Concept expression
 	 */
@@ -138,19 +151,5 @@ public class Normalize {
 	public OWLClassExpression addFreshClassName(long conceptNumber) {
 
 		return v_factory.getOWLClass(IRI.create("#FreshConcept" + conceptNumber));
-	}
-
-	/**
-	 * set the class expression to be used as super or sub class in ClassExpressionNormalize Visitor
-	 */
-	public void setCurrentClassExpression(OWLClassExpression ce) {
-		v_classExpression = ce;
-	}
-
-	/** 
-	 * @return classExpression set in for ClassExpressionNormalize Visitor
-	 */
-	public OWLClassExpression getCurrentClassExpression() {
-		return v_classExpression;
 	}
 }
