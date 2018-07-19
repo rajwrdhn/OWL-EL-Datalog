@@ -33,15 +33,11 @@ public class Normalize {
 	protected long v_counter_FreshConcept = 0;
 
 
-	public OWLClassExpression v_classExpression;
-	protected static long freshConceptNumber;
-	protected static long auxnum;
+	public OWLClassExpression v_classExpression = null;
+
 	//constructor
 	public Normalize(OWLDataFactory factory) {
 		v_factory=factory;
-		v_classExpression = null;
-		freshConceptNumber = 1;
-		auxnum = 1;
 	}
 
 	/**
@@ -118,29 +114,30 @@ public class Normalize {
 
 	public OWLAxiom addAxiomOfConjunctSubClass(OWLClassExpression ce1, OWLClassExpression ce2, OWLClassExpression ce3) {
 		//ce1 and ce2 subsumes ce3
-		return v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(ce1,ce2),ce3);
+		return (OWLAxiom)v_factory.getOWLSubClassOfAxiom((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1,ce2),ce3);
 	}
 
 	public OWLAxiom addSubClassAxiom(OWLClassExpression ce1, OWLClassExpression ce2) {
 		//ce1 subsumes ce2
-		return v_factory.getOWLSubClassOfAxiom(ce1, ce2);
+		return (OWLAxiom)v_factory.getOWLSubClassOfAxiom(ce1, ce2);
 	}
 
 	public OWLAxiom addSomevaluesFromAxiom(OWLClassExpression ce1, OWLObject obj,OWLClassExpression ce2) {		
-		return v_factory.getOWLSubClassOfAxiom(ce1, v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce2));
+		return (OWLAxiom) v_factory.getOWLSubClassOfAxiom(ce1, v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce2));
 	}
+	/**
+	 * Adds Fresh Class name to the existentially quantified Concept expression
+	 */
+	public OWLClassExpression addSomeValuesFromToFreshClassName(OWLObjectSomeValuesFrom expr, long conceptNumber) {
+		return (OWLClassExpression)v_factory.getOWLObjectSomeValuesFrom(expr.getProperty(), addFreshClassName(conceptNumber));
+	}
+		
 	/**
 	 * Adds the fresh concept name
 	 */
 	public OWLClassExpression addFreshClassName(long conceptNumber) {
 
 		return v_factory.getOWLClass(IRI.create("#FreshConcept" + conceptNumber));
-	}
-	/**
-	 * Adds Fresh Class name to the existentially quantified Concept expression
-	 */
-	public OWLObjectSomeValuesFrom addSomeValuesFromToFreshClassName(OWLObjectSomeValuesFrom expr, long conceptNumber) {
-		return v_factory.getOWLObjectSomeValuesFrom(expr.getProperty(), addFreshClassName(conceptNumber));
 	}
 
 	/**
