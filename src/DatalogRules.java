@@ -1,12 +1,94 @@
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
+import org.semanticweb.vlog4j.core.model.api.Rule;
+import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class DatalogRules extends DatalogTranslation{
-	public DatalogRules() {
+	
+	protected final List<Rule> v_l_Rules = new ArrayList<>();
+	
+	protected static Set<Predicate> v_s_nomEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_clsEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_rolEDB = new HashSet<>();	
+	protected static Set<Predicate> v_s_subClassEDB = new HashSet<>();	
+	protected static Set<Predicate> v_s_topEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_botEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_subConjEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_subExEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_supExEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_subSelfEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_supSelfEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_subRoleEDB = new HashSet<>();
+	
+	protected final Variable x = Expressions.makeVariable("x");
+	protected final Variable y = Expressions.makeVariable("y");
+	protected final Variable z = Expressions.makeVariable("z");
+	protected final Variable v = Expressions.makeVariable("v");
+	protected final Variable w = Expressions.makeVariable("w");
+	
+	public DatalogRules(Set<OWLAxiom> normaxms) {
+		super(normaxms);
+	}
 
+	public void setnomEDB(Set<Predicate> setnom) {
+		v_s_nomEDB = setnom;
+	}
+	
+	public void setclassEDB(Set<Predicate> setcls) {
+		v_s_clsEDB = setcls;
+	}
+	
+	public void setrolEDB(Set<Predicate> setrol) {
+		v_s_rolEDB = setrol;
+	}
+	
+	public void setsubclassEDB(Set<Predicate> setsubclass) {
+		v_s_subClassEDB = setsubclass;
+	}
+	
+	public void settopEDB(Set<Predicate> settop) {
+		v_s_topEDB = settop;
+	}
+	
+	public void setbotEDB(Set<Predicate> setbot) {
+		v_s_botEDB = setbot;
+	}
+	
+	public void setsubconjEDB(Set<Predicate> setsubconj) {
+		v_s_subConjEDB = setsubconj;
+	}
+	
+	public void setsubexEDB(Set<Predicate> setsubex) {
+		v_s_subExEDB = setsubex;
+	}
+	
+	public void setsupexEDB(Set<Predicate> setsupex) {
+		v_s_supExEDB = setsupex;
+	}
+	
+	public void setsubselfEDB(Set<Predicate> setsubself) {
+		v_s_subSelfEDB = setsubself;
+	}
+	
+	public void setsupselfEDB(Set<Predicate> setsupself) {
+		v_s_supSelfEDB = setsupself;
+	}
+	
+	public void setsubroleEDB(Set<Predicate> setsubrole) {
+		v_s_subRoleEDB = setsubrole;
 	}
 	
 	public void makeRules() {
+		String v_P_inst = "inst";
+		String v_P_triple = "triple";
+		String v_P_self = "self";
+		
 		for (Predicate nom : v_s_nomEDB) {
 			// nom(x) :- v_P_inst(x,x)
 			v_l_Rules.add(Expressions.makeRule(Expressions.makeAtom(nom, x), 

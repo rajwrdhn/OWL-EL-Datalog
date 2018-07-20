@@ -1,3 +1,6 @@
+import java.util.Set;
+
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLClassExpressionVisitor;
@@ -26,7 +29,8 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalisedAxioms implements OWLClassExpressionVisitor {
 	protected OWLClassExpression sub_class_of_axiom; 
 
-	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm) {
+	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm, Set<OWLAxiom> normalisedaxms) {
+		super(normalisedaxms);
 		sub_class_of_axiom = subClassExprOfAxm;
 	}
 	@Override

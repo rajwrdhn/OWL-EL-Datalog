@@ -1,5 +1,7 @@
 import java.util.Iterator;
+import java.util.Set;
 
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLClassExpressionVisitor;
@@ -27,7 +29,8 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalisedAxioms implements OWLClassExpressionVisitor {
 
 	protected OWLClassExpression super_class_of_axiom; 
-	public ClassExpressionVisitorForNormalisedAxiomLeft(OWLClassExpression superClassExprOfAxm) {
+	public ClassExpressionVisitorForNormalisedAxiomLeft(OWLClassExpression superClassExprOfAxm, Set<OWLAxiom> normalisedaxms) {
+		super(normalisedaxms);
 		super_class_of_axiom = superClassExprOfAxm;
 	}
 	@Override
@@ -101,7 +104,20 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 
 	@Override
 	public void visit(OWLObjectSomeValuesFrom ce) {
+		String predicatename = super_class_of_axiom.toString() + ce.toString();
+		Predicate predicate = Expressions.makePredicate(predicatename, 3);
 		
+		Constant c1 = Expressions.makeConstant(ce.getFiller().toString());
+		Constant c2 = Expressions.makeConstant(super_class_of_axiom.toString());
+		Constant c3 = Expressions.makeConstant(ce.getProperty().toString());
+		
+		addClassNamesEDB(super_class_of_axiom.toString());
+		addClassNamesEDB(ce.getFiller().toString());	
+		addrolesEDB(c3.getName());
+		
+		addToSubExEDB(predicate);
+		
+		addToThreeConstantFacts(predicate, c3, c1, c2);
 	}
 
 	@Override

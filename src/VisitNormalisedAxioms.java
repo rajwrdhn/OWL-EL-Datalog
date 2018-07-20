@@ -1,9 +1,12 @@
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLAxiomVisitor;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
@@ -39,12 +42,148 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.SWRLRule;
+import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxiomVisitor{
+	public VisitNormalisedAxioms(Set<OWLAxiom> normalisedAxioms) {
+		super(normalisedAxioms);
+		// TODO Auto-generated constructor stub
+	}
+
 	protected static long auxnum = 0;
+	
+	protected Set<Atom> v_s_Facts = new HashSet<>();
+	
+	protected static Set<Predicate> v_s_nomEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_clsEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_rolEDB = new HashSet<>();	
+	protected static Set<Predicate> v_s_subClassEDB = new HashSet<>();	
+	protected static Set<Predicate> v_s_topEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_botEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_subConjEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_subExEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_supExEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_subSelfEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_supSelfEDB = new HashSet<>();
+	protected static Set<Predicate> v_s_subRoleEDB = new HashSet<>();
+	
+	//EDB Predicates
+	public void addToSubClassEDB(Predicate predicate) {
+		v_s_subClassEDB.add(predicate);
+	}
+	
+	public void addToSubConjEDB(Predicate predicate) {
+		v_s_subConjEDB.add(predicate);
+	}
+	
+	public void addToSubExEDB(Predicate predicate) {
+		v_s_subExEDB.add(predicate);
+	}
+	
+	public void addToSupExEDB(Predicate predicate) {
+		v_s_supExEDB.add(predicate);
+	}
+	
+	public void addToSubSelfEDB(Predicate predicate) {
+		v_s_subSelfEDB.add(predicate);
+	}
+	
+	public void addToSupSelfEDB(Predicate predicate) {
+		v_s_subSelfEDB.add(predicate);
+	}
+	
+	public void addToSubRoleEDB(Predicate predicate) {
+		v_s_subRoleEDB.add(predicate);
+	}
+	
+	public void addTopEDB(String predicatename) {
+		v_s_topEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
+	public void addBotEDB(String predicatename) {
+		v_s_botEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
+	public void addrolesEDB(String predicatename) {
+		v_s_rolEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
+	public void addNominalsEDB(String predicatename) {
+		v_s_nomEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
+	public void addClassNamesEDB(String predicatename) {
+		v_s_clsEDB.add(Expressions.makePredicate(predicatename, 1));
+	}
+	
+	//Facts
+	public void addToDoubleConstantFacts(Predicate predicate, Constant c1, Constant c2) {
+		Atom a = Expressions.makeAtom(predicate, c1, c2);
+		//Add Atoms
+		v_s_Facts.add(a);
+	}
+	
+	public void addToFourConstantFacts(Predicate predicate, Constant c1, Constant c2, Constant c3, Constant c4) {
+		Atom a = Expressions.makeAtom(predicate, c1, c2, c3, c4);
+		//Add Atoms
+		v_s_Facts.add(a);
+	}
+	
+	public void addToThreeConstantFacts(Predicate predicate, Constant c1, Constant c2,Constant c3) {
+		Atom a = Expressions.makeAtom(predicate, c1, c2, c3);
+		//Add Atoms
+		v_s_Facts.add(a);
+	}
+	
+	public Set<Predicate> getSetNom() {
+		return v_s_nomEDB;
+	}
+	
+	public Set<Predicate> getSetCls() {
+		return v_s_clsEDB;
+	}
+	
+	public Set<Predicate> getSetRol() {
+		return v_s_rolEDB;
+	}
+	
+	public Set<Predicate> getSetsubcls() {
+		return v_s_subClassEDB;
+	}
+	
+	public Set<Predicate> getSetTop() {
+		return v_s_topEDB;
+	}
+	
+	public Set<Predicate> getSetBot() {
+		return v_s_botEDB;
+	}
+	public Set<Predicate> getSetsubConj() {
+		return v_s_subConjEDB;
+	}
+	
+	public Set<Predicate> getSetsubEx() {
+		return v_s_subExEDB;
+	}
+	
+	public Set<Predicate> getSetsupEx() {
+		return v_s_supExEDB;
+	}
+	
+	public Set<Predicate> getSetsubSelf() {
+		return v_s_subSelfEDB;
+	}
+	
+	public Set<Predicate> getSetsupSelf() {
+		return v_s_supSelfEDB;
+	}
+	
+	public Set<Predicate> getSetsubRole() {
+		return v_s_subRoleEDB;
+	}
 	
 	@Override
 	public void visit(OWLAnnotationAssertionAxiom axiom) {
@@ -69,10 +208,10 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 	@Override
 	public void visit(OWLSubClassOfAxiom axiom) {
 		if(axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
-			ClassExpressionVisitorForNormalisedAxiomRight ce_visit = new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSuperClass()); 
+			ClassExpressionVisitorForNormalisedAxiomRight ce_visit = new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSuperClass(), v_s_normalisedAxioms); 
 			axiom.getSuperClass().accept(ce_visit);
 		} else {
-			ClassExpressionVisitorForNormalisedAxiomLeft ce_visit = new ClassExpressionVisitorForNormalisedAxiomLeft(axiom.getSubClass()); 
+			ClassExpressionVisitorForNormalisedAxiomLeft ce_visit = new ClassExpressionVisitorForNormalisedAxiomLeft(axiom.getSubClass(), v_s_normalisedAxioms); 
 			axiom.getSubClass().accept(ce_visit);
 		}
 	}

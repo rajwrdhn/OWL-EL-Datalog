@@ -45,7 +45,7 @@ public class Normalize {
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Set<OWLAxiom> asi = new HashSet<>();
 		
-		onto.logicalAxioms().forEach(x -> asi.add(x));
+		onto.axioms().forEach(x -> asi.add(x));
 		
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
 		
