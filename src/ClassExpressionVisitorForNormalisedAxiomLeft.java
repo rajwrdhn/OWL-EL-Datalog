@@ -23,50 +23,26 @@ import org.semanticweb.owlapi.model.OWLObjectOneOf;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.vlog4j.core.model.api.Constant;
-import org.semanticweb.vlog4j.core.model.api.Predicate;
-import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalisedAxioms implements OWLClassExpressionVisitor {
 
 	protected OWLClassExpression super_class_of_axiom; 
+
 	public ClassExpressionVisitorForNormalisedAxiomLeft(OWLClassExpression superClassExprOfAxm, Set<OWLAxiom> normalisedaxms) {
 		super(normalisedaxms);
 		super_class_of_axiom = superClassExprOfAxm;
 	}
+
 	@Override
 	public void visit(OWLClass ce) {
-		// TODO 
-		if(ce.isTopEntity()) {
-			String predicatename = ce.toString() + super_class_of_axiom.toString();
-			addTopEDB(predicatename);
-		} else if (ce.isOWLNamedIndividual()) {
-			String predicatename = super_class_of_axiom.toString() + ce.toString();
-			Predicate predicate = Expressions.makePredicate(predicatename, 2);
+		if (ce.isOWLNamedIndividual()) {
+			Constant c1 = getConstant(ce.toString());
+			Constant c2 = getConstant(super_class_of_axiom.toString());
 			
-			Constant c1 = Expressions.makeConstant(ce.toString());
-			Constant c2 = Expressions.makeConstant(super_class_of_axiom.toString());
-			
-			addClassNamesEDB(super_class_of_axiom.toString());
-			addNominalsEDB(ce.toString());
-			addToSubClassEDB(predicate);
-			
-			addToDoubleConstantFacts(predicate, c1, c2);
-
-		} else {
-			String predicatename = super_class_of_axiom.toString() + ce.toString();
-			Predicate predicateEDB = Expressions.makePredicate(predicatename+"EDB", 2);
-			Predicate predicateIDB = Expressions.makePredicate(predicatename+"IDB", 2);
-			
-			Constant c1 = Expressions.makeConstant(ce.toString());
-			Constant c2 = Expressions.makeConstant(super_class_of_axiom.toString());
-			
-			addClassNamesEDB(super_class_of_axiom.toString());
-			addClassNamesEDB(ce.toString());			
-			addToSubClassEDB(predicateEDB);
-			addToSubClassEDB(predicateIDB);
-			
-			addToDoubleConstantFacts(predicateEDB, c1, c2);
-		}
+			toDoubleConstantFacts(v_subClassEDB, c1, c2);
+			toSingleConstantFacts(v_nomEDB, c1);
+			toSingleConstantFacts(v_clsEDB, c2);			
+		} 
 	}
 
 	@Override
@@ -74,24 +50,20 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 		Iterator<OWLClassExpression> iter = ce.asConjunctSet().iterator();
 		OWLClassExpression[] clsindi = new OWLClassExpression[2];
 		int i = 0 ;
-		
+
 		while(iter.hasNext()) {
 			clsindi[i] = iter.next();
 			i++;
 		}
+
+		Constant c1 = getConstant(clsindi[0].toString());
+		Constant c2 = getConstant(clsindi[1].toString());
+		Constant c3 = getConstant(super_class_of_axiom.toString());
 		
-		String predicatename = ce.toString()+super_class_of_axiom.toString();
-		Predicate predicate = Expressions.makePredicate(predicatename, 3);
-		
-		Constant c1 = Expressions.makeConstant(clsindi[0].toString());
-		Constant c2 = Expressions.makeConstant(clsindi[1].toString());
-		Constant c3 = Expressions.makeConstant(super_class_of_axiom.toString());
-		
-		addClassNamesEDB(c1.getName());
-		addClassNamesEDB(c2.getName());
-		addClassNamesEDB(c3.getName());
-		
-		addToThreeConstantFacts(predicate, c1, c2, c3);
+		toThreeConstantFacts(v_subConjEDB, c1, c2, c3);
+		toSingleConstantFacts(v_clsEDB, c1);
+		toSingleConstantFacts(v_clsEDB, c2);
+		toSingleConstantFacts(v_clsEDB, c3);
 	}
 
 	@Override
@@ -106,20 +78,14 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 
 	@Override
 	public void visit(OWLObjectSomeValuesFrom ce) {
-		String predicatename = super_class_of_axiom.toString() + ce.toString();
-		Predicate predicate = Expressions.makePredicate(predicatename, 3);
+
+		Constant c1 = getConstant(ce.getFiller().toString());
+		Constant c2 = getConstant(super_class_of_axiom.toString());
+		Constant c3 = getConstant(ce.getProperty().toString());
 		
-		Constant c1 = Expressions.makeConstant(ce.getFiller().toString());
-		Constant c2 = Expressions.makeConstant(super_class_of_axiom.toString());
-		Constant c3 = Expressions.makeConstant(ce.getProperty().toString());
-		
-		addClassNamesEDB(super_class_of_axiom.toString());
-		addClassNamesEDB(ce.getFiller().toString());	
-		addrolesEDB(c3.getName());
-		
-		addToSubExEDB(predicate);
-		
-		addToThreeConstantFacts(predicate, c3, c1, c2);
+		toSingleConstantFacts(v_clsEDB, c1);
+		toThreeConstantFacts(v_subExEDB, c3, c1, c3);
+		toSingleConstantFacts(v_clsEDB, c2);
 	}
 
 	@Override
@@ -149,17 +115,13 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 
 	@Override
 	public void visit(OWLObjectHasSelf ce) {
-		String predicatename = super_class_of_axiom.toString() + ce.getProperty().toString();
-		Predicate predicate = Expressions.makePredicate(predicatename, 2);
 		
-		Constant c1 = Expressions.makeConstant(ce.getProperty().toString());
-		Constant c2 = Expressions.makeConstant(super_class_of_axiom.toString());
+		Constant c1 = getConstant(ce.getProperty().toString());
+		Constant c2 = getConstant(super_class_of_axiom.toString());
 		
-		addClassNamesEDB(super_class_of_axiom.toString());
-		addrolesEDB(c1.getName());
-		addToSupExEDB(predicate);
-		
-		addToDoubleConstantFacts(predicate, c1, c2);
+		toDoubleConstantFacts(v_subSelfEDB, c1, c2);
+		toSingleConstantFacts(v_rolEDB, c1);
+		toSingleConstantFacts(v_clsEDB, c2);
 	}
 
 	@Override

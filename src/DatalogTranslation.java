@@ -1,11 +1,9 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
@@ -15,7 +13,6 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException
 import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
-
 
 public class DatalogTranslation {
 	protected final Set<OWLAxiom> v_s_normalisedAxioms;
@@ -32,58 +29,14 @@ public class DatalogTranslation {
 		
 		DatalogRules dlogrules = new DatalogRules(v_s_normalisedAxioms);
 		
-		assignPredicates(normalizedAxiomVisitor, dlogrules);
-		
 		dlogrules.makeRules();
 		
 		callReasoner(dlogrules,normalizedAxiomVisitor);
 	}
-	
-	public void assignPredicates(VisitNormalisedAxioms normalizedAxiomVisitor, DatalogRules dlogrules) {
-		//assign
-		Set<Predicate> setnom = normalizedAxiomVisitor.getSetNom();
-		dlogrules.setnomEDB(setnom);
-		System.out.println(setnom.isEmpty());
-		
-		Set<Predicate> setcls = normalizedAxiomVisitor.getSetCls();
-		dlogrules.setclassEDB(setcls);
-		System.out.println(setcls.size());
-		
-		Set<Predicate> setrol = normalizedAxiomVisitor.getSetRol();
-		dlogrules.setrolEDB(setrol);
-		System.out.println(setrol.size());
-		
-		Set<Predicate> setsubclass = normalizedAxiomVisitor.getSetsubcls();
-		dlogrules.setsubclassEDB(setsubclass);
-		
-		Set<Predicate> settop = normalizedAxiomVisitor.getSetTop();
-		dlogrules.setclassEDB(settop);
-		
-		Set<Predicate> setbot = normalizedAxiomVisitor.getSetBot();
-		dlogrules.setrolEDB(setbot);
-		
-		Set<Predicate> setsubconj = normalizedAxiomVisitor.getSetsubConj();
-		dlogrules.setclassEDB(setsubconj);
-		
-		Set<Predicate> setsubex = normalizedAxiomVisitor.getSetsubEx();
-		dlogrules.setrolEDB(setsubex);
-		
-		Set<Predicate> setsupex = normalizedAxiomVisitor.getSetsupEx();
-		dlogrules.setrolEDB(setsupex);
-		
-		Set<Predicate> setsubself = normalizedAxiomVisitor.getSetsubSelf();
-		dlogrules.setrolEDB(setsubself);
-		
-		Set<Predicate> setsupself = normalizedAxiomVisitor.getSetsupSelf();
-		dlogrules.setrolEDB(setsupself);
-		
-		Set<Predicate> setsubrole = normalizedAxiomVisitor.getSetsubRole();
-		dlogrules.setrolEDB(setsubrole);
-	}
-	
+
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Reasoner reasoner = Reasoner.getInstance();
-		List<Rule> allrules = dlogruls.v_l_Rules;
+		List<Rule> allrules = dlogruls.v_l_rules;
 		Set<Atom> allfacts = visitorget.getFacts();
 		
 		System.out.println(allrules.size());

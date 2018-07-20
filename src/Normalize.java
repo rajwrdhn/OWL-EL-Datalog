@@ -83,6 +83,8 @@ public class Normalize {
 		axmVisitor.removeNull();
 		
 		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty() ) {
+			axmVisitor.clear();
+			axmVisitor.removeNull();
 			System.out.println("Normalisation Complete!! ");		
 		} else {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
