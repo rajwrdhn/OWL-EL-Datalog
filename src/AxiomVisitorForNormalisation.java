@@ -234,8 +234,8 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLDifferentIndividualsAxiom axiom) {
-		throw new IllegalArgumentException(
-				"Not an OWL 2 EL axiom ! "+axiom.toString()+" Different Individuals Axiom !");
+		//throw new IllegalArgumentException(
+		//		"Not an OWL 2 EL axiom ! "+axiom.toString()+" Different Individuals Axiom !");
 	}
 
 	@Override

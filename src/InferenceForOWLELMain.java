@@ -16,7 +16,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.VLog4jException;
 //Main class upload ontology here
 public class InferenceForOWLELMain {
 
-	protected final Set<OWLAxiom> v_normalisedAxioms = new HashSet<>();
+	protected Set<OWLAxiom> v_normalisedAxioms = new HashSet<>();
 	
 
 	public InferenceForOWLELMain() {
@@ -30,7 +30,10 @@ public class InferenceForOWLELMain {
 		Normalize norm = new Normalize(factory);	
 		norm.getFromOntology(onto);
 		
-		//v_normalisedAxioms.addAll(norm.v_Normalised_Axioms);
+		v_normalisedAxioms = norm.getFromOntology(onto);
+		for(OWLAxiom axiom: v_normalisedAxioms) {
+			System.out.println(axiom);;
+		}
 	}
 	
 	public void applydDatalogRules() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {

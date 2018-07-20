@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
@@ -21,6 +23,7 @@ import org.semanticweb.owlapi.model.OWLHasKeyAxiom;
 import org.semanticweb.owlapi.model.OWLInverseFunctionalObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -41,14 +44,16 @@ import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxiomVisitor{
+	protected static long auxnum = 0;
+	
 	@Override
 	public void visit(OWLAnnotationAssertionAxiom axiom) {
-
+		
 	}
 
 	@Override
 	public void visit(OWLSubAnnotationPropertyOfAxiom axiom) {
-
+		
 	}
 
 	@Override
@@ -99,12 +104,12 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 
 	@Override
 	public void visit(OWLObjectPropertyDomainAxiom axiom) {
-		//Normalised
+		throw new IllegalArgumentException();
 	}
 
 	@Override
 	public void visit(OWLEquivalentObjectPropertiesAxiom axiom) {
-		//Normalised
+		throw new IllegalArgumentException();
 	}
 
 	@Override
@@ -134,8 +139,28 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-		//TODO
+		Iterator<OWLNamedIndividual> iter = axiom.individualsInSignature().iterator();
+		OWLNamedIndividual[] indi  = new OWLNamedIndividual[2];
+		int i = 0;
+		while (iter.hasNext()) {
+			indi[i] = iter.next();
+			i++;
+		}
 		
+		String predicatename = axiom.toString();
+		Predicate predicate = Expressions.makePredicate(predicatename, 3);
+		
+		Constant c1 = Expressions.makeConstant(axiom.getProperty().toString());
+		Constant c2 = Expressions.makeConstant(indi[0].toString());
+		Constant c3 = Expressions.makeConstant(indi[1].toString());
+		
+		addNominalsEDB(indi[0].toString());
+		addNominalsEDB(indi[1].toString());
+		addrolesEDB(axiom.getProperty().toString());
+		
+		addToSubExEDB(predicate);
+		
+		addToThreeConstantFacts(predicate, c2, c1, c3);		
 	}
 
 	@Override
@@ -146,7 +171,16 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 	@Override
 	public void visit(OWLSubObjectPropertyOfAxiom axiom) {
 		String predicatename = axiom.toString();
+		Predicate predicate = Expressions.makePredicate(predicatename, 2);
 		
+		Constant c1 = Expressions.makeConstant(axiom.getSubProperty().toString());
+		Constant c2 = Expressions.makeConstant(axiom.getSuperProperty().toString());
+		
+		addrolesEDB(axiom.getSubProperty().toString());
+		addrolesEDB(axiom.getSuperProperty().toString());
+		addToSubRoleEDB(predicate);
+		
+		addToDoubleConstantFacts(predicate, c1, c2);		
 	}
 
 	@Override
@@ -191,7 +225,7 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 
 	@Override
 	public void visit(OWLEquivalentClassesAxiom axiom) {
-		//Normalised
+		throw new IllegalArgumentException();
 	}
 
 	@Override

@@ -23,7 +23,8 @@ public class Normalize {
 
 	protected Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<>();
 	protected static int v_Iterable_KeyForMap = 1;
-    
+    protected final Set<OWLAxiom> v_final_normalised = new HashSet<>();
+	
 	protected final OWLDataFactory v_factory;
 	
 	protected static int v_counter;
@@ -41,7 +42,7 @@ public class Normalize {
 	 * @throws EdbIdbSeparationException 
 	 * @throws ReasonerStateException 
 	 */
-	public void getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Set<OWLAxiom> asi = new HashSet<>();
 		
 		onto.logicalAxioms().forEach(x -> asi.add(x));
@@ -55,8 +56,12 @@ public class Normalize {
 		} else {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}
-
-		//return v_Normalised_Axioms;
+		
+		for(OWLAxiom axiom: axmVisitor.getNormalisedAxiom()) {
+			v_final_normalised.add(axiom);
+		}
+		
+		return v_final_normalised;
 	}
 
 	/**
@@ -67,30 +72,19 @@ public class Normalize {
 		axmVisitor.setCounterOfFreshNumber(v_counter+1);
 		
 		for (OWLAxiom axiom : axioms) {
-			System.out.println(axiom);
 			axiom.accept(axmVisitor);
 		}
-		
-		for (OWLAxiom axiom : axmVisitor.getAxiomsForFurtherNorm()) {
-			System.out.println("for more norm"+ axiom);
-		}
+
 		v_Iterable_KeyForMap = v_Iterable_KeyForMap + 1;
-		
-		for(OWLAxiom axiom: axmVisitor.getNormalisedAxiom()) {
-			System.out.println("normalised "+axiom);
-		}
-		
+
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, axmVisitor.getAxiomsForFurtherNorm());
 		
-		System.out.println("counter"+ v_counter);
-		v_counter = axmVisitor.getCounterOfFreshNumber();
-		System.out.println("counter"+ v_counter);
+		axmVisitor.clear();
+		axmVisitor.removeNull();
 		
-		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty()) {			
-			System.out.println("Normalisation Complete!! ");
+		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty() ) {
+			System.out.println("Normalisation Complete!! ");		
 		} else {
-			axmVisitor.clear();
-			axmVisitor.removeNull();
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}
 	}

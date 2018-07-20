@@ -23,9 +23,9 @@ import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 
-public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTranslation implements OWLClassExpressionVisitor {
+public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalisedAxioms implements OWLClassExpressionVisitor {
 	protected OWLClassExpression sub_class_of_axiom; 
-	protected long auxnum = 0;
+
 	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm) {
 		sub_class_of_axiom = subClassExprOfAxm;
 	}
@@ -63,7 +63,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTransl
 
 	@Override
 	public void visit(OWLObjectIntersectionOf ce) {
-		//Normalised
+
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTransl
 	public void visit(OWLObjectSomeValuesFrom ce) {
 		
 		String predicatename = sub_class_of_axiom.toString() + ce.toString();
-		Predicate predicate = Expressions.makePredicate(predicatename, 2);
+		Predicate predicate = Expressions.makePredicate(predicatename, 4);
 		
 		Constant c1 = Expressions.makeConstant(ce.getFiller().toString());
 		Constant c2 = Expressions.makeConstant(sub_class_of_axiom.toString());
@@ -89,7 +89,9 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends DatalogTransl
 		auxnum++;
 		
 		addClassNamesEDB(sub_class_of_axiom.toString());
-		addClassNamesEDB(ce.getFiller().toString());		
+		addClassNamesEDB(ce.getFiller().toString());	
+		addrolesEDB(c3.getName());
+		
 		addToSupExEDB(predicate);
 		
 		addToFourConstantFacts(predicate, c2, c3, c1, c4);
