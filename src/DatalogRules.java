@@ -84,6 +84,8 @@ public class DatalogRules extends DatalogTranslation{
 		v_s_subRoleEDB = setsubrole;
 	}
 	
+	
+	
 	public void makeRules() {
 		String v_P_inst = "inst";
 		String v_P_triple = "triple";

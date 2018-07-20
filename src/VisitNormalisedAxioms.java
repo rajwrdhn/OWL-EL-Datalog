@@ -185,6 +185,11 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 		return v_s_subRoleEDB;
 	}
 	
+
+	public Set<Atom> getFacts() {		
+		return v_s_Facts;
+	}
+	
 	@Override
 	public void visit(OWLAnnotationAssertionAxiom axiom) {
 		
@@ -416,4 +421,5 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 	public void visit(SWRLRule node) {
 		throw new IllegalArgumentException();
 	}
+
 }
