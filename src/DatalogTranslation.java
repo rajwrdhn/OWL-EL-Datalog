@@ -85,8 +85,14 @@ public class DatalogTranslation {
 		Reasoner reasoner = Reasoner.getInstance();
 		List<Rule> allrules = dlogruls.v_l_Rules;
 		Set<Atom> allfacts = visitorget.getFacts();
+		
+		System.out.println(allrules.size());
+		System.out.println(allfacts.size());
+		
 		reasoner.addRules(allrules);
 		reasoner.addFacts(allfacts);
+		
+		
 
 		reasoner.load();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
@@ -95,13 +101,13 @@ public class DatalogTranslation {
 		
 		Variable x = Expressions.makeVariable("x");
 		Variable y = Expressions.makeVariable("y");
-
+		Atom a =Expressions.makeAtom("inst", x, y);
 		/* Indeed, the Skolem Chase did not terminate before timeout. */
 		boolean skolemChaseFinished = reasoner.reason();
 		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
 		System.out.println(
-				"Answers to query " + Expressions.makeAtom("inst", x, y) + " after reasoning with the Skolem Chase for 1 second:");
-		printOutQueryAnswers(Expressions.makeAtom("inst", x, y), reasoner);
+				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
+		printOutQueryAnswers(a , reasoner);
 		reasoner.close();
 
 	}

@@ -47,7 +47,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 			
 			addClassNamesEDB(sub_class_of_axiom.toString());
 			addNominalsEDB(ce.toString());
-			addToSubClassEDB(predicate);
+			addToSubClassEDB(Expressions.makePredicate(predicatename+"rule", 2));
 			
 			addToDoubleConstantFacts(predicate, c2, c1);
 		} else {
@@ -59,7 +59,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 			
 			addClassNamesEDB(sub_class_of_axiom.toString());
 			addClassNamesEDB(ce.toString());			
-			addToSubClassEDB(predicate);
+			addToSubClassEDB(Expressions.makePredicate(predicatename+"rule", 2));
 			
 			addToDoubleConstantFacts(predicate, c2, c1);
 		}
@@ -67,7 +67,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 
 	@Override
 	public void visit(OWLObjectIntersectionOf ce) {
-
+		//should not be present after normalisation
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 		addClassNamesEDB(ce.getFiller().toString());	
 		addrolesEDB(c3.getName());
 		
-		addToSupExEDB(predicate);
+		addToSupExEDB(Expressions.makePredicate(predicatename+"rule", 2));
 		
 		addToFourConstantFacts(predicate, c2, c3, c1, c4);
 	}
@@ -136,7 +136,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 		
 		addClassNamesEDB(sub_class_of_axiom.toString());
 		addrolesEDB(predicatename);
-		addToSupExEDB(predicate);
+		addToSupExEDB(Expressions.makePredicate(predicatename+"rule", 2));
 		
 		addToDoubleConstantFacts(predicate, c2, c1);
 	}

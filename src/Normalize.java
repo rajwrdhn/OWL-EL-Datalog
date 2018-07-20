@@ -93,14 +93,14 @@ public class Normalize {
 		v_Iterable_MapAxioms.remove(keyA);		
 	}
 	
-	//NOt working as map is not initialised
+/*	//NOt working as map is not initialised
 	public void addAxiomsToMap(int number, Set<OWLAxiom> axioms) {
 		if (v_Iterable_MapAxioms.containsKey(number)) {
 			v_Iterable_MapAxioms.put(number, axioms);
 		} else {
 			System.out.println("Okay !!");
 		}
-	}
+	}*/
 
 	public boolean isNonComplementOFNamedClass(OWLClassExpression ce) {
 		if (ce instanceof OWLObjectComplementOf) {

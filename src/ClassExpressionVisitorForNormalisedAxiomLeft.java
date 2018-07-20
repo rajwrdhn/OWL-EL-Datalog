@@ -54,16 +54,18 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 
 		} else {
 			String predicatename = super_class_of_axiom.toString() + ce.toString();
-			Predicate predicate = Expressions.makePredicate(predicatename, 2);
+			Predicate predicateEDB = Expressions.makePredicate(predicatename+"EDB", 2);
+			Predicate predicateIDB = Expressions.makePredicate(predicatename+"IDB", 2);
 			
 			Constant c1 = Expressions.makeConstant(ce.toString());
 			Constant c2 = Expressions.makeConstant(super_class_of_axiom.toString());
 			
 			addClassNamesEDB(super_class_of_axiom.toString());
 			addClassNamesEDB(ce.toString());			
-			addToSubClassEDB(predicate);
+			addToSubClassEDB(predicateEDB);
+			addToSubClassEDB(predicateIDB);
 			
-			addToDoubleConstantFacts(predicate, c1, c2);
+			addToDoubleConstantFacts(predicateEDB, c1, c2);
 		}
 	}
 

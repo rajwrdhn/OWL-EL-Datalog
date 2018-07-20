@@ -322,7 +322,7 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 		
 		addrolesEDB(axiom.getSubProperty().toString());
 		addrolesEDB(axiom.getSuperProperty().toString());
-		addToSubRoleEDB(predicate);
+		addToSubRoleEDB(Expressions.makePredicate(predicatename+"rule", 2));
 		
 		addToDoubleConstantFacts(predicate, c1, c2);		
 	}
@@ -362,7 +362,7 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 		
 		addClassNamesEDB(axiom.getClassExpression().toString());
 		addNominalsEDB(axiom.getIndividual().toString());
-		addToSubClassEDB(predicate);
+		addToSubClassEDB(Expressions.makePredicate(predicatename+"rule", 2));
 		
 		addToDoubleConstantFacts(predicate, c1, c2);
 	}

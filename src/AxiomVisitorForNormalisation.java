@@ -132,7 +132,6 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubClassOfAxiom axiom) {
-		System.out.println(v_counter_FreshConcept);
 		if (isNonComplementOFNamedClass(axiom.getSubClass()) 
 				&& isNonComplementOFNamedClass(axiom.getSuperClass())) {
 
@@ -153,12 +152,9 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 		} else if (isNonComplementOFNamedClass(axiom.getSubClass())) {
 			
 			ClassExpressionVisitorForNormalisationRight ceVisitor = new ClassExpressionVisitorForNormalisationRight(v_factory);
-			System.out.println("here !");
 			//set the named class for use
 			v_Leftt_Named_ClassExpression = axiom.getSubClass();
-			System.out.println("here !"+ v_Leftt_Named_ClassExpression);
 			setCurrentClassExpression(v_Leftt_Named_ClassExpression);
-			System.out.println("here !"+ getCurrentClassExpression().toString());
 			axiom.getSuperClass().accept(ceVisitor);
 		
 		} else if (isNonComplementOFNamedClass(axiom.getSuperClass())){
