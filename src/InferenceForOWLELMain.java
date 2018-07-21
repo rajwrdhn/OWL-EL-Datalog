@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.*;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
