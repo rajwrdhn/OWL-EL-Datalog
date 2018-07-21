@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,13 @@ public class DatalogTranslation {
 		
 		callReasoner(dlogrules,normalizedAxiomVisitor);
 	}
+	
+/*	public void getargsList() {
+		String[] list = new 
+		for (int i = 1; i < list.size(); i++) {
+			if(list)
+		}
+	}*/
 
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Reasoner reasoner = Reasoner.getInstance();
@@ -44,7 +52,6 @@ public class DatalogTranslation {
 		
 		reasoner.addRules(allrules);
 		reasoner.addFacts(allfacts);
-		
 		
 
 		reasoner.load();

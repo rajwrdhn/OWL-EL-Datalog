@@ -248,7 +248,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyRangeAxiom axiom) {
-		//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
+		throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
 	}
 
 	@Override
@@ -330,12 +330,12 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLDataPropertyAssertionAxiom axiom) {
-		//throw new IllegalArgumentException("Data Property Assertion Axiom Exception !" + axiom.toString());
+		throw new IllegalArgumentException("Data Property Assertion Axiom Exception !" + axiom.toString());
 	}
 
 	@Override
 	public void visit(OWLTransitiveObjectPropertyAxiom axiom) {
-		//throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
+		throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
 	}
 
 	@Override
@@ -360,12 +360,12 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubPropertyChainOfAxiom axiom) {
-		//throw new IllegalArgumentException("Sub Property Chain Of Axiom" + axiom.toString());
+		throw new IllegalArgumentException("Sub Property Chain Of Axiom" + axiom.toString());
 	}
 
 	@Override
 	public void visit(OWLInverseObjectPropertiesAxiom axiom) {
-		//throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
+		throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
 	}
 
 	@Override

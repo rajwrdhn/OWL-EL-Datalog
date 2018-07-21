@@ -1,6 +1,9 @@
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -53,6 +56,12 @@ public class InferenceForOWLELMain {
 		InferenceForOWLELMain inferMain = new InferenceForOWLELMain();
 		timer.start("Start EL-Ontology reasoning! ");
 		String file = args[0];
+		List<String>  argslist = new ArrayList<String>();
+/*		if (args.length > 0 && args[0] == file) {
+			for (int i = 0; i < args.length; i++) {
+				
+			}
+		}*/
 		try {
 			inferMain.loadOntology(file);
 			inferMain.applydDatalogRules();
