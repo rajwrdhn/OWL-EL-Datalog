@@ -1,0 +1,1000 @@
+    9  java -version
+   10  cd Downloads/
+   11  ls
+   12  tar -zxvf eclipse-inst-linux64.tar.gz 
+   13  python -version
+   14  python --version
+   15  exit
+   16  Java --version
+   17  java -version
+   18  java -Version
+   19  java --Version
+   20  exit
+   21  sudo apt-get update
+   22  sudo apt-get y upgrade
+   23  sudo apt-get -y upgrade
+   24  python3 -V
+   25  sudo apt-get install -y python3-pip
+   26  pip3 install numpy
+   27  pip install --upgrade pip
+   28  pip3 install --upgrade pip
+   29  sudo apt-get install build-essential libssl-dev libffi-dev python-dev
+   30  exit
+   31  sudo apt update
+   32  sudo apt install skype
+   33  sudo apt update
+   34  sudo apt install skype
+   35  exit
+   36  pip install pandas
+   37  sudo easy_install pandas
+   38  pip install pandas
+   39  pip install numpy
+   40  pip install pandas
+   41  conda install pandas
+   42  sudo pip install pandas
+   43  pip install pandas
+   44  sudo apt-get install python-pandas
+   45  sudo aptitude install python-setuptools
+   46  sudo apt-get install python-setuptools
+   47  sudo easy_install pandas
+   48  exirt
+   49  exit
+   50  git
+   51  sudo add-apt-repository ppa:git-core/ppa
+   52  sudo apt-get update
+   53  sudo apt-get install git
+   54  git --version
+   55  cd Documents/
+   56  mkdir thesis
+   57  cd thesis/
+   58  git clone https://github.com/owlcs/owlapi.git
+   59  cd..
+   60  cd ..
+   61  java --version
+   62  java
+   63  java -version
+   64  sudo apt-get update
+   65  sudo apt-get install mysql-server
+   66  mysql_secure_installation
+   67  systemctl status mysql.service
+   68  mysqladmin -p -u root version
+   69  mysql -u root -p
+   70  cd Documents/
+   71  ls
+   72  cd thesis
+   73  ls
+   74  git clone https://github.com/liveontologies/elk-reasoner.git
+   75  cd elk-reasoner/
+   76  git status
+   77  cd ..
+   78  cd owlapi/
+   79  git status
+   80  sudo apt-get install texlive-bibtex-extra biber
+   81  sudo apt-get install texlive-science
+   82  cd Home
+   83  ls
+   84  cd Documents/
+   85  ls
+   86  cd thesis
+   87  ls
+   88  cd..
+   89  cd .
+   90  cd ..
+   91  ls
+   92  cd ..
+   93  ls
+   94  cd eclipse-workspace/
+   95  ls
+   96  cd CLThesis/
+   97  ls
+   98  git -version
+   99  git --version
+  100  git .add
+  101  git.add
+  102  git add .
+  103  cd eclipse-workspace/
+  104  ls
+  105  cd CLThesis/
+  106  ls
+  107  git add .
+  108  git init
+  109  git add .
+  110  git commit -m "First Commit"
+  111  git remote add origin https://github.com/rajwrdhn/CLThesis.git
+  112  git push -u origin master
+  113  git commit -m "First Commit"
+  114  echo "# CLThesis" >> README.md
+  115  git init
+  116  git add .
+  117  git commit -m "First Commit"
+  118  git config --global user.email "rajwrdhn@gmail.com"
+  119  git config --global user.name "rajwrdhn"
+  120  git commit -m "First Commit"
+  121  git remote add origin https://github.com/rajwrdhn/CLThesis.git
+  122  git push -u origin master
+  123  exit
+  124  sudo nano /usr/share/applications/google-chrome.desktop
+  125  exit
+  126  cd eclipse/java-oxygen/
+  127  ls
+  128  cd eclipse/
+  129  ls
+  130  ./eclipse-initialize
+  131  ./eclipse-initialise
+  132  ./eclipse
+  133  ./eclipse-1514092057389.p2bu 
+  134  ./eclipse-1514092059891.p2bu 
+  135  cd..
+  136  cd ..
+  137  rm -rf eclipse
+  138  cd eclipse-workspace/
+  139  tar –xvf eclipse-inst-linux64.tar.gz
+  140  tar xf eclipse-inst-linux64.tar.gz
+  141  tar -xf eclipse-inst-linux64.tar.gz
+  142  cd ..
+  143  tar -xf eclipse-inst-linux64.tar.gz
+  144  cd eclipse-installer/
+  145  ls
+  146  ./eclipse-inst 
+  147  exit
+  148  Apache ant
+  149  sudo nano /etc/apt/sources.list
+  150  sudo apt-get install ant
+  151  sudo apt-get install g++
+  152  ant
+  153  cd..
+  154  cd ..
+  155  ls
+  156  cd ..
+  157  ls
+  158  cd Home
+  159  ls
+  160  exit
+  161  ls
+  162  tar zxvf Protege-5.2.0-linux.tar.gz 
+  163  cd Protege-5.2.0/
+  164  ls
+  165  run.sh
+  166  /run.sh
+  167  ./run.sh
+  168  run.sh
+  169  /run.sh
+  170  ./run.sh
+  171  exit
+  172  ls
+  173  cd eclipse-workspace/CLThesis/
+  174  ls
+  175  cd src/
+  176  ls
+  177  java -c
+  178  java
+  179  java -classpath . class
+  180  echo $classpath$
+  181  java -cp
+  182  ls
+  183  cd eclipse-workspace/
+  184  ls
+  185  cd RDFox
+  186  ls
+  187  ant
+  188  cd ..
+  189  ls
+  190  cd ..
+  191  ls
+  192  cd Downloads/
+  193  cd RDFox (2)
+  194  cd RDFox(2)
+  195  cd RDFox2
+  196  ls
+  197  ant
+  198  eclipse -clean &
+  199  ls
+  200  cd eclipse-workspace/
+  201  ls
+  202  cd RDFox-linux.zip_expanded/
+  203  ls
+  204  cd RDFox
+  205  ls
+  206  cd lib
+  207  ls
+  208  ant
+  209  cd ..
+  210  cd examples/
+  211  ls
+  212  ant
+  213  cd ..
+  214  ls -a
+  215  cd ..
+  216  ls
+  217  unzip \*.zip
+  218  ls
+  219  cd RDFox-linux.zip_expanded/
+  220  ls
+  221  ant
+  222  cd RDFox
+  223  ant
+  224  cd ..
+  225  ant
+  226  cd ..
+  227  ant
+  228  git status
+  229  git
+  230  git --version
+  231  cd /home/raj/eclipse-workspace/
+  232  ls
+  233  cd CLThesis/
+  234  ls
+  235  git init
+  236  git add .
+  237  git commit -m "Normalization"
+  238  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  239  git commit -m "Normalization"
+  240  git push -u origin master
+  241  git commit -m "Normalization-"
+  242  git init
+  243  git add .
+  244  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  245  git commit -m "Normalization-"
+  246  git push -u origin master
+  247  git commit -m "Normalization-"
+  248  git init
+  249  git add .
+  250  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  251  git commit -m "Normalization-"
+  252  git push -u origin master
+  253  exit
+  254  cd /home/raj/Documents/ThesisReport/
+  255  ls
+  256  git init
+  257  git add .
+  258  git commit -m "First Commit"
+  259  git remote add origin https://github.com/rajwrdhn/Report.git
+  260  git push -u origin master
+  261  cd /home/raj/Doc
+  262  cd /home/raj/Documents/
+  263  cd ..
+  264  ls
+  265  cd eclipse-workspace/
+  266  ls
+  267  cd CLThesis/
+  268  ls
+  269  git init
+  270  git add .
+  271  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  272  git commit -m "input translation"
+  273  git push -u origin master
+  274  git init
+  275  git add .
+  276  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  277  git commit -m "input translation"
+  278  git push -u origin master
+  279  exit
+  280  cd ..
+  281  ls
+  282  cd Documents/
+  283  ls
+  284  cd ThesisReport/
+  285  ls
+  286  git init
+  287  git add .
+  288  git remote add origin https://github.com/rajwrdhn/Report.git
+  289  git commit -m "dlog"
+  290  git push -u origin master
+  291  cd eclipse-workspace/
+  292  cd CLThesis/
+  293  git init
+  294  git add .
+  295  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  296  git commit -m "input translation-"
+  297  git push -u origin master
+  298  cd Documents/
+  299  ls
+  300  cd ..
+  301  cd eclipse-workspace/
+  302  ls
+  303  cd CLThesis/
+  304  ls
+  305  git init
+  306  git add .
+  307  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  308  git pull -u origin master
+  309  git pull origin master
+  310  git init
+  311  git add .
+  312  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  313  git commit -m "input translation-"
+  314  git push -u origin master
+  315  cd eclipse-workspace/
+  316  ls
+  317  cd ..
+  318  cd VLog4j/
+  319  ls
+  320  git clone https://github.com/mkroetzsch/vlog4j.git
+  321  cd vlog4j/
+  322  ls
+  323  git status
+  324  mvn --version
+  325  mvn install
+  326  source /etc/environment
+  327  exit
+  328  echo $JAVA_HOME
+  329  gedit /etc/environment
+  330  source /etc/environment
+  331  echo $JAVA_HOME
+  332  source /etc/environment
+  333  gedit /etc/environment
+  334  sudo gedit /etc/environment
+  335  source /etc/environment
+  336  sudo gedit /etc/environment
+  337  source /etc/environment
+  338  exit
+  339  . /etc/environment
+  340  exit
+  341  JAVA_HOME
+  342  java -version
+  343  exit
+  344  cd Downloads/
+  345  ls
+  346  tar xzvf apache-maven-3.5.3-bin.tar.gz
+  347  exit
+  348  mvn --version
+  349  mvn --version
+  350  sudo gedit /etc/environment
+  351  source /etc/environment
+  352  . /etc/environment
+  353  mvn]
+  354  mvn
+  355  sudo gedit /etc/environment
+  356  source /etc/environment
+  357  . /etc/environment
+  358  mvn -v
+  359  ls -la
+  360  ls -lA
+  361  sudo gedit /etc/environment
+  362  export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin/:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+  363  nano /etc/environment
+  364  sudo nano /etc/environment
+  365  reboot
+  366  sudo apt-get update
+  367  cd /opt/
+  368  ls
+  369  wget http://mirror.softaculous.com/apache/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz
+  370  wget http://apache.mirror.digionline.de/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz
+  371  sudo wget http://apache.mirror.digionline.de/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz
+  372  ls
+  373  tar xzvf apache-maven-3.5.3-bin.tar.gz
+  374  sudo tar xzvf apache-maven-3.5.3-bin.tar.gz
+  375  sudo mv apache-maven-3.5.3 maven
+  376  ls
+  377  sudo vim /etc/profile.d/mavenenv.sh
+  378  sudo vlm /etc/profile.d/mavenenv.sh
+  379  sudo gedit /etc/profile.d/mavenenv.sh
+  380  sudo source /etc/profile.d/mavenenv.sh
+  381  source /etc/profile.d/mavenenv.sh
+  382  mvn -v
+  383  sudo source /etc/profile.d/mavenenv.sh
+  384  source /etc/profile.d/mavenenv.sh
+  385  sudo gedit /etc/environment
+  386  gedit /etc/environment
+  387  nano /etc/environment
+  388  ls
+  389  nano /profile.d/mavenenv.sh
+  390  nano /etc/environment
+  391  ls
+  392  cd /opt
+  393  ls
+  394  cd ..
+  395  cd /etc
+  396  ls
+  397  cd profile.d
+  398  ls
+  399  nano mavenenv.sh
+  400  ls
+  401  nano mavenenv.sh 
+  402  cd ..
+  403  ls
+  404  export PATH="
+  405  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+  406  reboot
+  407  export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+  408  nano .bashrc
+  409  nano /etc/environment
+  410  nano /etc/profile.d/mavenenv.sh 
+  411  sudo nano /etc/profile.d/mavenenv.sh 
+  412  reboot
+  413  Java -v
+  414  java -version
+  415  sudo apt-get update -y
+  416  sudo apt-get upgrade -y
+  417  mvn -v
+  418  cd /opt/
+  419  ls
+  420  exit
+  421  mvn -v
+  422  sudo nano /etc/profile.d/mavenenv.sh
+  423  sudo chmod +x /etc/profile.d/mavenenv.sh
+  424  sudo source /etc/profile.d/mavenenv.sh
+  425  source /etc/profile.d/mavenenv.sh
+  426  mvn --version
+  427  cd eclipse-workspace/
+  428  ls
+  429  dir
+  430  cd CLThesis/
+  431  ls
+  432  dir
+  433  git init
+  434  git add .
+  435  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  436  git pull origin master
+  437  git merge
+  438  git clone https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  439  exit
+  440  mvn -version
+  441  mvn --version
+  442  mvn site
+  443  cd eclipse-workspace/
+  444  mvn package
+  445  cd CLThesis/
+  446  mvn package
+  447  mvn eclipse:eclipse
+  448  mvn package
+  449  mvn dependency:tree
+  450  exit
+  451  git clone https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  452  exit
+  453  ls
+  454  cd CLThesisOWL-EL/
+  455  ls
+  456  cd ..
+  457  ls
+  458  cd git/
+  459  ls
+  460  cd CLThesisOWL-EL/
+  461  ls
+  462  git init
+  463  git add .
+  464  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  465  git commit -m "input"
+  466  git push -u origin master
+  467  git init
+  468  git add .
+  469  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  470  git commit -m "input"
+  471  git push -u origin master
+  472  git init
+  473  git add .
+  474  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  475  git commit -m "input"
+  476  git push -u origin master
+  477  git init
+  478  git add .
+  479  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  480  git commit -m ""
+  481  git commit -m "n"
+  482  git push -u origin master
+  483  git init
+  484  git add .
+  485  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  486  git commit -m "materialisation"
+  487  git push -u origin master
+  488  git init
+  489  git add .
+  490  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  491  git commit -m "materialisation"
+  492  git push -u origin master
+  493  cd git
+  494  ls
+  495  cd CLThesisOWL-EL/
+  496  ls
+  497  git init
+  498  git add .
+  499  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  500  git commit -m "materialisation"
+  501  git push -u origin master
+  502  git init
+  503  git add .
+  504  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  505  git commit -m "change-Normalize"
+  506  git push -u origin master
+  507  git commit -m "inference-"
+  508  git init
+  509  git add .
+  510  git commit -m "inference-"
+  511  git push -u origin master
+  512  exit
+  513  cd Documents/
+  514  ls
+  515  cd ThesisReport/
+  516  ls
+  517  git init
+  518  git add .
+  519  git remote add origin https://github.com/rajwrdhn/Report.git
+  520  git commit -m "commit-new"
+  521  git push -u origin master
+  522  exit
+  523  cd ..
+  524  ls
+  525  cd eclipse-workspace/
+  526  ls
+  527  cd ..
+  528  cd git/CLThesisOWL-EL/
+  529  ls
+  530  cd Documents/
+  531  cd ThesisReport/
+  532  ls
+  533  cd git/CLThesisOWL-EL/
+  534  ls
+  535  cd git/CLThesisOWL-EL/
+  536  ls
+  537  git init
+  538  git add .
+  539  git remote add origin https://github.com/rajwrdhn/Report.git
+  540  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  541  git commit -m "c"
+  542  git push -u origin master
+  543  cd ..
+  544  cd Documents/ThesisReport/
+  545  ls
+  546  cd git/CLThesisOWL-EL/
+  547  ls
+  548  cd git/CLThesisOWL-EL/
+  549  git init
+  550  git add .
+  551  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  552  git commit -m "corrections"
+  553  git push -u origin master
+  554  git init
+  555  git add .
+  556  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  557  git commit -m "correction"
+  558  git push -u origin master
+  559  git init
+  560  git add .
+  561  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  562  git commit -m "corrections-done"
+  563  git commit -m "correction"
+  564  git push -u origin master
+  565  cd git/CLThesisOWL-EL/
+  566  git init
+  567  git add .
+  568  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  569  git commit -m "v_axioms"
+  570  git push -u origin master
+  571  cd git/CLThesisOWL-EL/
+  572  ls
+  573  git init
+  574  git add .
+  575  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  576  git commit -m "a"
+  577  git push -u origin master
+  578  sudo lshw -C network
+  579  sudo lshw -class network
+  580  sudo chmod 755 /etc/pm/config.d/
+  581  sudo vi  755 /etc/pm/config.d/
+  582  sudo lshw -class network
+  583  sudo edit  755 /etc/pm/config.d/
+  584  sudo gedit  755 /etc/pm/config.d/
+  585  sudo gedit /etc/pm/config.d/
+  586  sudo gedit /etc/pm/config.d
+  587  sudo service network-manager restart
+  588  nmcli con up wifi-sid
+  589  lspci
+  590  nmcli radio  wifi 
+  591  nmcli
+  592  nmcli device wifi 
+  593  sudo lshw -C network
+  594  cd Downloads/
+  595  ls
+  596  sudo dpkg -i 
+  597  cd Downloads/
+  598  tar -xvzf broadcom-sta_6.30.223.271-3~16.04.3.debian.tar.xz
+  599  cd Downloads/
+  600  ls
+  601  xdg-open broadcom-sta_6.30.223.271.orig.tar.xz 
+  602  ./configure
+  603  make
+  604  cd broadcom-sta-6.30.223.271/
+  605  ./configure
+  606  cd am
+  607  cd amd64/
+  608  ./configure
+  609  make
+  610  sudo make install
+  611  cd ..
+  612  xdg-open broadcom-sta_6.30.223.271-3~16.04.3.debian.tar.xz 
+  613  cd debian/
+  614  ./configure
+  615  make
+  616  sudo make install
+  617  sudo apt remove linux-image-4.4.0-91-generic linux-headers-4.4.0-91-generic
+  618  sudo apt install linux-generic
+  619  dpkg -l | grep linux
+  620  sudo apt install synaptic
+  621  uname -r
+  622  dpkg --list | grep linux-image 
+  623  sudo apt-get purge linux-image-4.15.0-24-generic
+  624  dpkg --list | grep linux-image 
+  625  sudo apt-get purge linux-image-unsigned-4.15.0-24-generic
+  626  dpkg --list | grep linux-image 
+  627  uname -r
+  628  exit
+  629  sudo update-grub2 
+  630  cd git/CLThesisOWL-EL/
+  631  git init
+  632  git add .
+  633  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  634  git commit -m "classexpr"
+  635  git push -u origin master
+  636  cd git/CLThesisOWL-EL/
+  637  git init
+  638  git add .
+  639  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  640  git commit -m "rule & facts"
+  641  git push -u origin master
+  642  git init
+  643  git add .
+  644  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  645  git commit -m "rulefacts"
+  646  git push -u origin master
+  647  exit
+  648  cd git/CLThesisOWL-EL/
+  649  git init
+  650  git add .
+  651  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  652  git commit -m "facts"
+  653  git push -u origin master
+  654  git init
+  655  git add .
+  656  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  657  git commit -m "facts"
+  658  git push -u origin master
+  659  cd git/CLThesisOWL-EL/
+  660  git init
+  661  git add .
+  662  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  663  git commit -m "rules"
+  664  git push -u origin master
+  665  git add .
+  666  git commit -m "rules"
+  667  git push -u origin master
+  668  git init
+  669  git add .
+  670  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  671  git commit -m "cls,rol"
+  672  git push -u origin master
+  673  git init
+  674  git add .
+  675  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  676  git commit -m "fin-1"
+  677  git push -u origin master
+  678  git init
+  679  git add .
+  680  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  681  git commit -m "fin-1"
+  682  git push -u origin master
+  683  git init
+  684  git add .
+  685  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  686  git commit -m "fin--"
+  687  git push -u origin master
+  688  git init
+  689  git add .
+  690  cd git/CLThesisOWL-EL/
+  691  git init
+  692  git add .
+  693  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  694  git commit -m "fin--"
+  695  git push -u origin master
+  696  exit
+  697  cd git/CLThesisOWL-EL/
+  698  git init
+  699  git add .
+  700  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  701  git commit -m "fin2--"
+  702  git push -u origin master
+  703  git init
+  704  git add .
+  705  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  706  git commit -m "fin2--"
+  707  git push -u origin master
+  708  git init
+  709  git add .
+  710  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  711  git commit -m "fin2--"
+  712  git push -u origin master
+  713  git init
+  714  git add .
+  715  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  716  git commit -m "fin2--"
+  717  git push -u origin master
+  718  git init
+  719  git add .
+  720  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  721  git commit -m "fin2--"
+  722  git push -u origin master
+  723  exit
+  724  cd git/CLThesisOWL-EL/
+  725  git init
+  726  git add .
+  727  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  728  git commit -m "fin--"
+  729  git push -u origin master
+  730  exit
+  731  cd git/CLThesisOWL-EL/
+  732  git init
+  733  git add .
+  734  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  735  cd git/CLThesisOWL-EL/
+  736  git init
+  737  git add .
+  738  git commit -m "fingit add ."
+  739  git push -u origin master
+  740  exit
+  741  cd git/CLThesisOWL-EL/
+  742  git init
+  743  git add .
+  744  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  745  git commit -m "finishedgit remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git without test"
+  746  git push -u origin master
+  747  exit
+  748  cd git/CLThesisOWL-EL/
+  749  git init
+  750  git add .
+  751  git remote add origin https://github.com/rajwrdhn/CLThesisOWL-EL.git
+  752  git commit -m "finished with examplein Normalise class for someValuesFrom"
+  753  git push -u origin master
+  754  exit
+  755  cd git/CLThesisOWL-EL/
+  756  git init
+  757  git add .
+  758  git commit -m "changed EDB IDB naming"
+  759  git push -u origin master
+  760  git init
+  761  git add .
+  762  git commit -m "verify intersectionof and someValesof remaining."
+  763  git commit -m "changed EDB IDB naming"
+  764  git commit -m "verify intersectionof and someValesof remaining."
+  765  git push -u origin master
+  766  git init
+  767  git add .
+  768  git commit -m "cleaning code --1"
+  769  git push -u origin master
+  770  git init
+  771  git add .
+  772  git commit -m "cleaning code --2"
+  773  git push -u origin master
+  774  git init
+  775  git add .
+  776  git commit -m "cleaning code --3"
+  777  git push -u origin master
+  778  git init
+  779  git add .
+  780  git commit -m "cleaning code --3"
+  781  git push -u origin master
+  782  git init
+  783  git add .
+  784  git commit -m "cleaning code --4"
+  785  git push -u origin master
+  786  git init
+  787  git add .
+  788  git commit -m "cleaning code --5"
+  789  git push -u origin master
+  790  git init
+  791  git add .
+  792  git commit -m "cleaning code --6"
+  793  git push -u origin master
+  794  git init
+  795  git add .
+  796  git commit -m "cleaning code --7"
+  797  git push -u origin master
+  798  exit
+  799  cd git/CLThesisOWL-EL/
+  800  git init
+  801  git add .
+  802  git commit -m "cleaning code --8"
+  803  git push -u origin master
+  804  git init
+  805  git add .
+  806  git commit -m "cleaning code --8"
+  807  git push -u origin master
+  808  git init
+  809  git add .
+  810  git commit -m "cleaning code --8"
+  811  git push -u origin master
+  812  exit
+  813  cd git/CLThesisOWL-EL/
+  814  git init
+  815  git add .
+  816  git commit -m "cleaning code --9"
+  817  git push -u origin master
+  818  git init
+  819  git add .
+  820  git commit -m "cleaning code --9"
+  821  git push -u origin master
+  822  exit
+  823  cd git/CLThesisOWL-EL/
+  824  git init
+  825  git add .
+  826  git commit -m "cleaning code --10"
+  827  git push -u origin master
+  828  git init
+  829  git add .
+  830  git commit -m "cleaning code --11"
+  831  git push -u origin master
+  832  cd git/CLThesisOWL-EL/
+  833  git init
+  834  git add .
+  835  git commit -m "cleaning code --12"
+  836  git push -u origin master
+  837  git init
+  838  git add .
+  839  git commit -m "cleaning code --Normalisation Complete!"
+  840  git push -u origin master
+  841  git init
+  842  git add .
+  843  git commit -m "cleaning code --Normalisation Complete!"
+  844  git push -u origin master
+  845  exit
+  846  cd git/CLThesisOWL-EL/
+  847  git init
+  848  git add .
+  849  git commit -m "cleaning code-- DatalogTranslation1"
+  850  git push -u origin master
+  851  man ulimit
+  852  ulimit -c unlimited
+  853  ulimit -c -l
+  854  ulimit -c unlimited
+  855  ulimit -c -l
+  856  ulimit -a
+  857  ulimit -c unlimited
+  858  ulimit -a
+  859  ulimit -c -l
+  860  exit
+  861  cd git/CLThesisOWL-EL/
+  862  git init
+  863  git add .
+  864  git commit -m "cleaning code-- DatalogTranslation2"
+  865  git push -u origin master
+  866  git init
+  867  git add .
+  868  git commit -m "cleaning code-- DatalogTranslation3"
+  869  git push -u origin master
+  870  exit
+  871  sudo apt-get clean
+  872  sudo apt-get autoremove --purge
+  873  sudo apt-get clean
+  874  sudo apt-get autoremove --purge
+  875  uname -a
+  876  uname -r
+  877  sudo apt-get autoclean
+  878  du -sh ~/.cache/thumbnails
+  879  sudo dpkg --list 'linux-image*'
+  880  sudo apt-get remove linux-image-VERSION
+  881  sudo apt-get install bleachbit
+  882  exit
+  883  cd git/CLThesisOWL-EL/
+  884  git init
+  885  git add .
+  886  git commit -m "Done! Full Working! A little code cleaning left."
+  887  git push -u origin master
+  888  exit
+  889  ls
+  890  cd git
+  891  ls
+  892  cd CLThesisOWL-EL/
+  893  ls
+  894  cd src
+  895  ls
+  896  javac InferenceForOWLELMain.java 
+  897  java InferenceForOWLELMain.java 
+  898  java InferenceForOWLELMain 
+  899  java InferenceForOWLELMain /home/raj/Documents/thesis/Ancestry.owl 
+  900  cd ..
+  901  javac /src/InferenceForOWLELMain.java 
+  902  java InferenceForOWLELMain /home/raj/Documents/thesis/Ancestry.owl 
+  903  java /src/InferenceForOWLELMain /home/raj/Documents/thesis/Ancestry.owl 
+  904  java /src/target/classes/InferenceForOWLELMain /home/raj/Documents/thesis/Ancestry.owl 
+  905  java /src/target/classes /home/raj/Documents/thesis/Ancestry.owl 
+  906  java /src/ /home/raj/Documents/thesis/Ancestry.owl 
+  907  java /home/raj/Documents/thesis/Ancestry.owl 
+  908  javac /src/InferenceForOWLELMain.java 
+  909  cd src
+  910  ls
+  911  javac
+  912  javac -verbose
+  913  javac -verbose InferenceForOWLELMain.java 
+  914  java InferenceForOWLELMain /home/raj/Documents/thesis/Ancestry.owl 
+  915  javac 
+  916  cd ..
+  917  javac /src/ */.java
+  918  cd src
+  919  javac  */.java
+  920  javac  **/.java
+  921  javac  **/ .java
+  922  javac  * .java
+  923  javac * .java
+  924  javac *.java
+  925  javac *.java /home/raj/Documents/thesis/Ancestry.owl
+  926  javac *.java 
+  927  cd git
+  928  cd CLThesisOWL-EL/
+  929  ls
+  930  cd src/
+  931  ls
+  932  mvn compile
+  933  cd ..
+  934  mvn compile
+  935  mvn exec:java /home/raj/Documents/thesis/co_330.owl 
+  936  mvn exec:java -Dexec.mainClass="" -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  937  mvn exec:java -Dexec.mainClass="/home/raj/git/CLThesisOWL-EL/target/classes/InferenceForOWLELMain.class" -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  938  mvn compile
+  939  mvn test
+  940  mvn exec:java -Dexec.mainClass="/home/raj/git/CLThesisOWL-EL/target/classes/InferenceForOWLELMain.class" -Dexec.args="/home/raj/Documents/thesis/Ancestry.owl" 
+  941  mvn exec:java -Dexec.mainClass="/home/raj/git/CLThesisOWL-EL/target/classes/InferenceForOWLELMain.class" -Dexec.args="/home/raj/Documents/thesis/Ancestry.owl" -e
+  942  mvn exec:java -Dexec.mainClass="/home/raj/git/CLThesisOWL-EL/target/classes/InferenceForOWLELMain.class" -Dexec.arguments="/home/raj/Documents/thesis/Ancestry.owl" -e
+  943  mvn exec:java -Dexec.arguments="/home/raj/Documents/thesis/Ancestry.owl" -e
+  944  mvn build
+  945  mvn exec:java -Dexec.arguments="/home/raj/Documents/thesis/Ancestry.owl" -e
+  946  mvn compile
+  947  mvn compile -e
+  948  mvn help:describe -DartifactId=maven-war-plugin -DgroupId=org.apache.maven.plugins
+  949  mvn dependency:resolve-plugins
+  950  mvn versions:display-plugin-updates
+  951  mvn exec:java -Dexec.arguments="/home/raj/Documents/thesis/Ancestry.owl" -e
+  952  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/Ancestry.owl" -e
+  953  mvn exec:java -Dexec.arguments="/home/raj/Documents/thesis/Ancestry.owl" -e
+  954  mvn versions:display-plugin-updates
+  955  mvn exec:java -Dexec.arguments="/home/raj/Documents/thesis/Ancestry.owl" -e
+  956  mvn clean
+  957  mvn exec:java
+  958  mvn exec:java -Dexec.mainClass="InferenceForOWLELMain.class" -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  959  mvn clean
+  960  mvn build
+  961  mvn test
+  962  mvn compile
+  963  mvn exec:java -Dexec.mainClass="/target/classes/InferenceForOWLELMain.class" -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  964  mvn exec:java -Dexec.mainClass="/target/classes/InferenceForOWLELMain.class" -Dexec.args="/home/raj/Documents/thesis/co_330.owl" -e
+  965  mvn exec:java -Dexec.mainClass="/target/classes/InferenceForOWLELMain.class" -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  966  mvn clean
+  967  mvn compile
+  968  mvn clean install
+  969  cd git/
+  970  ls
+  971  cd ..
+  972  ls
+  973  mvn clean install
+  974  cd git/CLThesisOWL-EL/
+  975  ls
+  976  mvn clean install
+  977  mvn spring:boot run
+  978  mvn clean install
+  979  mvn exec:java -Dexec.mainClass="/target/classes/InferenceForOWLELMain.class" -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  980  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  981  mvn clean install
+  982  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  983  mvn clean install
+  984  mvn dependency:go-offline
+  985  mvn clean install
+  986  mvn dependency:go-offline
+  987  rm -rf ~/.m2/repository/*
+  988  mvn dependency:go-offline
+  989  mvn clean install
+  990  mvn clean
+  991  mvn clean install
+  992  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  993  mvn clean install
+  994  mvn exec:java exec.args="/home/raj/Documents/thesis/co_330.owl" 
+  995  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl" 
+  996  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl" -e 
+  997  mvn clean install
+  998  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl" -e 
+  999  mvn clean install
+ 1000  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl" -e 
+ 1001  mvn clean install
+ 1002  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl"
+ 1003  mvn clean install
+ 1004  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl"
+ 1005  mvn exec:java
+ 1006  mvn exec:java -e
+ 1007  mvn exec:java -Dexec.args="/home/raj/Documents/thesis/co_330.owl"
+ 1008  history > print.txt

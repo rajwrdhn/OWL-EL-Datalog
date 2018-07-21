@@ -5,6 +5,9 @@
 	<groupId>CLThesis</groupId>
 	<artifactId>CLThesis</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -27,18 +30,15 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<mainClass>InferenceForOWLELMain</mainClass>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.6</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>/home/raj/git/CLThesisOWL-EL/</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
+
 			</plugin>
 		</plugins>
 	</build>
