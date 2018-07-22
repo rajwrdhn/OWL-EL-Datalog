@@ -52,7 +52,7 @@ public class DatalogTranslation {
 		} else if(arg.contains("self")) {
 			getSelf(reasoner);
 		} else if(arg.contains("triple")) {
-			getInst(reasoner);
+			getTriple(reasoner);
 		} else {
 			System.out.println("Not Coreect format of arguments !!" + v_args);
 		}
@@ -65,7 +65,7 @@ public class DatalogTranslation {
 		Variable y = Expressions.makeVariable("y");
 		Variable z = Expressions.makeVariable("z");
 		
-		Atom a =Expressions.makeAtom("triple", x, y,z);
+		Atom a =Expressions.makeAtom("triple", x, y, z);
 		
 		reasoner.load();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);

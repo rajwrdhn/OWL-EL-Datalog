@@ -55,7 +55,7 @@ public class InferenceForOWLELMain {
 		System.out.println();
 		StopWatch timer = new StopWatch();
 		InferenceForOWLELMain inferMain = new InferenceForOWLELMain(args);
-		timer.start("Start EL-Ontology reasoning! ");
+		
 		String file = args[0];
 		List<String>  argslist = new ArrayList<String>();
 /*		if (args.length > 0 && args[0] == file) {
@@ -65,6 +65,7 @@ public class InferenceForOWLELMain {
 		}*/
 		try {
 			inferMain.loadOntology(file);
+			timer.start("Start EL-Ontology reasoning! ");
 			inferMain.applyDatalogRules(args[1]);
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();
