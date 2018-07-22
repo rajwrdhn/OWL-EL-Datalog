@@ -21,11 +21,12 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.VLog4jException;
 public class InferenceForOWLELMain {
 
 	protected static Set<OWLAxiom> v_normalisedAxioms = new HashSet<>();
-	
+	protected final String[] v_arrargsList;
 
-	public InferenceForOWLELMain() {
-
+	public InferenceForOWLELMain(String[] args) {
+		this.v_arrargsList = args;
 	}
+	
 	public void loadOntology(String fileadd) throws OWLOntologyCreationException, VLog4jException, VLog4jException, VLog4jException, IOException {
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		File file = new File(fileadd);
@@ -40,9 +41,9 @@ public class InferenceForOWLELMain {
 		}*/
 	}
 	
-	public void applydDatalogRules() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
-		DatalogTranslation dlog = new DatalogTranslation(v_normalisedAxioms);
-		dlog.visitNormalisedAxiomsHash();
+	public void applyDatalogRules(String arg1) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+		DatalogTranslation dlog = new DatalogTranslation(v_normalisedAxioms, arg1);
+		dlog.visitNormalisedAxiomsHash(arg1);
 	}
 	/**
 	 * 
@@ -53,7 +54,7 @@ public class InferenceForOWLELMain {
 	public static void main(String []args) throws VLog4jException, IOException{
 		System.out.println();
 		StopWatch timer = new StopWatch();
-		InferenceForOWLELMain inferMain = new InferenceForOWLELMain();
+		InferenceForOWLELMain inferMain = new InferenceForOWLELMain(args);
 		timer.start("Start EL-Ontology reasoning! ");
 		String file = args[0];
 		List<String>  argslist = new ArrayList<String>();
@@ -64,7 +65,7 @@ public class InferenceForOWLELMain {
 		}*/
 		try {
 			inferMain.loadOntology(file);
-			inferMain.applydDatalogRules();
+			inferMain.applyDatalogRules(args[1]);
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();
 		}

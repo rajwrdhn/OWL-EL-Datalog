@@ -17,59 +17,107 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 public class DatalogTranslation {
 	protected final Set<OWLAxiom> v_s_normalisedAxioms;
-
-	public DatalogTranslation(Set<OWLAxiom> normalisedAxioms) {
+	protected final String v_args;
+	
+	public DatalogTranslation(Set<OWLAxiom> normalisedAxioms, String arg1) {
 		v_s_normalisedAxioms = normalisedAxioms;
+		v_args = arg1;
 	}
 
-	public void visitNormalisedAxiomsHash() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
-		VisitNormalisedAxioms normalizedAxiomVisitor = new VisitNormalisedAxioms(v_s_normalisedAxioms);
+	public void visitNormalisedAxiomsHash(String arg) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+		VisitNormalisedAxioms normalizedAxiomVisitor = new VisitNormalisedAxioms(v_s_normalisedAxioms, arg);
 		for (OWLAxiom axiom: v_s_normalisedAxioms) {
 			axiom.accept(normalizedAxiomVisitor);
 		}
 		
-		DatalogRules dlogrules = new DatalogRules(v_s_normalisedAxioms);
+		DatalogRules dlogrules = new DatalogRules(v_s_normalisedAxioms, arg);
 		
 		dlogrules.makeRules();
 		
-		callReasoner(dlogrules,normalizedAxiomVisitor);
+		callReasoner(dlogrules,normalizedAxiomVisitor, arg);
 	}
-	
-/*	public void getargsList() {
-		String[] list = new 
-		for (int i = 1; i < list.size(); i++) {
-			if(list)
-		}
-	}*/
 
-	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget, String arg) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Reasoner reasoner = Reasoner.getInstance();
 		List<Rule> allrules = dlogruls.v_l_rules;
 		Set<Atom> allfacts = visitorget.getFacts();
 		
-		System.out.println(allrules.size());
-		System.out.println(allfacts.size());
+		System.out.println("Number of facts= "+allfacts.size());
 		
 		reasoner.addRules(allrules);
 		reasoner.addFacts(allfacts);
 		
+		if(arg.contains("inst")) {
+			getInst(reasoner);
+		} else if(arg.contains("self")) {
+			getSelf(reasoner);
+		} else if(arg.contains("triple")) {
+			getInst(reasoner);
+		} else {
+			System.out.println("Not Coreect format of arguments !!" + v_args);
+		}
 
+
+	}
+	
+	public void getTriple(Reasoner reasoner) throws ReasonerStateException, IOException, EdbIdbSeparationException, IncompatiblePredicateArityException {
+		Variable x = Expressions.makeVariable("x");
+		Variable y = Expressions.makeVariable("y");
+		Variable z = Expressions.makeVariable("z");
+		
+		Atom a =Expressions.makeAtom("triple", x, y,z);
+		
 		reasoner.load();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
 		reasoner.setReasoningTimeout(1);
 		System.out.println("Starting Skolem Chase with 1 second timeout.");
 		
-		Variable x = Expressions.makeVariable("x");
-		Variable y = Expressions.makeVariable("y");
-		Atom a =Expressions.makeAtom("inst", x, y);
-		/* Indeed, the Skolem Chase did not terminate before timeout. */
 		boolean skolemChaseFinished = reasoner.reason();
 		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
 		System.out.println(
 				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
 		printOutQueryAnswers(a , reasoner);
 		reasoner.close();
-
+	}
+	
+	public void getSelf(Reasoner reasoner) throws ReasonerStateException, IOException, EdbIdbSeparationException, IncompatiblePredicateArityException {
+		Variable x = Expressions.makeVariable("x");
+		Variable y = Expressions.makeVariable("y");
+		
+		
+		Atom a =Expressions.makeAtom("self", x, y);
+		
+		reasoner.load();
+		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
+		reasoner.setReasoningTimeout(1);
+		System.out.println("Starting Skolem Chase with 1 second timeout.");
+		
+		boolean skolemChaseFinished = reasoner.reason();
+		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
+		System.out.println(
+				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
+		printOutQueryAnswers(a , reasoner);
+		reasoner.close();
+	}
+	
+	public void getInst(Reasoner reasoner) throws ReasonerStateException, IOException, EdbIdbSeparationException, IncompatiblePredicateArityException {
+		Variable x = Expressions.makeVariable("x");
+		Variable y = Expressions.makeVariable("y");
+		
+		
+		Atom a =Expressions.makeAtom("inst", x, y);
+		
+		reasoner.load();
+		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
+		reasoner.setReasoningTimeout(1);
+		System.out.println("Starting Skolem Chase with 1 second timeout.");
+		
+		boolean skolemChaseFinished = reasoner.reason();
+		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
+		System.out.println(
+				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
+		printOutQueryAnswers(a , reasoner);
+		reasoner.close();
 	}
 
 	private void printOutQueryAnswers(Atom queryAtom, Reasoner reasoner) throws ReasonerStateException {

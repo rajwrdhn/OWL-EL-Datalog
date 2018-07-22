@@ -28,8 +28,8 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 
 	protected OWLClassExpression super_class_of_axiom; 
 
-	public ClassExpressionVisitorForNormalisedAxiomLeft(OWLClassExpression superClassExprOfAxm, Set<OWLAxiom> normalisedaxms) {
-		super(normalisedaxms);
+	public ClassExpressionVisitorForNormalisedAxiomLeft(OWLClassExpression superClassExprOfAxm, Set<OWLAxiom> normalisedaxms, String args) {
+		super(normalisedaxms, args);
 		super_class_of_axiom = superClassExprOfAxm;
 	}
 

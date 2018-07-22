@@ -197,7 +197,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLDisjointClassesAxiom axiom) {
-		//throw new IllegalAccessError("Disjoint Class Axiom Exception !");
+		throw new IllegalAccessError("Disjoint Class Axiom Exception !");
 	}
 
 	@Override
@@ -248,7 +248,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyRangeAxiom axiom) {
-		throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
+		//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
 	}
 
 	@Override
@@ -267,7 +267,9 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubObjectPropertyOfAxiom axiom) {
-		//TODO only subRole(R,T) done if() 
+		//TODO only subRole(R,T) done. check?
+		// for full use OWLObjectVisitor
+		// Concept product
 		if (axiom.objectPropertiesInSignature().count() ==2) {
 			v_Normalised_Axioms.add(axiom);
 		} else {
@@ -306,6 +308,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 			v_Normalised_Axioms.add(v_factory.getOWLClassAssertionAxiom(axiom.getClassExpression(), axiom.getIndividual()));	
 		
 		} else {
+			
 			OWLClassExpression new_Expression =addFreshClassName(v_counter_FreshConcept);
 			v_counter_FreshConcept++;
 			//X(a)
@@ -335,7 +338,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLTransitiveObjectPropertyAxiom axiom) {
-		throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
+		//throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
 	}
 
 	@Override
@@ -365,7 +368,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLInverseObjectPropertiesAxiom axiom) {
-		throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
+		//throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
 	}
 
 	@Override

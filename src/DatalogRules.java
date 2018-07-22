@@ -11,21 +11,20 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 public class DatalogRules extends VisitNormalisedAxioms{
 	protected final List<Rule> v_l_rules = new ArrayList<>();
 
-	protected Predicate v_inst = Expressions.makePredicate("inst",2);
-	protected Predicate v_triple = Expressions.makePredicate("triple",3);
-	protected Predicate v_self = Expressions.makePredicate("self", 2);
-
-	protected Variable x = Expressions.makeVariable("x");
-	protected Variable y = Expressions.makeVariable("y");
-	protected Variable z = Expressions.makeVariable("z");
-	protected Variable v = Expressions.makeVariable("v");
-	protected Variable w = Expressions.makeVariable("w");
-
-	public DatalogRules(Set<OWLAxiom> normaxms) {
-		super(normaxms);
+	public DatalogRules(Set<OWLAxiom> normaxms, String v_args) {
+		super(normaxms, v_args);
 	}
 
 	public void makeRules() {
+		Predicate v_inst = Expressions.makePredicate("inst",2);
+		Predicate v_triple = Expressions.makePredicate("triple",3);
+		Predicate v_self = Expressions.makePredicate("self", 2);
+
+		Variable x = Expressions.makeVariable("x");
+		Variable y = Expressions.makeVariable("y");
+		Variable z = Expressions.makeVariable("z");
+		Variable v = Expressions.makeVariable("v");
+		Variable w = Expressions.makeVariable("w");
 
 		// nom(x) :- v_inst(x,x)
 		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, x,x), Expressions.makeAtom(v_nomEDB, x)));

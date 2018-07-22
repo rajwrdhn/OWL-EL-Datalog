@@ -28,8 +28,8 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalisedAxioms implements OWLClassExpressionVisitor {
 	protected OWLClassExpression sub_class_of_axiom; 
 
-	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm, Set<OWLAxiom> normalisedaxms) {
-		super(normalisedaxms);
+	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm, Set<OWLAxiom> normalisedaxms, String args) {
+		super(normalisedaxms, args);
 		sub_class_of_axiom = subClassExprOfAxm;
 	}
 	@Override

@@ -126,9 +126,13 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	@Override
 	public void visit(OWLClass ce) {
 		if(ce.isOWLNothing()) {
+			//Empty
+			//System.out.println("Empty set OWL Nothing!!" + ce.getClassExpressionType());
+		} else if (ce.isOWLNamedIndividual()){			
 			v_Normalised_Axioms.add(addSubClassAxiom(ce, getCurrentClassExpression()));
 		} else {
-			System.out.println("OWLObject classs clsExprNormLeft"+ce.getClassExpressionType());
+			//Nothing
+			//Not doing 
 		}
 	}
 	

@@ -29,22 +29,26 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLClass ce) {
-		
+		if (ce.isOWLThing()) {			
+			//Empty
+		} else {
+			v_Normalised_Axioms.add(addSubClassAxiom(getCurrentClassExpression(), ce));
+		}
 	}
 
 	@Override
 	public void visit(OWLObjectIntersectionOf ce) {
 		
 		//OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
-		
+/*		
 		for (OWLClassExpression ce1 : ce.asConjunctSet()) {
 			if(isNonComplementOFNamedClass(ce1)) {
 				v_Normalised_Axioms.add(addSubClassAxiom(getCurrentClassExpression(), ce1));				
-			} /*else {
+			} else {
 				v_For_FurtherNormalisation.add(addSubClassAxiom(getCurrentClassExpression(), ce1));
-			}*/
+			}
 		}
-		
+		*/
 	}
 
 	@Override
@@ -64,11 +68,11 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		v_counter_FreshConcept++;
 		
 		if (isNonComplementOFNamedClass(ce.getFiller())) {
-			v_Normalised_Axioms.add(addSubClassAxiom(new_expr, ce));
+			//v_Normalised_Axioms.add(addSubClassAxiom(new_expr, ce.getFiller()));
 			v_Normalised_Axioms.add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 
 		} else {
-			v_For_FurtherNormalisation.add(addSubClassAxiom(new_expr, ce.getFiller()));
+			//v_For_FurtherNormalisation.add(addSubClassAxiom(new_expr, ce.getFiller()));
 			v_Normalised_Axioms.add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 		}
 		
@@ -100,7 +104,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 			v_Normalised_Axioms.add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 
 		} else {
-			v_For_FurtherNormalisation.add(addSubClassAxiom(new_expr, ce.getFiller()));
+			//v_For_FurtherNormalisation.add(addSubClassAxiom(new_expr, ce.getFiller()));
 			v_Normalised_Axioms.add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 		}
 		
