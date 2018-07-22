@@ -46,7 +46,7 @@ public class StopWatch {
 		if (descrptionOfTask != null) {
 			System.out.println("Time for " + descrptionOfTask + ": " + elapsedSeconds() + " seconds");
 			if (extraText != null) {
-				System.out.println(", " + extraText);
+				System.out.println(extraText);
 			}
 			System.out.println(".");
 		} else if (extraText != null) {
