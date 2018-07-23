@@ -386,4 +386,8 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	public Set<OWLAxiom> getV_Normalised_Axioms() {
 		return v_Normalised_Axioms;
 	}
+	
+	public Set<OWLAxiom> getV_For_FurtherNormalisation() {
+		return v_For_FurtherNormalisation;
+	}
 }

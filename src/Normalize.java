@@ -67,8 +67,9 @@ public class Normalize {
 	 * @throws OWLOntologyCreationException
 	 */
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms, AxiomVisitorForNormalisation axmVisitor) throws OWLOntologyCreationException {
-		
+		v_counter = axmVisitor.getCounterOfFreshNumber();
 		axmVisitor.setCounterOfFreshNumber(v_counter+1);
+		System.out.println(v_counter);
 		
 		for (OWLAxiom axiom : axioms) {
 			axiom.accept(axmVisitor);
