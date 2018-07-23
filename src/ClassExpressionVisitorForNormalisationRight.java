@@ -28,7 +28,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLClass ce) {
-		if(ce.isOWLNamedIndividual()) {
+		if(ce.isOWLNamedIndividual() || ce.isBottomEntity()) {
 			getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce));
 		}
 	}
