@@ -8,7 +8,6 @@ import org.semanticweb.owlapi.model.OWLDataHasValue;
 import org.semanticweb.owlapi.model.OWLDataMaxCardinality;
 import org.semanticweb.owlapi.model.OWLDataMinCardinality;
 import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
@@ -29,25 +28,23 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLClass ce) {
-		if (ce.isOWLThing()) {			
-			//Empty
-		} else {
+		if(ce.isOWLNamedIndividual()) {
 			getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce));
 		}
 	}
 
 	@Override
 	public void visit(OWLObjectIntersectionOf ce) {
-		
+
 		//OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
-		
-		for (OWLClassExpression ce1 : ce.asConjunctSet()) {
+
+		/*		for (OWLClassExpression ce1 : ce.asConjunctSet()) {
 			if(isNonComplementOFNamedClass(ce1)) {
-				getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce1));				
-			} /*else {
+				getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce1));	 done in visit owlclass method			
+			} else {
 				v_For_FurtherNormalisation.add(addSubClassAxiom(getCurrentClassExpression(), ce1));
-			}*/
-		}
+			}
+		}*/
 	}
 
 	@Override
@@ -62,19 +59,19 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectSomeValuesFrom ce) {
-		
+
 		OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
 		v_counter_FreshConcept++;
-		
+
 		if (isNonComplementOFNamedClass(ce.getFiller())) {
-			//v_Normalised_Axioms.add(addSubClassAxiom(new_expr, ce.getFiller()));
+			getV_Normalised_Axioms().add(addSubClassAxiom(new_expr, ce.getFiller())); 
 			getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 
 		} else {
 			//v_For_FurtherNormalisation.add(addSubClassAxiom(new_expr, ce.getFiller()));
 			getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 		}
-		
+
 		setCurrentClassExpression(new_expr);		
 	}
 
@@ -85,28 +82,30 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		if (getCurrentClassExpression() instanceof OWLIndividual) {
-			getV_Normalised_Axioms().add(v_factory.getOWLObjectPropertyAssertionAxiom(ce.getProperty(), (OWLIndividual) getCurrentClassExpression(), ce.getFiller()));
-		} else {
-			getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), (OWLClassExpression)ce.getFiller()));
-		}
+		OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
+		v_counter_FreshConcept++;
+
+		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_Expr));
+		//getV_Normalised_Axioms().add(addSubClassAxiom(new_Expr,(OWLClassExpression) ce.getFiller()));   
+
+		setCurrentClassExpression(new_Expr);
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
-		
+
 		OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
 		v_counter_FreshConcept++;
-		
+
 		if (isNonComplementOFNamedClass(ce.getFiller())) {
-			getV_Normalised_Axioms().add(addSubClassAxiom(new_expr, ce));
+			getV_Normalised_Axioms().add(addSubClassAxiom(new_expr, ce.getFiller())); 
 			getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 
 		} else {
 			//v_For_FurtherNormalisation.add(addSubClassAxiom(new_expr, ce.getFiller()));
 			getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 		}
-		
+
 		setCurrentClassExpression(new_expr);		
 	}
 
