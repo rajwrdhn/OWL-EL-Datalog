@@ -40,15 +40,14 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	public void visit(OWLObjectIntersectionOf ce) {
 		
 		//OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
-/*		
+		
 		for (OWLClassExpression ce1 : ce.asConjunctSet()) {
 			if(isNonComplementOFNamedClass(ce1)) {
 				v_Normalised_Axioms.add(addSubClassAxiom(getCurrentClassExpression(), ce1));				
-			} else {
+			} /*else {
 				v_For_FurtherNormalisation.add(addSubClassAxiom(getCurrentClassExpression(), ce1));
-			}
+			}*/
 		}
-		*/
 	}
 
 	@Override

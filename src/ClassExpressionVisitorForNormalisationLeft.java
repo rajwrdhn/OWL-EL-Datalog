@@ -123,16 +123,15 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 			return (OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce_conjunct);
 		}	
 	}
+	
 	@Override
 	public void visit(OWLClass ce) {
-		if(ce.isOWLNothing()) {
-			//Empty
-			//System.out.println("Empty set OWL Nothing!!" + ce.getClassExpressionType());
-		} else if (ce.isOWLNamedIndividual()){			
+		if(ce.isOWLNamedIndividual()) {
+			v_Normalised_Axioms.add(addSubClassAxiom(ce, getCurrentClassExpression()));
+		} else if (ce.isTopEntity()){			
 			v_Normalised_Axioms.add(addSubClassAxiom(ce, getCurrentClassExpression()));
 		} else {
-			//Nothing
-			//Not doing 
+			//Nothing //
 		}
 	}
 	

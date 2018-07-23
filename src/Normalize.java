@@ -43,22 +43,18 @@ public class Normalize {
 	 * @throws ReasonerStateException 
 	 */
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
-		Set<OWLAxiom> asi = new HashSet<>();
 		
+		Set<OWLAxiom> asi = new HashSet<>();		
 		onto.axioms().forEach(x -> asi.add(x));
 		
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
 		
 		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
 		
-		if(v_Iterable_MapAxioms.isEmpty()) {
+		if(asi.isEmpty()) {
 			System.out.println("No Axioms in the Ontology!!");
 		} else {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
-		}
-		
-		for(OWLAxiom axiom: axmVisitor.getNormalisedAxiom()) {
-			v_final_normalised.add(axiom);
 		}
 		
 		return v_final_normalised;
@@ -66,6 +62,9 @@ public class Normalize {
 
 	/**
 	 * Visit all Axioms in the initial Ontology and normalize the axioms
+	 * @param axioms
+	 * @param axmVisitor
+	 * @throws OWLOntologyCreationException
 	 */
 	public void visitAxioms(Collection<? extends OWLAxiom> axioms, AxiomVisitorForNormalisation axmVisitor) throws OWLOntologyCreationException {
 		
@@ -76,33 +75,16 @@ public class Normalize {
 		}
 
 		v_Iterable_KeyForMap = v_Iterable_KeyForMap + 1;
-
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, axmVisitor.getAxiomsForFurtherNorm());
-		
 		axmVisitor.clear();
 		axmVisitor.removeNull();
 		
 		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty() ) {
-			axmVisitor.clear();
-			axmVisitor.removeNull();
 			System.out.println("Normalisation Complete!! ");		
 		} else {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}
 	}
-
-	public void crunchCleanNormalisedAxiomFromMap(int keyA) {		
-		v_Iterable_MapAxioms.remove(keyA);		
-	}
-	
-/*	//NOt working as map is not initialised
-	public void addAxiomsToMap(int number, Set<OWLAxiom> axioms) {
-		if (v_Iterable_MapAxioms.containsKey(number)) {
-			v_Iterable_MapAxioms.put(number, axioms);
-		} else {
-			System.out.println("Okay !!");
-		}
-	}*/
 
 	public boolean isNonComplementOFNamedClass(OWLClassExpression ce) {
 		if (ce instanceof OWLObjectComplementOf) {

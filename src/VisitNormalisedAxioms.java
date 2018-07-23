@@ -131,32 +131,16 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 	@Override
 	public void visit(OWLSubClassOfAxiom axiom) {
 		
-		if (axiom.getSubClass().isOWLThing()) {
-			Constant c1 = getConstant(axiom.getSuperClass().toString());
-			toSingleConstantFacts(v_topEDB, c1);
+		if (axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
 			
-		} else if(axiom.getSubClass().isClassExpressionLiteral()) { //We do this in order to avoid A and B subsumes X behaviour by visitor
 			Constant c1 = getConstant(axiom.getSubClass().toString());
 			Constant c2 = getConstant(axiom.getSuperClass().toString());
 			
 			toDoubleConstantFacts(v_subClassEDB, c1, c2);
 			toSingleConstantFacts(v_clsEDB, c1);
+			
 			toSingleConstantFacts(v_clsEDB, c2);
-			
-		} else if(axiom.getSuperClass().isClassExpressionLiteral()) { //We do this in order to avoid Exists R. A subsumes X behaviour by visitor
-			Constant c1 = getConstant(axiom.getSubClass().toString());
-			Constant c2 = getConstant(axiom.getSuperClass().toString());
-			
-			toDoubleConstantFacts(v_subClassEDB, c1, c2);
-			toSingleConstantFacts(v_clsEDB, c1);
-			toSingleConstantFacts(v_clsEDB, c2);
-			
-		} else if (axiom.getSuperClass().isOWLNothing()) {
-			
-			Constant c1 = getConstant(axiom.getSubClass().toString());
-			toSingleConstantFacts(v_botEDB, c1);			
-			
-		}else if(axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
+		} else if(axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
 		
 			ClassExpressionVisitorForNormalisedAxiomRight ce_visit = new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSuperClass(), v_s_normalisedAxioms, v_args); 
 			axiom.getSuperClass().accept(ce_visit);

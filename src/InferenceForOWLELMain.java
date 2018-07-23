@@ -1,9 +1,6 @@
-import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -12,7 +9,6 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.*;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
@@ -27,6 +23,15 @@ public class InferenceForOWLELMain {
 		this.v_arrargsList = args;
 	}
 	
+	/**
+	 * 
+	 * @param fileadd
+	 * @throws OWLOntologyCreationException
+	 * @throws VLog4jException
+	 * @throws VLog4jException
+	 * @throws VLog4jException
+	 * @throws IOException
+	 */
 	public void loadOntology(String fileadd) throws OWLOntologyCreationException, VLog4jException, VLog4jException, VLog4jException, IOException {
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 		File file = new File(fileadd);
@@ -36,11 +41,16 @@ public class InferenceForOWLELMain {
 		norm.getFromOntology(onto);
 		
 		v_normalisedAxioms = norm.getFromOntology(onto);
-/*		for(OWLAxiom axiom: v_normalisedAxioms) {
-			System.out.println(axiom);;
-		}*/
 	}
 	
+	/**
+	 * 
+	 * @param arg1
+	 * @throws ReasonerStateException
+	 * @throws EdbIdbSeparationException
+	 * @throws IncompatiblePredicateArityException
+	 * @throws IOException
+	 */
 	public void applyDatalogRules(String arg1) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		DatalogTranslation dlog = new DatalogTranslation(v_normalisedAxioms, arg1);
 		dlog.visitNormalisedAxiomsHash(arg1);
@@ -57,12 +67,6 @@ public class InferenceForOWLELMain {
 		InferenceForOWLELMain inferMain = new InferenceForOWLELMain(args);
 		
 		String file = args[0];
-		List<String>  argslist = new ArrayList<String>();
-/*		if (args.length > 0 && args[0] == file) {
-			for (int i = 0; i < args.length; i++) {
-				
-			}
-		}*/
 		try {
 			inferMain.loadOntology(file);
 			timer.start("Start EL-Ontology reasoning! ");
