@@ -129,9 +129,9 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLClass ce) {
-		if(ce.isOWLNamedIndividual() || ce.isTopEntity() ) {
+		if(ce.isOWLNamedIndividual() || ce.isTopEntity()) {
 			getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
-		} 
+		}
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 		OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 		v_counter_FreshConcept++;
 
-		//getV_Normalised_Axioms().add(addSubClassAxiom((OWLClassExpression)ce.getFiller(), new_Expr));
+		getV_Normalised_Axioms().add(addSubClassAxiom((OWLClassExpression)ce.getFiller(), new_Expr));
 		getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
 
 		setCurrentClassExpression(new_Expr);
@@ -183,17 +183,18 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {	
-		OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
-		v_counter_FreshConcept++;
-
 		if (isNonComplementOFNamedClass(ce.getFiller())) {
-			getV_Normalised_Axioms().add(addSubClassAxiom(ce.getFiller(), new_expr));
-			getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_expr, ce.getProperty(), getCurrentClassExpression()));
+			getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
+
 		} else {
 
-			getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_expr, ce.getProperty(), getCurrentClassExpression()));
+			OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
+			v_counter_FreshConcept++;
+
+			getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
+			
+			setCurrentClassExpression(new_Expr);
 		}
-		setCurrentClassExpression(new_expr);
 	}
 
 	@Override
