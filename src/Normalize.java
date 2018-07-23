@@ -23,12 +23,12 @@ public class Normalize {
 
 	protected Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<>();
 	protected static int v_Iterable_KeyForMap = 1;
-    //protected final Set<OWLAxiom> v_final_normalised = new HashSet<>();
-	
+	//protected final Set<OWLAxiom> v_final_normalised = new HashSet<>();
+
 	protected final OWLDataFactory v_factory;
-	
+
 	protected static int v_counter;
-	
+
 	//constructor
 	public Normalize(OWLDataFactory factory) {
 		v_factory=factory;
@@ -43,20 +43,20 @@ public class Normalize {
 	 * @throws ReasonerStateException 
 	 */
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
-		
+
 		Set<OWLAxiom> asi = new HashSet<>();		
 		onto.axioms().forEach(x -> asi.add(x));
-		
+
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
-		
+
 		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
-		
+
 		if(asi.isEmpty()) {
 			System.out.println("No Axioms in the Ontology!!");
 		} else {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}
-		
+
 		return axmVisitor.getV_Normalised_Axioms();
 	}
 
@@ -70,7 +70,7 @@ public class Normalize {
 		v_counter = axmVisitor.getCounterOfFreshNumber();
 		axmVisitor.setCounterOfFreshNumber(v_counter+1);
 		System.out.println(v_counter);
-		
+
 		for (OWLAxiom axiom : axioms) {
 			axiom.accept(axmVisitor);
 		}
@@ -79,7 +79,7 @@ public class Normalize {
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, axmVisitor.getAxiomsForFurtherNorm());
 		axmVisitor.clear();
 		axmVisitor.removeNull();
-		
+
 		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty() ) {
 			System.out.println("Normalisation Complete!! ");		
 		} else {
@@ -111,18 +111,18 @@ public class Normalize {
 	public OWLAxiom addSomevaluesFromAxiomLeft(OWLClassExpression ce1, OWLObject obj,OWLClassExpression ce2) {		
 		return (OWLAxiom) v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce1), ce2);
 	}
-	
+
 	public OWLAxiom addSomevaluesFromAxiomRight(OWLClassExpression ce1, OWLObject obj,OWLClassExpression ce2) {		
 		return (OWLAxiom) v_factory.getOWLSubClassOfAxiom(ce1,v_factory.getOWLObjectSomeValuesFrom((OWLObjectPropertyExpression) obj, ce2));
 	}
-	
+
 	/**
 	 * Adds Fresh Class name to the existentially quantified Concept expression
 	 */
 	public OWLClassExpression addSomeValuesFromToFreshClassName(OWLObjectSomeValuesFrom expr, long conceptNumber) {
 		return (OWLClassExpression)v_factory.getOWLObjectSomeValuesFrom(expr.getProperty(), addFreshClassName(conceptNumber));
 	}
-		
+
 	/**
 	 * Adds the fresh concept name
 	 */

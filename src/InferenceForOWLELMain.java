@@ -22,7 +22,7 @@ public class InferenceForOWLELMain {
 	public InferenceForOWLELMain(String[] args) {
 		this.v_arrargsList = args;
 	}
-	
+
 	/**
 	 * 
 	 * @param fileadd
@@ -33,17 +33,17 @@ public class InferenceForOWLELMain {
 	 * @throws IOException
 	 */
 	public void loadOntology(String fileadd) throws OWLOntologyCreationException, VLog4jException, VLog4jException, VLog4jException, IOException {
-		
+
 		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-		
+
 		OWLOntology onto = man.loadOntologyFromOntologyDocument(new File(fileadd));
 		OWLDataFactory factory = man.getOWLDataFactory();		
-		
+
 		Normalize norm = new Normalize(factory);	
 		norm.getFromOntology(onto);		
 		v_normalisedAxioms = norm.getFromOntology(onto);
 	}
-	
+
 	/**
 	 * 
 	 * @param arg1
@@ -65,21 +65,21 @@ public class InferenceForOWLELMain {
 	public static void main(String []args) throws VLog4jException, IOException{
 		StopWatch timer = new StopWatch();
 		InferenceForOWLELMain inferMain = new InferenceForOWLELMain(args);		
-		
+
 		String file = args[0];
-		
+
 		try {
-		
+
 			inferMain.loadOntology(file);
-			
+
 			timer.start("Start EL-Ontology reasoning! ");
-			
+
 			inferMain.applyDatalogRules(args[1]);
-		
+
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();
 		}
-		
+
 		timer.stop("Done!");
 	}
 }
