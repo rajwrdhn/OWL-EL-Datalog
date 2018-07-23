@@ -76,13 +76,13 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 				getV_Normalised_Axioms().add(addSubClassAxiom(ce2, newExpr));
 				//v_For_FurtherNormalisation.add(addAxiomOfConjunctSubClass(ce1, newExpr, getCurrentClassExpression()));
-				insertIntoAxiomForNormalisation(ce1, newExpr);
+				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1, newExpr));
 				setCurrentClassExpression(newExpr);
 
 
 			} else {
-				insertIntoAxiomForNormalisation(ce2, newExpr);
-				insertIntoAxiomForNormalisation(ce1, newExpr);
+				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce2, newExpr));
+				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1, newExpr));
 				//v_For_FurtherNormalisation.add(addSubClassAxiom(ce2, newExpr));
 				//v_For_FurtherNormalisation.add(addAxiomOfConjunctSubClass(ce1, newExpr, getCurrentClassExpression()));
 				setCurrentClassExpression(newExpr);
@@ -98,8 +98,8 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 				//v_For_FurtherNormalisation.add(addAxiomOfConjunctSubClass(newExpr, ce2, getCurrentClassExpression()));
 				//v_For_FurtherNormalisation.add(addSubClassAxiom(ce1, newExpr));
-				insertIntoAxiomForNormalisation(ce1, newExpr);
-				insertIntoAxiomForNormalisation(newExpr, ce2);
+				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1, newExpr));
+				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(newExpr,ce2));
 				setCurrentClassExpression(newExpr);
 
 			}
@@ -108,15 +108,15 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 				getV_Normalised_Axioms().add(addSubClassAxiom(ce1, newExpr));
 				//v_For_FurtherNormalisation.add(addAxiomOfConjunctSubClass(ce2, newExpr, getCurrentClassExpression()));
-				insertIntoAxiomForNormalisation(ce2, newExpr);
+				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce2, newExpr));
 				setCurrentClassExpression(newExpr);
 
 			} else {
 
 				//v_For_FurtherNormalisation.add(addSubClassAxiom(ce1, getCurrentClassExpression()));
 				//v_For_FurtherNormalisation.add(addAxiomOfConjunctSubClass(ce2, newExpr, getCurrentClassExpression()));
-				insertIntoAxiomForNormalisation(ce1, getCurrentClassExpression());
-				insertIntoAxiomForNormalisation(ce2, newExpr);
+				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1, getCurrentClassExpression()));
+				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce2, newExpr));
 				setCurrentClassExpression(newExpr);
 			}
 		}
