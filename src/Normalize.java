@@ -23,7 +23,7 @@ public class Normalize {
 
 	protected Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<>();
 	protected static int v_Iterable_KeyForMap = 1;
-    protected final Set<OWLAxiom> v_final_normalised = new HashSet<>();
+    //protected final Set<OWLAxiom> v_final_normalised = new HashSet<>();
 	
 	protected final OWLDataFactory v_factory;
 	
@@ -57,7 +57,7 @@ public class Normalize {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}
 		
-		return v_final_normalised;
+		return axmVisitor.getV_Normalised_Axioms();
 	}
 
 	/**

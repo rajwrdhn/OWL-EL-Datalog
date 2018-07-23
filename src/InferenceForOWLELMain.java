@@ -33,13 +33,14 @@ public class InferenceForOWLELMain {
 	 * @throws IOException
 	 */
 	public void loadOntology(String fileadd) throws OWLOntologyCreationException, VLog4jException, VLog4jException, VLog4jException, IOException {
-		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-		File file = new File(fileadd);
-		OWLOntology onto = man.loadOntologyFromOntologyDocument(file);
-		OWLDataFactory factory = man.getOWLDataFactory();		
-		Normalize norm = new Normalize(factory);	
-		norm.getFromOntology(onto);
 		
+		OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+		
+		OWLOntology onto = man.loadOntologyFromOntologyDocument(new File(fileadd));
+		OWLDataFactory factory = man.getOWLDataFactory();		
+		
+		Normalize norm = new Normalize(factory);	
+		norm.getFromOntology(onto);		
 		v_normalisedAxioms = norm.getFromOntology(onto);
 	}
 	
@@ -62,18 +63,23 @@ public class InferenceForOWLELMain {
 	 * @throws VLog4jException 
 	 */
 	public static void main(String []args) throws VLog4jException, IOException{
-		System.out.println();
 		StopWatch timer = new StopWatch();
-		InferenceForOWLELMain inferMain = new InferenceForOWLELMain(args);
+		InferenceForOWLELMain inferMain = new InferenceForOWLELMain(args);		
 		
 		String file = args[0];
+		
 		try {
+		
 			inferMain.loadOntology(file);
+			
 			timer.start("Start EL-Ontology reasoning! ");
+			
 			inferMain.applyDatalogRules(args[1]);
+		
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();
 		}
+		
 		timer.stop("Done!");
 	}
 }

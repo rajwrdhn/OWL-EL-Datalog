@@ -32,7 +32,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		if (ce.isOWLThing()) {			
 			//Empty
 		} else {
-			v_Normalised_Axioms.add(addSubClassAxiom(getCurrentClassExpression(), ce));
+			getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce));
 		}
 	}
 
@@ -43,7 +43,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		
 		for (OWLClassExpression ce1 : ce.asConjunctSet()) {
 			if(isNonComplementOFNamedClass(ce1)) {
-				v_Normalised_Axioms.add(addSubClassAxiom(getCurrentClassExpression(), ce1));				
+				getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce1));				
 			} /*else {
 				v_For_FurtherNormalisation.add(addSubClassAxiom(getCurrentClassExpression(), ce1));
 			}*/
@@ -68,11 +68,11 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		
 		if (isNonComplementOFNamedClass(ce.getFiller())) {
 			//v_Normalised_Axioms.add(addSubClassAxiom(new_expr, ce.getFiller()));
-			v_Normalised_Axioms.add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
+			getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 
 		} else {
 			//v_For_FurtherNormalisation.add(addSubClassAxiom(new_expr, ce.getFiller()));
-			v_Normalised_Axioms.add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
+			getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 		}
 		
 		setCurrentClassExpression(new_expr);		
@@ -86,9 +86,9 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLObjectHasValue ce) {
 		if (getCurrentClassExpression() instanceof OWLIndividual) {
-			v_Normalised_Axioms.add(v_factory.getOWLObjectPropertyAssertionAxiom(ce.getProperty(), (OWLIndividual) getCurrentClassExpression(), ce.getFiller()));
+			getV_Normalised_Axioms().add(v_factory.getOWLObjectPropertyAssertionAxiom(ce.getProperty(), (OWLIndividual) getCurrentClassExpression(), ce.getFiller()));
 		} else {
-			v_Normalised_Axioms.add(addSubClassAxiom(getCurrentClassExpression(), (OWLClassExpression)ce.getFiller()));
+			getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), (OWLClassExpression)ce.getFiller()));
 		}
 	}
 
@@ -99,12 +99,12 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		v_counter_FreshConcept++;
 		
 		if (isNonComplementOFNamedClass(ce.getFiller())) {
-			v_Normalised_Axioms.add(addSubClassAxiom(new_expr, ce));
-			v_Normalised_Axioms.add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
+			getV_Normalised_Axioms().add(addSubClassAxiom(new_expr, ce));
+			getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 
 		} else {
 			//v_For_FurtherNormalisation.add(addSubClassAxiom(new_expr, ce.getFiller()));
-			v_Normalised_Axioms.add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
+			getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 		}
 		
 		setCurrentClassExpression(new_expr);		
@@ -122,7 +122,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectHasSelf ce) {		
-		v_Normalised_Axioms.add(addSubClassAxiom(getCurrentClassExpression(), ce));
+		getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce));
 	}
 
 	@Override
