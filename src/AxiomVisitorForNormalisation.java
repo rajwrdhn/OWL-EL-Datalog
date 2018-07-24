@@ -199,11 +199,13 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyDomainAxiom axiom) {
-		v_For_FurtherNormalisation.add(axiom.asOWLSubClassOfAxiom());
+		
+		v_For_FurtherNormalisation.add(axiom.asOWLSubClassOfAxiom());	
 	}
 
 	@Override
 	public void visit(OWLEquivalentObjectPropertiesAxiom axiom) {
+		
 		Iterator<OWLSubObjectPropertyOfAxiom> iter = axiom.asSubObjectPropertyOfAxioms().iterator();
 		//It can be very big !
 		int i =10;
@@ -240,15 +242,14 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyRangeAxiom axiom) {
-		throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
+		//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
 	}
 
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom axiom) {
+		
 		if(axiom.individualsInSignature().count()==2) {
 			getV_Normalised_Axioms().add(axiom);
-		} else {
-			System.out.println("Individuals in Object property Assertion Axiom!"+axiom.individualsInSignature().count());
 		}
 	}
 

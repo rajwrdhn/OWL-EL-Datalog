@@ -103,11 +103,13 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 	@Override
 	public void visit(OWLObjectHasValue ce) {
 		//normalised
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
 		//normalised
+		throw new IllegalStateException();
 	}
 
 	@Override

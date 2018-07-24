@@ -48,12 +48,14 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 /*			Constant c1 = getConstant(ce.toString());
 			Constant c2 = getConstant(sub_class_of_axiom.toString());
 			toDoubleConstantFacts(v_subClassEDB,c1,c2);*/
+			//Nothing
 		}
 	}
 
 	@Override
 	public void visit(OWLObjectIntersectionOf ce) {
 		//should not be present after normalisation
+		throw new IllegalStateException();
 	}
 
 	@Override
@@ -90,11 +92,13 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 	@Override
 	public void visit(OWLObjectHasValue ce) {
 		//Normalised
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
 		//Normalised
+		throw new IllegalStateException();
 	}
 
 	@Override
@@ -134,7 +138,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 
 	@Override
 	public void visit(OWLDataHasValue ce) {
-		//Normalised
+		throw new IllegalStateException();
 	}
 
 	@Override

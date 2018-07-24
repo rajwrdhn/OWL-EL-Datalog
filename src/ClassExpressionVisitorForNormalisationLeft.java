@@ -36,13 +36,13 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	}
 
 	public void normalizeIntersectionOf(OWLClassExpression sub_conj) {
-
+		
 		Set<OWLClassExpression> descriptions = sub_conj.asConjunctSet(); 
 		Set<OWLClassExpression> new_descriptions = new HashSet<>();
 
 		int n = descriptions.size() % 2;
 		int i = 0;
-
+		
 		for (OWLClassExpression ce: descriptions) {
 			if(i==n)
 				break;
@@ -74,17 +74,16 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 			if(isNonComplementOFNamedClass(ce2)) {
 
-				getV_Normalised_Axioms().add(addSubClassAxiom(ce2, newExpr));
-				//v_For_FurtherNormalisation.add(addAxiomOfConjunctSubClass(ce1, newExpr, getCurrentClassExpression()));
-				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1, newExpr));
+				getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(newExpr, ce2, getCurrentClassExpression()));
+				getV_For_FurtherNormalisation().add(addSubClassAxiom(ce1, newExpr));
 				setCurrentClassExpression(newExpr);
 
 
 			} else {
-				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce2, newExpr));
-				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1, newExpr));
-				//v_For_FurtherNormalisation.add(addSubClassAxiom(ce2, newExpr));
-				//v_For_FurtherNormalisation.add(addAxiomOfConjunctSubClass(ce1, newExpr, getCurrentClassExpression()));
+				
+				getV_For_FurtherNormalisation().add(addAxiomOfConjunctSubClass(newExpr, ce1, getCurrentClassExpression()));
+				getV_For_FurtherNormalisation().add(addSubClassAxiom(ce1, newExpr));
+
 				setCurrentClassExpression(newExpr);
 
 			}
@@ -94,25 +93,35 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 			if(isNonComplementOFNamedClass(ce1) && isNonComplementOFNamedClass(ce2)) {			
 				getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(ce1, ce2, getCurrentClassExpression()));
 
-			} else {
+			} else if (isNonComplementOFNamedClass(ce1) && !isNonComplementOFNamedClass(ce2)){
+				
+				getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(ce1, newExpr, getCurrentClassExpression()));
+				getV_For_FurtherNormalisation().add(addSubClassAxiom(ce2, newExpr));
+				setCurrentClassExpression(newExpr);
 
-				//v_For_FurtherNormalisation.add(addAxiomOfConjunctSubClass(newExpr, ce2, getCurrentClassExpression()));
-				//v_For_FurtherNormalisation.add(addSubClassAxiom(ce1, newExpr));
-				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1, newExpr));
-				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(newExpr,ce2));
+			}  else if (!isNonComplementOFNamedClass(ce1) && isNonComplementOFNamedClass(ce2)){
+				
+				getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(ce2, newExpr, getCurrentClassExpression()));
+				getV_For_FurtherNormalisation().add(addSubClassAxiom(ce1, newExpr));
+				setCurrentClassExpression(newExpr);
+
+			}  else {
+				
+				getV_For_FurtherNormalisation().add(addAxiomOfConjunctSubClass(ce1, newExpr, getCurrentClassExpression()));
+				getV_For_FurtherNormalisation().add(addSubClassAxiom(ce2, newExpr));
 				setCurrentClassExpression(newExpr);
 
 			}
 		} else {
 			if(isNonComplementOFNamedClass(ce1)) {
-
-				getV_Normalised_Axioms().add(addSubClassAxiom(ce1, newExpr));
-				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce2, newExpr));
+				getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(newExpr, ce1, getCurrentClassExpression()));
+				
+				getV_For_FurtherNormalisation().add(addSubClassAxiom(ce2, newExpr));
 				setCurrentClassExpression(newExpr);
 
 			} else {
-				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1, getCurrentClassExpression()));
-				normalizeIntersectionOf((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce2, newExpr));
+				getV_For_FurtherNormalisation().add(addAxiomOfConjunctSubClass(newExpr, ce1, getCurrentClassExpression()));
+				getV_For_FurtherNormalisation().add(addSubClassAxiom(ce2, newExpr));
 				setCurrentClassExpression(newExpr);
 			}
 		}
@@ -250,6 +259,4 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	public void visit(OWLDataMaxCardinality ce) {
 		throw new IllegalStateException();
 	}
-
-
 }
