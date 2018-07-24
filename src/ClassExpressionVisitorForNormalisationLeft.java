@@ -107,7 +107,6 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 		} else {
 			if(isNonComplementOFNamedClass(ce1)) {
 				getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(newExpr, ce1, getCurrentClassExpression()));
-
 				getV_For_FurtherNormalisation().add(addSubClassAxiom(ce2, newExpr));
 
 			} else {
