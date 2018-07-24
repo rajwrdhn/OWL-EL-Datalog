@@ -263,11 +263,9 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 		//TODO only subRole(R,T) done. check?
 		// for full use OWLObjectVisitor
 		// Concept product
-	/*	if (axiom.objectPropertiesInSignature().count() ==2) {
+		if (axiom.objectPropertiesInSignature().count() ==2) {
 			getV_Normalised_Axioms().add(axiom);
-		} else {
-			System.out.println("sub object property axiom - " + axiom.objectPropertiesInSignature().count());
-		}*/
+		} 
 	}
 
 	@Override
@@ -361,7 +359,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLInverseObjectPropertiesAxiom axiom) {
-		throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
+		//throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
 	}
 
 	@Override
