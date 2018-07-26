@@ -39,8 +39,7 @@ public class InferenceForOWLELMain {
 		OWLOntology onto = man.loadOntologyFromOntologyDocument(new File(fileadd));
 		OWLDataFactory factory = man.getOWLDataFactory();		
 
-		Normalize norm = new Normalize(factory);	
-		norm.getFromOntology(onto);		
+		Normalize norm = new Normalize(factory);			
 		v_normalisedAxioms = norm.getFromOntology(onto);
 	}
 
@@ -56,6 +55,7 @@ public class InferenceForOWLELMain {
 		DatalogTranslation dlog = new DatalogTranslation(v_normalisedAxioms, arg1);
 		dlog.visitNormalisedAxiomsHash(arg1);
 	}
+	
 	/**
 	 * 
 	 * @param args
@@ -63,23 +63,24 @@ public class InferenceForOWLELMain {
 	 * @throws VLog4jException 
 	 */
 	public static void main(String []args) throws VLog4jException, IOException{
+		
 		StopWatch timer = new StopWatch();
 		InferenceForOWLELMain inferMain = new InferenceForOWLELMain(args);		
 
 		String file = args[0];
 
 		try {
-
+			
+			timer.start("Start Normalisation! ");
 			inferMain.loadOntology(file);
-
+			timer.stop("Stop Normalisation");
+			
 			timer.start("Start EL-Ontology reasoning! ");
-
 			inferMain.applyDatalogRules(args[1]);
-
+			timer.stop("Done!");
+		
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();
-		}
-
-		timer.stop("Done!");
+		}		
 	}
 }

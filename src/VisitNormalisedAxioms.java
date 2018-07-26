@@ -339,5 +339,4 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 	public void visit(SWRLRule node) {
 		throw new IllegalArgumentException();
 	}
-
 }

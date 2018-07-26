@@ -75,7 +75,7 @@ public class DatalogTranslation {
 		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
 		System.out.println(
 				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
-		printOutQueryAnswers(a , reasoner);
+		//printOutQueryAnswers(a , reasoner);
 		reasoner.close();
 	}
 	
@@ -95,7 +95,7 @@ public class DatalogTranslation {
 		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
 		System.out.println(
 				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
-		printOutQueryAnswers(a , reasoner);
+		//printOutQueryAnswers(a , reasoner);
 		reasoner.close();
 	}
 	
@@ -115,7 +115,7 @@ public class DatalogTranslation {
 		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
 		System.out.println(
 				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
-		printOutQueryAnswers(a , reasoner);
+		//printOutQueryAnswers(a , reasoner);
 		reasoner.close();
 	}
 

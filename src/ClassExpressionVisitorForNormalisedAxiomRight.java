@@ -80,8 +80,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 		toSingleConstantFacts(v_clsEDB, c1);
 		toSingleConstantFacts(v_rolEDB, c3);
 		toSingleConstantFacts(v_clsEDB, c2);
-		toFourConstantFacts(v_supExEDB, c2, c3, c1, c4);
-		
+		toFourConstantFacts(v_supExEDB, c2, c3, c1, c4);		
 	}
 
 	@Override
