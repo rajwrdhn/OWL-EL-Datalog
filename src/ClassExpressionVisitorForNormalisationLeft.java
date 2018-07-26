@@ -32,7 +32,7 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	public ClassExpressionVisitorForNormalisationLeft(OWLDataFactory factory) {
 		super(factory);
 	}
-
+	
 	public OWLClassExpression getIntersectionOf(List<OWLClassExpression> ce_conjunct) {
 
 		if (ce_conjunct.size() ==1) {
@@ -45,9 +45,9 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLClass ce) {
-		//if(ce.isOWLNamedIndividual() || ce.isTopEntity() || ce.isClassExpressionLiteral()) {
+		if(ce.isOWLNamedIndividual() || ce.isTopEntity() || ce.isClassExpressionLiteral() ) {
 			getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
-		//} 
+		} 
 	}
 
 	@Override
@@ -65,22 +65,21 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 			getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(ce1, ce2, getCurrentClassExpression()));
 		} else {
 			OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
+			v_counter_FreshConcept++;			
+			
+			OWLClassExpression new_Expr2 = addFreshClassName(v_counter_FreshConcept);
 			v_counter_FreshConcept++;
-/*			OWLClassExpression new_Expr1 = addFreshClassName(v_counter_FreshConcept);
-			v_counter_FreshConcept++;*/
 			
-			//getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(new_Expr, new_Expr1, getCurrentClassExpression()));
+			getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(new_Expr, new_Expr2, getCurrentClassExpression()));
 			
-			addSubClassAxiom(ce1, new_Expr).accept(this);
-			//setCurrentClassExpression(new_Expr);
-			//System.out.println(ce1);
-			//ce1.accept(this);
-			System.out.println(ce2.toString()+ "here in left");
-			addAxiomOfConjunctSubClass(ce2, new_Expr, getCurrentClassExpression()).accept(this);
-			//addSubClassAxiom(ce2, new_Expr1).accept(this);
-			//setCurrentClassExpression(new_Expr1);
-			//System.out.println(ce2);
-			//ce2.accept(this);			
+			setCurrentClassExpression(new_Expr);
+			ce1.accept(this);
+			
+			setCurrentClassExpression(new_Expr2);
+			ce2.accept(this);
+			
+			//addSubClassAxiom(ce1, new_Expr).accept(this);
+			//addAxiomOfConjunctSubClass(ce2, new_Expr, getCurrentClassExpression()).accept(this);		
 		}
 	}
 
@@ -99,19 +98,18 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 		OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 		v_counter_FreshConcept++;
-		
+
 		getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
+		
+		setCurrentClassExpression(new_Expr);
+		ce.getFiller().accept(this);
 
-/*		setCurrentClassExpression(new_Expr);
-		v_counter_FreshConcept++;*/
-
-		//ce.getFiller().accept(this);
-		addSubClassAxiom(getCurrentClassExpression(), ce.getFiller()).accept(this);
+		//addSubClassAxiom(ce.getFiller(), new_Expr).accept(this);
 	}
 
 	@Override
 	public void visit(OWLObjectAllValuesFrom ce) {
-		throw new IllegalStateException();
+		//throw new IllegalStateException();
 	}
 
 	@Override
@@ -125,14 +123,12 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 		OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 		v_counter_FreshConcept++;
-		
+
 		getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
 
-/*		setCurrentClassExpression(new_Expr);
-		v_counter_FreshConcept++;
-*/
-		//ce.getFiller().accept(this);
-		addSubClassAxiom(getCurrentClassExpression(), ce.getFiller()).accept(this);
+		setCurrentClassExpression(new_Expr);
+		ce.getFiller().accept(this);
+		//addSubClassAxiom(ce.getFiller(), new_Expr).accept(this);
 	}
 
 	@Override
@@ -156,7 +152,7 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 		// R{a,b,...,x}
 		ce.individuals();
 		//getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(ce1, ce.pro, ce2))
-		throw new IllegalStateException();
+		//throw new IllegalStateException();
 	}
 
 	@Override

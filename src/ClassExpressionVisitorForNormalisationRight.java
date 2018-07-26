@@ -37,13 +37,12 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectIntersectionOf ce) {
-
-		OWLClassExpression ce_keep = getCurrentClassExpression();		
+		
+		OWLClassExpression ce_expr = getCurrentClassExpression();
 		ce.operands().forEach(x -> {
-			
-			addSubClassAxiom(getCurrentClassExpression(), x).accept(this);
-	/*		setCurrentClassExpression(ce_keep); 
-			x.accept(this);*/
+			setCurrentClassExpression(ce_expr);
+			x.accept(this);
+			//addSubClassAxiom(getCurrentClassExpression(), x);
 		});
 	}
 
@@ -64,13 +63,10 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		v_counter_FreshConcept++;
 		
 		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
-
-		//setCurrentClassExpression(new_expr);
-		//v_counter_FreshConcept++;
 		
-		System.out.println(new_expr + ce.getFiller().toString());
-		addSubClassAxiom(getCurrentClassExpression(), ce.getFiller()).accept(this);
-		//ce.getFiller().accept(this);
+		setCurrentClassExpression(new_expr);
+		ce.getFiller().accept(this);
+		//addSubClassAxiom(getCurrentClassExpression(), ce.getFiller());
 	}
 
 	@Override
@@ -91,11 +87,10 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		
 		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
 
-		//setCurrentClassExpression(new_expr);
-		//v_counter_FreshConcept++;
+		setCurrentClassExpression(new_expr);
+		ce.getFiller().accept(this);
 		
-		addSubClassAxiom(getCurrentClassExpression(), ce.getFiller()).accept(this);
-		//ce.getFiller().accept(this);
+		//addSubClassAxiom(getCurrentClassExpression(), ce.getFiller());
 	}
 
 	@Override

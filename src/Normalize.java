@@ -75,7 +75,7 @@ public class Normalize {
 	}
 
 	public boolean isNotNamedClass(OWLClassExpression ce) {
-		return !ce.isClassExpressionLiteral();
+		return !ce.isClassExpressionLiteral() && ce.isAnonymous();
 	}
 
 	public OWLAxiom addAxiomOfConjunctSubClass(OWLClassExpression ce1, OWLClassExpression ce2, OWLClassExpression ce3) {

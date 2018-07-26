@@ -60,7 +60,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	public AxiomVisitorForNormalisation(OWLDataFactory factory) {
 		super(factory);
 	}
-
+	
 	/**
 	 * set the class expression to be used as super or sub class in ClassExpressionNormalize Visitor
 	 */
@@ -104,52 +104,47 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubClassOfAxiom axiom) {
-		if (isNonComplementOFNamedClass(axiom.getSubClass()) 
+		
+		ClassExpressionVisitorForNormalisationLeft ceVisitorL = new ClassExpressionVisitorForNormalisationLeft(v_factory);
+		OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
+		v_counter_FreshConcept++;
+		setCurrentClassExpression(new_Expr);
+		axiom.getSubClass().accept(ceVisitorL);
+
+		ClassExpressionVisitorForNormalisationRight ceVisitorR = new ClassExpressionVisitorForNormalisationRight(v_factory);
+		OWLClassExpression new_ExprL = addFreshClassName(v_counter_FreshConcept);
+		v_counter_FreshConcept++;
+		setCurrentClassExpression(new_ExprL);
+		axiom.getSuperClass().accept(ceVisitorR);
+		
+		getV_Normalised_Axioms().add(addSubClassAxiom(new_ExprL, new_Expr));
+		
+/*		if (isNonComplementOFNamedClass(axiom.getSubClass()) 
 				&& isNonComplementOFNamedClass(axiom.getSuperClass())) {
 
 			getV_Normalised_Axioms().add(axiom);					
 
 		} else if (isNotNamedClass(axiom.getSubClass()) && isNotNamedClass(axiom.getSuperClass())){
-/*			ClassExpressionVisitorForNormalisationRight ceVisitorR = new ClassExpressionVisitorForNormalisationRight(v_factory);
-			ClassExpressionVisitorForNormalisationLeft ceVisitorL = new ClassExpressionVisitorForNormalisationLeft(v_factory);*/
 
 			//C subsumes D -> C subsumes X and X subsumes D
 			OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 			v_counter_FreshConcept++;
-
+			
 			addSubClassAxiom(axiom.getSubClass(), new_Expr).accept(this);
 			
 			addSubClassAxiom(new_Expr, axiom.getSuperClass()).accept(this);
 			
-/*			OWLClassExpression new_ExprLeft = addFreshClassName(v_counter_FreshConcept);
-			v_counter_FreshConcept++;
-
-			getV_Normalised_Axioms().add(addSubClassAxiom(new_ExprLeft, new_ExprRight));
-
-			System.out.println(axiom.getSubClass().toString()+ "herePPPP");
-			setCurrentClassExpression(new_ExprLeft);
-			axiom.getSuperClass().accept(ceVisitorR);		
-
-			System.out.println(axiom.getSubClass().toString()+ "here");
-			setCurrentClassExpression(new_ExprRight);
-			axiom.getSubClass().accept(ceVisitorL);*/
 		}else if (isNonComplementOFNamedClass(axiom.getSubClass()) && !isNonComplementOFNamedClass(axiom.getSuperClass())) {
 
-			ClassExpressionVisitorForNormalisationRight ceVisitorL = new ClassExpressionVisitorForNormalisationRight(v_factory);
-			//set the named class for use
-			//v_Leftt_Named_ClassExpression = axiom.getSubClass();
+			ClassExpressionVisitorForNormalisationRight ceVisitorR = new ClassExpressionVisitorForNormalisationRight(v_factory);
 			setCurrentClassExpression(axiom.getSubClass());
-			axiom.getSuperClass().accept(ceVisitorL);
+			axiom.getSuperClass().accept(ceVisitorR);
 
 		} else {
-			ClassExpressionVisitorForNormalisationRight ceVisitorR = new ClassExpressionVisitorForNormalisationRight(v_factory);
-			//set the named class for use
-			//v_Leftt_Named_ClassExpression = axiom.getSubClass();
+			ClassExpressionVisitorForNormalisationLeft ceVisitorL = new ClassExpressionVisitorForNormalisationLeft(v_factory);
 			setCurrentClassExpression(axiom.getSuperClass());
-			axiom.getSuperClass().accept(ceVisitorR);
-		}
-
-
+			axiom.getSubClass().accept(ceVisitorL);
+		}*/
 	}
 
 	@Override
@@ -192,13 +187,9 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	public void visit(OWLEquivalentObjectPropertiesAxiom axiom) {
 
 		Iterator<OWLSubObjectPropertyOfAxiom> iter = axiom.asSubObjectPropertyOfAxioms().iterator();
-		//It can be very big !
-		int i =10;
+		//It can be very big
 		while (iter.hasNext()) {
 			getV_Normalised_Axioms().add(iter.next());
-			i++;
-			if (i==10)
-				break;
 		}
 	}
 
@@ -227,7 +218,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyRangeAxiom axiom) {
-		throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
+		//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
 	}
 
 	@Override
@@ -277,25 +268,21 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLClassAssertionAxiom axiom) {
 
-		OWLClassExpression new_Expression =addFreshClassName(v_counter_FreshConcept);
+		axiom.asOWLSubClassOfAxiom().accept(this);
+/*		OWLClassExpression new_Expression =addFreshClassName(v_counter_FreshConcept);
 		v_counter_FreshConcept++;
 		//X(a)
 		getV_Normalised_Axioms().add(v_factory.getOWLClassAssertionAxiom(new_Expression, axiom.getIndividual()));
 		//X :- C
-		addSubClassAxiom(new_Expression, axiom.getClassExpression()).accept(this);
+		addSubClassAxiom(new_Expression, axiom.getClassExpression()).accept(this);*/
 
 	}
 
 	@Override
 	public void visit(OWLEquivalentClassesAxiom axiom) {
-		int i =10;
 		Iterator<OWLSubClassOfAxiom> iter = axiom.asOWLSubClassOfAxioms().iterator();
 		while (iter.hasNext()) {
-			System.out.println(iter.next());
 			iter.next().accept(this);
-			i++;
-			if (i==10)
-				break;
 		}
 	}
 
