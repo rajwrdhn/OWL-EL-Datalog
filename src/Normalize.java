@@ -43,7 +43,6 @@ public class Normalize {
 		onto.axioms().forEach(x -> asi.add(x));
 		asi.remove(null);
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
-		System.out.println(asi.size());
 
 		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
 		
@@ -68,24 +67,20 @@ public class Normalize {
 		axioms.remove(null);
 		for (OWLAxiom axiom : axioms) {
 			axiom.accept(axmVisitor);
-			//System.out.println(axiom);
 		}		
 		
 		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty()) {
-			System.out.println("here");
 			v_Iterable_MapAxioms.remove(v_Iterable_KeyForMap);
 		} else {
 			v_Iterable_MapAxioms.remove(v_Iterable_KeyForMap);
 			v_Iterable_KeyForMap = v_Iterable_KeyForMap + 1;
 			v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, axmVisitor.getAxiomsForFurtherNorm());
-			System.out.println(v_Iterable_MapAxioms.isEmpty());
 		}
 		axmVisitor.clear();	
 	
 		if(v_Iterable_MapAxioms.isEmpty()) {
 			System.out.println("Norm Comp!!");
 		} else {
-			System.out.println("here!");
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}	
 	}

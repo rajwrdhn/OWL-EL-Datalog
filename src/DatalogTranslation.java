@@ -68,15 +68,9 @@ public class DatalogTranslation {
 		
 		reasoner.load();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
-		reasoner.setReasoningTimeout(1);
-		System.out.println("Starting Skolem Chase with 1 second timeout.");
-		
-		boolean skolemChaseFinished = reasoner.reason();
-		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
-		System.out.println(
-				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
-		printOutQueryAnswers(a , reasoner);
-		//reasoner.answerQuery(arg0, arg1);
+		System.out.println("Starting Skolem Chase For Query: "+  a );
+		reasoner.reason();
+
 		reasoner.close();
 	}
 	
@@ -89,14 +83,9 @@ public class DatalogTranslation {
 		
 		reasoner.load();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
-		reasoner.setReasoningTimeout(1);
-		System.out.println("Starting Skolem Chase with 1 second timeout.");
-		
-		boolean skolemChaseFinished = reasoner.reason();
-		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
-		System.out.println(
-				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
-		//printOutQueryAnswers(a , reasoner);
+		System.out.println("Starting Skolem Chase For Query: "+  a );
+		reasoner.reason();
+
 		reasoner.close();
 	}
 	
@@ -109,26 +98,9 @@ public class DatalogTranslation {
 		
 		reasoner.load();
 		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
-		reasoner.setReasoningTimeout(1);
-		System.out.println("Starting Skolem Chase with 1 second timeout.");
-		
-		boolean skolemChaseFinished = reasoner.reason();
-		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
-		System.out.println(
-				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
-		//printOutQueryAnswers(a , reasoner);
-		reasoner.close();
-	}
+		System.out.println("Starting Skolem Chase For Query: "+  a );
+		reasoner.reason();
 
-	private void printOutQueryAnswers(Atom queryAtom, Reasoner reasoner) throws ReasonerStateException {
-		// TODO Auto-generated method stub
-		System.out.println();
-		System.out.println("Answers to query " + queryAtom + " before materialisation:");
-		try (QueryResultIterator answersBeforeMaterialisation = reasoner.answerQuery(queryAtom, true)) {
-			while (answersBeforeMaterialisation.hasNext()) {
-				System.out.println(" - " + answersBeforeMaterialisation.next());
-			}
-			System.out.println();
-		}
+		reasoner.close();
 	}
 }

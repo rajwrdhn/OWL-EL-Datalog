@@ -168,7 +168,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 		try {
 			System.out.println("Data Property Domain Axiom Exception !" + axiom.toString());
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.getMessage();
 		}
 	}
 
@@ -233,12 +233,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubObjectPropertyOfAxiom axiom) {
-		//TODO only subRole(R,T) done. check?
 		// for full use OWLObjectVisitor
 		// Concept product
 /*		if (axiom.objectPropertiesInSignature().count() ==2) {
 			getV_Normalised_Axioms().add(axiom);
-		} */
+		} */ 
 	}
 
 	@Override
@@ -249,18 +248,17 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLSymmetricObjectPropertyAxiom axiom) {
 		try {
-			System.out.println(axiom.toString());
+			//System.out.println(axiom.toString());
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.getMessage();
 		}
 	}
 
 	@Override
 	public void visit(OWLDataPropertyRangeAxiom axiom) {
 		try {
-			System.out.println("Data Property Range Axiom Exception !" + axiom.toString());
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.getMessage();
 		}
 	}
 
@@ -268,9 +266,9 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	public void visit(OWLFunctionalDataPropertyAxiom axiom) {
 		//throw new IllegalArgumentException("Functional Data Property Axiom Exception !" + axiom.toString());
 		try {
-			System.out.println("Functional Data Property Axiom Exception !" + axiom.toString());
+			//System.out.println("Functional Data Property Axiom Exception !" + axiom.toString());
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.getMessage();
 		}
 	}
 
@@ -281,14 +279,13 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLClassAssertionAxiom axiom) {
 
-		//axiom.asOWLSubClassOfAxiom().accept(this);
-		OWLClassExpression new_Expression =addFreshClassName(v_counter_FreshConcept);
-		v_counter_FreshConcept++;
+		axiom.asOWLSubClassOfAxiom().accept(this);
+		//OWLClassExpression new_Expression =addFreshClassName(v_counter_FreshConcept);
+		//v_counter_FreshConcept++;
 		//X(a)
-		getV_Normalised_Axioms().add(v_factory.getOWLClassAssertionAxiom(new_Expression, axiom.getIndividual()));
+		//getV_Normalised_Axioms().add(v_factory.getOWLClassAssertionAxiom(new_Expression, axiom.getIndividual()));
 		//X :- C
-		getAxiomsForFurtherNorm().add(addSubClassAxiom(new_Expression, axiom.getClassExpression()));
-		System.out.println(axiom.getClassExpression());
+		//getAxiomsForFurtherNorm().add(addSubClassAxiom(new_Expression, axiom.getClassExpression()));
 		//addSubClassAxiom(new_Expression, axiom.getClassExpression()).accept(this);s
 	}
 
@@ -308,6 +305,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLTransitiveObjectPropertyAxiom axiom) {
 		//throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -325,7 +327,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 		try {
 			System.out.println("Inverse Functional Object Property Axiom Exception !" + axiom.toString());
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.getMessage();
 		}
 	}
 

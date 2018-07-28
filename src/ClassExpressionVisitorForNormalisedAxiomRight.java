@@ -45,11 +45,11 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 			toSingleConstantFacts(v_botEDB, c2);
 
 		} else {
-/*			Constant c1 = getConstant(ce.toString());
+			Constant c1 = getConstant(ce.toString());
 			Constant c2 = getConstant(sub_class_of_axiom.toString());
 			toDoubleConstantFacts(v_subClassEDB,c2,c1);
 			toSingleConstantFacts(v_clsEDB, c1);
-			toSingleConstantFacts(v_clsEDB, c2);*/
+			toSingleConstantFacts(v_clsEDB, c2);
 		}
 	}
 
