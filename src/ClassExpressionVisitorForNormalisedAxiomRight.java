@@ -37,7 +37,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 		if (ce.isOWLNamedIndividual()) {
 			Constant c1 = getConstant(ce.toString());
 			Constant c2 = getConstant(sub_class_of_axiom.toString());
-			toDoubleConstantFacts(v_subClassEDB,c1,c2);
+			toDoubleConstantFacts(v_subClassEDB,c2,c1);
 
 		} else if (ce.isOWLNothing()){
 			
@@ -47,8 +47,9 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 		} else {
 /*			Constant c1 = getConstant(ce.toString());
 			Constant c2 = getConstant(sub_class_of_axiom.toString());
-			toDoubleConstantFacts(v_subClassEDB,c1,c2);*/
-			//Nothing
+			toDoubleConstantFacts(v_subClassEDB,c2,c1);
+			toSingleConstantFacts(v_clsEDB, c1);
+			toSingleConstantFacts(v_clsEDB, c2);*/
 		}
 	}
 

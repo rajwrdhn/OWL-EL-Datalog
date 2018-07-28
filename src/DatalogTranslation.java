@@ -31,7 +31,7 @@ public class DatalogTranslation {
 		
 		DatalogRules dlogrules = new DatalogRules(v_s_normalisedAxioms, arg);
 		
-		dlogrules.makeRules();
+		dlogrules.instanceRetrievalRules();
 		
 		callReasoner(dlogrules,normalizedAxiomVisitor, arg);
 	}
@@ -75,7 +75,8 @@ public class DatalogTranslation {
 		System.out.println("Has Skolem Chase algorithm finished before 1 second timeout? " + skolemChaseFinished);
 		System.out.println(
 				"Answers to query " + a + " after reasoning with the Skolem Chase for 1 second:");
-		//printOutQueryAnswers(a , reasoner);
+		printOutQueryAnswers(a , reasoner);
+		//reasoner.answerQuery(arg0, arg1);
 		reasoner.close();
 	}
 	

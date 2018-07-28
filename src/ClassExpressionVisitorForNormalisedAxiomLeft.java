@@ -48,7 +48,11 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 			toSingleConstantFacts(v_topEDB, c1);
 			toSingleConstantFacts(v_clsEDB, c2);
 		} else {
-			// Not doing named class here. Empty
+/*			Constant c1 = getConstant(ce.toString());
+			Constant c2 = getConstant(super_class_of_axiom.toString());
+			toDoubleConstantFacts(v_subClassEDB,c1,c2);
+			toSingleConstantFacts(v_clsEDB, c1);
+			toSingleConstantFacts(v_clsEDB, c2);*/
 		}
 	}
 
@@ -91,8 +95,9 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 		Constant c3 = getConstant(ce.getProperty().toString());
 		
 		toSingleConstantFacts(v_clsEDB, c1);
-		toThreeConstantFacts(v_subExEDB, c3, c1, c3);
+		toThreeConstantFacts(v_subExEDB, c3, c1, c2);
 		toSingleConstantFacts(v_clsEDB, c2);
+		toSingleConstantFacts(v_rolEDB, c3);
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.IRI;
@@ -20,7 +22,9 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 public class Normalize {
 
 	protected final OWLDataFactory v_factory;
-	protected final Set<OWLAxiom> v_normalised = new HashSet<>();
+	
+	protected static Map<Integer,Set<OWLAxiom>> v_Iterable_MapAxioms = new HashMap<>();
+	private static int v_Iterable_KeyForMap = 1;
 	
 	public Normalize(OWLDataFactory factory) {
 		v_factory=factory;
@@ -37,34 +41,53 @@ public class Normalize {
 
 		Set<OWLAxiom> asi = new HashSet<>();		
 		onto.axioms().forEach(x -> asi.add(x));
+		asi.remove(null);
+		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
+		System.out.println(asi.size());
 
+		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
 		
-
 		if(asi.isEmpty()) {
 			System.out.println("No Axioms in the Ontology!!");
 		} else {
-			visitAxioms(asi);
+			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap),axmVisitor);
 		}
 
-		return get_Normalised_Axioms();
-	}
-
-	private Set<OWLAxiom> get_Normalised_Axioms() {
-		return v_normalised;
+		return axmVisitor.getV_Normalised_Axioms();
 	}
 
 	/**
 	 * Visit all Axioms in the Ontology and normalize the axioms
 	 * @param axioms
+	 * @param axmVisitor 
 	 * @param axmVisitor
 	 * @throws OWLOntologyCreationException
 	 */
-	public void visitAxioms(Collection<? extends OWLAxiom> axioms) throws OWLOntologyCreationException {
-		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
+	public void visitAxioms(Collection<? extends OWLAxiom> axioms, AxiomVisitorForNormalisation axmVisitor) throws OWLOntologyCreationException {
+		
+		axioms.remove(null);
 		for (OWLAxiom axiom : axioms) {
 			axiom.accept(axmVisitor);
+			//System.out.println(axiom);
+		}		
+		
+		if (axmVisitor.getAxiomsForFurtherNorm().isEmpty()) {
+			System.out.println("here");
+			v_Iterable_MapAxioms.remove(v_Iterable_KeyForMap);
+		} else {
+			v_Iterable_MapAxioms.remove(v_Iterable_KeyForMap);
+			v_Iterable_KeyForMap = v_Iterable_KeyForMap + 1;
+			v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, axmVisitor.getAxiomsForFurtherNorm());
+			System.out.println(v_Iterable_MapAxioms.isEmpty());
 		}
-		v_normalised.addAll(axmVisitor.getV_Normalised_Axioms());
+		axmVisitor.clear();	
+	
+		if(v_Iterable_MapAxioms.isEmpty()) {
+			System.out.println("Norm Comp!!");
+		} else {
+			System.out.println("here!");
+			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
+		}	
 	}
 
 	public boolean isNonComplementOFNamedClass(OWLClassExpression ce) {

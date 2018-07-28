@@ -40,15 +40,17 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		
 		OWLClassExpression ce_expr = getCurrentClassExpression();
 		ce.operands().forEach(x -> {
-			setCurrentClassExpression(ce_expr);
-			x.accept(this);
-			//addSubClassAxiom(getCurrentClassExpression(), x);
+			getAxiomsForFurtherNorm().add(addSubClassAxiom(ce_expr, x));
 		});
 	}
 
 	@Override
 	public void visit(OWLObjectUnionOf ce) {
-		throw new IllegalArgumentException("OWLObjectUnionOf not OWL 2 EL ! " + ce.toString()  );
+		try {
+			//System.out.println("OWLObjectUnionOf not OWL 2 EL ! " + ce.toString() ) ;
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -62,21 +64,26 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
 		v_counter_FreshConcept++;
 		
-		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
+		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), 
+				ce.getProperty(), new_expr));
 		
 		setCurrentClassExpression(new_expr);
 		ce.getFiller().accept(this);
-		//addSubClassAxiom(getCurrentClassExpression(), ce.getFiller());
 	}
 
 	@Override
 	public void visit(OWLObjectAllValuesFrom ce) {
-		//throw new IllegalStateException("OWLObjectAllValuesFrom " + ce.toString());
+		try {
+			//System.out.println("Not a OWL EL syntax !"+ce.toString());
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {		
-		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), (OWLClassExpression)ce.getFiller()));		
+		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), 
+				ce.getProperty(), (OWLClassExpression)ce.getFiller()));		
 	}
 
 	@Override
@@ -85,12 +92,11 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 		OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
 		v_counter_FreshConcept++;
 		
-		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), ce.getProperty(), new_expr));
+		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), 
+				ce.getProperty(), new_expr));
 
 		setCurrentClassExpression(new_expr);
 		ce.getFiller().accept(this);
-		
-		//addSubClassAxiom(getCurrentClassExpression(), ce.getFiller());
 	}
 
 	@Override
@@ -125,7 +131,11 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLDataHasValue ce) {
-		throw new IllegalStateException("OWLDataHasValue " + ce.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override

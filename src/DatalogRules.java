@@ -15,7 +15,7 @@ public class DatalogRules extends VisitNormalisedAxioms{
 		super(normaxms, v_args);
 	}
 
-	public void makeRules() {
+	public void instanceRetrievalRules() {
 		Predicate v_inst = Expressions.makePredicate("inst",2);
 		Predicate v_triple = Expressions.makePredicate("triple",3);
 		Predicate v_self = Expressions.makePredicate("self", 2);
@@ -157,5 +157,37 @@ public class DatalogRules extends VisitNormalisedAxioms{
 						Expressions.makeAtom(v_self, x,y)
 						)));
 
+	}
+	
+	public void subClassRules() {
+		Predicate v_inst = Expressions.makePredicate("inst",2);
+		Predicate v_srole = Expressions.makePredicate("srole",2);
+		Predicate v_self = Expressions.makePredicate("self", 2);
+
+		Variable x = Expressions.makeVariable("x");
+		Variable y = Expressions.makeVariable("y");
+		Variable z = Expressions.makeVariable("z");
+		Variable v = Expressions.makeVariable("v");
+		Variable w = Expressions.makeVariable("w");
+		
+		// nom(x) :- v_inst(x,x)
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, x,x), Expressions.makeAtom(v_nomEDB, x)));
+		
+		// cls(x) :- v_inst(x,x)
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, y,y), Expressions.makeAtom(v_clsEDB, y)));
+		
+		// rol(x) :- v_srole(x,x)
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_srole, y,y), Expressions.makeAtom(v_rolEDB, x)));
+		
+		// supEx(x,y,z,v) :- v_inst(v,z)
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, v,z), Expressions.makeAtom(v_supExEDB, x,y,z,v)));
+		
+		//nom(z) , v_inst (x,z) , v_inst (v,w) , cls(y) :- v_inst (v,y)
+/*		v_l_rules.add(Expressions.makeRule(
+				Expressions.makeConjunction(Expressions.makeAtom(v_inst, v,y)),
+				Expressions.makeConjunction(Expressions.makeAtom(v_botEDB, z),
+				Expressions.makeAtom(v_inst, x,z),
+				Expressions.makeAtom(v_inst, v,w),
+				Expressions.makeAtom(v_clsEDB, y))));*/
 	}
 }
