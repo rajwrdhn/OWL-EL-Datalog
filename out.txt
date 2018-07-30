@@ -10,39 +10,26 @@
 [INFO] 
 [INFO] 
 [INFO] --- exec-maven-plugin:1.2.1:java (default-cli) @ CLThesis ---
-[WARNING] 
-java.lang.reflect.InvocationTargetException
-    at sun.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
-    at sun.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:62)
-    at sun.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)
-    at java.lang.reflect.Method.invoke (Method.java:498)
-    at org.codehaus.mojo.exec.ExecJavaMojo$1.run (ExecJavaMojo.java:297)
-    at java.lang.Thread.run (Thread.java:748)
-Caused by: java.lang.IllegalStateException: OWLObjectAllValuesFrom ObjectAllValuesFrom(<http://www.owl-ontologies.com/unnamed.owl#creatorOf> <http://www.owl-ontologies.com/unnamed.owl#Artefact>)
-    at ClassExpressionVisitorForNormalisationRight.visit (ClassExpressionVisitorForNormalisationRight.java:71)
-    at org.semanticweb.owlapi.model.OWLObjectAllValuesFrom.accept (OWLObjectAllValuesFrom.java:53)
-    at AxiomVisitorForNormalisation.visit (AxiomVisitorForNormalisation.java:144)
-    at org.semanticweb.owlapi.model.OWLSubClassOfAxiom.accept (OWLSubClassOfAxiom.java:87)
-    at Normalize.visitAxioms (Normalize.java:75)
-    at Normalize.getFromOntology (Normalize.java:57)
-    at InferenceForOWLELMain.loadOntology (InferenceForOWLELMain.java:43)
-    at InferenceForOWLELMain.main (InferenceForOWLELMain.java:73)
-    at sun.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
-    at sun.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:62)
-    at sun.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)
-    at java.lang.reflect.Method.invoke (Method.java:498)
-    at org.codehaus.mojo.exec.ExecJavaMojo$1.run (ExecJavaMojo.java:297)
-    at java.lang.Thread.run (Thread.java:748)
+...
+Time for Start Normalising ...  : 0.119 seconds
+   ...Normalised! 
+.
+Time for Load File! : 3.045 seconds
+.
+Start Instance Check...
+Number of facts :=  10945
+Time for : 0.276 seconds
+Instance Checking Done!!
+.
+
+
+Start SubClass...
+Number of facts :=  10945
+Time: 0.096 seconds, SubClass Done!!.
+Time: 0.56 seconds, Done!.
 [INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
+[INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4.009 s
-[INFO] Finished at: 2018-07-25T18:42:40+02:00
+[INFO] Total time: 5.034 s
+[INFO] Finished at: 2018-07-30T11:13:21+02:00
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.codehaus.mojo:exec-maven-plugin:1.2.1:java (default-cli) on project CLThesis: An exception occured while executing the Java class. null: InvocationTargetException: OWLObjectAllValuesFrom ObjectAllValuesFrom(<http://www.owl-ontologies.com/unnamed.owl#creatorOf> <http://www.owl-ontologies.com/unnamed.owl#Artefact>) -> [Help 1]
-[ERROR] 
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR] 
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

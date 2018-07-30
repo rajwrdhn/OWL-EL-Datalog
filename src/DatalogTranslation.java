@@ -25,13 +25,38 @@ public class DatalogTranslation {
 			axiom.accept(normalizedAxiomVisitor);
 		}
 		
+		instance();
+		
+		subclass();		
+	}
+	
+	public void instance() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+		StopWatch timer = new StopWatch();
+		timer.start("");
+		System.out.println("Start Instance Check...");
+		VisitNormalisedAxioms normalizedAxiomVisitor = new VisitNormalisedAxioms(v_s_normalisedAxioms);
 		DatalogRules dlogrules = new DatalogRules(v_s_normalisedAxioms);
 		
 		dlogrules.instanceRetrievalRules();
 		
 		callReasoner(dlogrules,normalizedAxiomVisitor);
+		timer.stop("Instance Checking Done!!");
 	}
 
+	public void subclass() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+		StopWatch timer = new StopWatch();
+		timer.start();
+		System.out.println("\n");
+		System.out.println("Start SubClass...");
+		VisitNormalisedAxioms normalizedAxiomVisitor = new VisitNormalisedAxioms(v_s_normalisedAxioms);
+		DatalogRules dlogrules = new DatalogRules(v_s_normalisedAxioms);
+		
+		dlogrules.subClassRules();
+		
+		callReasoner(dlogrules,normalizedAxiomVisitor);
+		timer.stop("SubClass Done!!");
+	}
+	
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		Reasoner reasoner = Reasoner.getInstance();
 		List<Rule> allrules = dlogruls.v_l_rules;

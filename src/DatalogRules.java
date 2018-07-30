@@ -169,6 +169,9 @@ public class DatalogRules extends VisitNormalisedAxioms{
 		Variable z = Expressions.makeVariable("z");
 		Variable v = Expressions.makeVariable("v");
 		Variable w = Expressions.makeVariable("w");
+		Variable r = Expressions.makeVariable("r");
+		Variable s = Expressions.makeVariable("s");
+		Variable t = Expressions.makeVariable("t");
 
 		// nom(x) :- v_inst(x,x)
 		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, x,x), Expressions.makeAtom(v_nomEDB, x)));
@@ -181,15 +184,55 @@ public class DatalogRules extends VisitNormalisedAxioms{
 
 		// supEx(x,y,z,v) :- v_inst(v,z)
 		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, v,z), Expressions.makeAtom(v_supExEDB, x,y,z,v)));
+		
+		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_self, x,v)), 
+				Expressions.makeConjunction(Expressions.makeAtom(v_nomEDB, x),
+				Expressions.makeAtom(v_supExEDB, y,v,z,w),
+				Expressions.makeAtom(v_inst, x,y)
+				,Expressions.makeAtom(v_inst, w,x))));
+		
+		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,z)), 
+				Expressions.makeConjunction(Expressions.makeAtom(v_subClassEDB, y,z),
+				Expressions.makeAtom(v_inst, x,y)		)
+				));
 
-		//nom(z) , v_inst (x,z) , v_inst (v,w) , cls(y) :- v_inst (v,y)
-		/*		v_l_rules.add(Expressions.makeRule(
-				Expressions.makeConjunction(Expressions.makeAtom(v_inst, v,y)),
-				Expressions.makeConjunction(Expressions.makeAtom(v_botEDB, z),
-				Expressions.makeAtom(v_inst, x,z),
-				Expressions.makeAtom(v_inst, v,w),
-				Expressions.makeAtom(v_clsEDB, y))));*/
-		//subrole , self :- self
+		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,z)),
+				Expressions.makeConjunction(Expressions.makeAtom(v_subConjEDB, y,v,z),
+						Expressions.makeAtom(v_inst, x,y),
+						Expressions.makeAtom(v_inst, x, v))
+				));
+		
+		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,z)),
+				Expressions.makeConjunction(Expressions.makeAtom(v_supExEDB, y,v,z,w),
+						Expressions.makeAtom(v_subExEDB, r,s,t),
+						Expressions.makeAtom(v_inst, x,y),
+						Expressions.makeAtom(v_srole, v,r),
+						Expressions.makeAtom(v_inst, w,s)
+						)
+				));
+		
+		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,z)),
+				Expressions.makeConjunction(Expressions.makeAtom(v_subConjEDB, v,y,z),
+						Expressions.makeAtom(v_self, x,v),
+						Expressions.makeAtom(v_inst, x, y))
+				));
+		
+		//subSelf(v,z) , v_self(x,v) :- v_inst(x,z)
+		v_l_rules.add(Expressions.makeRule(
+				Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,z)),
+				Expressions.makeConjunction(
+						Expressions.makeAtom(v_subSelfEDB, v,z),
+						Expressions.makeAtom(v_self, x,v)
+						)));
+
+		//supSelf(y,v) , v_inst(x,y) :- v_self(x,v)
+		v_l_rules.add(Expressions.makeRule(
+				Expressions.makeConjunction(Expressions.makeAtom(v_self, x,v)),
+				Expressions.makeConjunction(
+						Expressions.makeAtom(v_supSelfEDB, y,v),
+						Expressions.makeAtom(v_inst, x,y)
+						)));
+
 		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(
 				Expressions.makeAtom(v_self, x,w)),
 				Expressions.makeConjunction(
