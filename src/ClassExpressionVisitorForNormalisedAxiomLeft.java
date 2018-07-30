@@ -28,24 +28,24 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 
 	protected OWLClassExpression super_class_of_axiom; 
 
-	public ClassExpressionVisitorForNormalisedAxiomLeft(OWLClassExpression superClassExprOfAxm, Set<OWLAxiom> normalisedaxms, String args) {
-		super(normalisedaxms, args);
+	public ClassExpressionVisitorForNormalisedAxiomLeft(OWLClassExpression superClassExprOfAxm, Set<OWLAxiom> normalisedaxms) {
+		super(normalisedaxms);
 		super_class_of_axiom = superClassExprOfAxm;
 	}
 
 	@Override
 	public void visit(OWLClass ce) {
 		if (ce.isOWLNamedIndividual()) {
-			Constant c1 = getConstant(ce.asOWLNamedIndividual().toString());
+			Constant c1 = getConstant(ce.toString());
 			Constant c2 = getConstant(super_class_of_axiom.toString());
 			
 			toDoubleConstantFacts(v_subClassEDB, c1, c2);
 			toSingleConstantFacts(v_nomEDB, c1);
 			toSingleConstantFacts(v_clsEDB, c2);			
 		} else if (ce.isOWLThing()) {
-			Constant c1 = getConstant(ce.toString());
+			//Constant c1 = getConstant(ce.toString());
 			Constant c2 = getConstant(super_class_of_axiom.toString());
-			toSingleConstantFacts(v_topEDB, c1);
+			toSingleConstantFacts(v_topEDB, c2);
 			toSingleConstantFacts(v_clsEDB, c2);
 		} else {
 			Constant c1 = getConstant(ce.toString());
@@ -107,14 +107,26 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		//normalised
-		throw new IllegalStateException();
+		Constant c1 = getConstant(ce.getFiller().toString());
+		Constant c2 = getConstant(super_class_of_axiom.toString());
+		Constant c3 = getConstant(ce.getProperty().toString());
+		
+		toSingleConstantFacts(v_nomEDB, c1);
+		toThreeConstantFacts(v_subExEDB, c3, c1, c2);
+		toSingleConstantFacts(v_clsEDB, c2);
+		toSingleConstantFacts(v_rolEDB, c3);
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
-		//normalised
-		throw new IllegalStateException();
+		Constant c1 = getConstant(ce.getFiller().toString());
+		Constant c2 = getConstant(super_class_of_axiom.toString());
+		Constant c3 = getConstant(ce.getProperty().toString());
+		
+		toSingleConstantFacts(v_nomEDB, c1);
+		toThreeConstantFacts(v_subExEDB, c3, c1, c2);
+		toSingleConstantFacts(v_clsEDB, c2);
+		toSingleConstantFacts(v_rolEDB, c3);
 	}
 
 	@Override

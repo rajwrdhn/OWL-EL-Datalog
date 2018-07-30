@@ -28,8 +28,8 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalisedAxioms implements OWLClassExpressionVisitor {
 	protected OWLClassExpression sub_class_of_axiom; 
 
-	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm, Set<OWLAxiom> normalisedaxms, String args) {
-		super(normalisedaxms, args);
+	public ClassExpressionVisitorForNormalisedAxiomRight(OWLClassExpression subClassExprOfAxm, Set<OWLAxiom> normalisedaxms) {
+		super(normalisedaxms);
 		sub_class_of_axiom = subClassExprOfAxm;
 	}
 	@Override
@@ -38,11 +38,15 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 			Constant c1 = getConstant(ce.toString());
 			Constant c2 = getConstant(sub_class_of_axiom.toString());
 			toDoubleConstantFacts(v_subClassEDB,c2,c1);
+			
+			toSingleConstantFacts(v_nomEDB, c1);
+			toSingleConstantFacts(v_clsEDB, c2);
 
 		} else if (ce.isOWLNothing()){
 			
 			Constant c2 = getConstant(sub_class_of_axiom.toString());
 			toSingleConstantFacts(v_botEDB, c2);
+			toSingleConstantFacts(v_clsEDB, c2);
 
 		} else {
 			Constant c1 = getConstant(ce.toString());
@@ -91,14 +95,30 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		//Normalised
-		throw new IllegalStateException();
+		Constant c1 = getConstant(ce.getFiller().toString());
+		Constant c2 = getConstant(sub_class_of_axiom.toString());
+		Constant c3 = getConstant(ce.getProperty().toString());
+		Constant c4 = getConstant("aux"+auxnum);
+		auxnum++;
+		
+		toSingleConstantFacts(v_nomEDB, c1);
+		toSingleConstantFacts(v_rolEDB, c3);
+		toSingleConstantFacts(v_clsEDB, c2);
+		toFourConstantFacts(v_supExEDB, c2, c3, c1, c4);
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
-		//Normalised
-		throw new IllegalStateException();
+		Constant c1 = getConstant(ce.getFiller().toString());
+		Constant c2 = getConstant(sub_class_of_axiom.toString());
+		Constant c3 = getConstant(ce.getProperty().toString());
+		Constant c4 = getConstant("aux"+auxnum);
+		auxnum++;
+		
+		toSingleConstantFacts(v_nomEDB, c1);
+		toSingleConstantFacts(v_rolEDB, c3);
+		toSingleConstantFacts(v_clsEDB, c2);
+		toFourConstantFacts(v_supExEDB, c2, c3, c1, c4);
 	}
 
 	@Override

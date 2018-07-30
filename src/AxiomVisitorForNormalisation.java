@@ -174,7 +174,6 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLObjectPropertyDomainAxiom axiom) {
-
 		axiom.asOWLSubClassOfAxiom().accept(this);	
 	}
 
@@ -221,23 +220,17 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	}
 
 	@Override
-	public void visit(OWLFunctionalObjectPropertyAxiom axiom) {
-		
+	public void visit(OWLFunctionalObjectPropertyAxiom axiom) {		
 		try {
 			System.out.println("Functional Object Property Axiom Exception !" + axiom.toString());
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.getMessage();
 		}
 	}
 
 	@Override
 	public void visit(OWLSubObjectPropertyOfAxiom axiom) {
-		// for full use OWLObjectVisitor
-		// Concept product
-/*		if (axiom.objectPropertiesInSignature().count() ==2) {
-			getV_Normalised_Axioms().add(axiom);
-		} */ 
+		getV_Normalised_Axioms().add(axiom);
 	}
 
 	@Override
@@ -264,9 +257,8 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLFunctionalDataPropertyAxiom axiom) {
-		//throw new IllegalArgumentException("Functional Data Property Axiom Exception !" + axiom.toString());
 		try {
-			//System.out.println("Functional Data Property Axiom Exception !" + axiom.toString());
+			
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -278,15 +270,8 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	}
 	@Override
 	public void visit(OWLClassAssertionAxiom axiom) {
-
+		
 		axiom.asOWLSubClassOfAxiom().accept(this);
-		//OWLClassExpression new_Expression =addFreshClassName(v_counter_FreshConcept);
-		//v_counter_FreshConcept++;
-		//X(a)
-		//getV_Normalised_Axioms().add(v_factory.getOWLClassAssertionAxiom(new_Expression, axiom.getIndividual()));
-		//X :- C
-		//getAxiomsForFurtherNorm().add(addSubClassAxiom(new_Expression, axiom.getClassExpression()));
-		//addSubClassAxiom(new_Expression, axiom.getClassExpression()).accept(this);s
 	}
 
 	@Override

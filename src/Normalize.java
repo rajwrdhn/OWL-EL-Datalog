@@ -38,20 +38,21 @@ public class Normalize {
 	 * @throws ReasonerStateException 
 	 */
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
-
+		StopWatch timer = new StopWatch();
+		
 		Set<OWLAxiom> asi = new HashSet<>();		
 		onto.axioms().forEach(x -> asi.add(x));
 		asi.remove(null);
 		v_Iterable_MapAxioms.put(v_Iterable_KeyForMap, asi);
 
 		AxiomVisitorForNormalisation axmVisitor = new AxiomVisitorForNormalisation(v_factory);
-		
+		timer.start("Start Normalising ...  ");
 		if(asi.isEmpty()) {
 			System.out.println("No Axioms in the Ontology!!");
 		} else {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap),axmVisitor);
 		}
-
+		timer.stop("   ...Normalised! ");
 		return axmVisitor.getV_Normalised_Axioms();
 	}
 
@@ -79,7 +80,7 @@ public class Normalize {
 		axmVisitor.clear();	
 	
 		if(v_Iterable_MapAxioms.isEmpty()) {
-			System.out.println("Norm Comp!!");
+			System.out.println("...");
 		} else {
 			visitAxioms(v_Iterable_MapAxioms.get(v_Iterable_KeyForMap), axmVisitor);
 		}	

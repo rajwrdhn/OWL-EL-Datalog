@@ -69,8 +69,8 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 	protected Predicate v_subRoleEDB = Expressions.makePredicate("subRoleEDB", 2);
 
 
-	public VisitNormalisedAxioms(Set<OWLAxiom> normalisedAxioms, String args) {
-		super(normalisedAxioms, args);
+	public VisitNormalisedAxioms(Set<OWLAxiom> normalisedAxioms) {
+		super(normalisedAxioms);
 	}
 
 	//Facts
@@ -130,27 +130,17 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 
 	@Override
 	public void visit(OWLSubClassOfAxiom axiom) {
-		
-		if (axiom.getSubClass().isClassExpressionLiteral() && axiom.getSuperClass().isClassExpressionLiteral()) {
-			
-			Constant c1 = getConstant(axiom.getSubClass().toString());
-			Constant c2 = getConstant(axiom.getSuperClass().toString());
-			
-			toDoubleConstantFacts(v_subClassEDB, c1, c2);
-			toSingleConstantFacts(v_clsEDB, c1);
-			
-			toSingleConstantFacts(v_clsEDB, c2);
-		} else if(axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
+		if(axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
 		
 			ClassExpressionVisitorForNormalisedAxiomRight ce_visit = 
-					new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSuperClass(), v_s_normalisedAxioms, v_args); 
+					new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSuperClass(), v_s_normalisedAxioms); 
 			
 			axiom.getSuperClass().accept(ce_visit);
 		
 		} else {
 		
 			ClassExpressionVisitorForNormalisedAxiomLeft ce_visit = 
-					new ClassExpressionVisitorForNormalisedAxiomLeft(axiom.getSubClass(), v_s_normalisedAxioms,v_args); 
+					new ClassExpressionVisitorForNormalisedAxiomLeft(axiom.getSubClass(), v_s_normalisedAxioms); 
 			
 			axiom.getSubClass().accept(ce_visit);
 		}

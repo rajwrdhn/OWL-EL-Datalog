@@ -82,21 +82,12 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {		
-		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), 
-				ce.getProperty(), (OWLClassExpression)ce.getFiller()));		
+		getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce));		
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
-
-		OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
-		v_counter_FreshConcept++;
-		
-		getV_Normalised_Axioms().add(addSomevaluesFromAxiomRight(getCurrentClassExpression(), 
-				ce.getProperty(), new_expr));
-
-		setCurrentClassExpression(new_expr);
-		ce.getFiller().accept(this);
+		getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce));
 	}
 
 	@Override
@@ -116,7 +107,8 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectOneOf ce) {
-		throw new IllegalStateException("OWLObjectOneOf " + ce.toString());
+		ce.individuals().forEach(x -> 
+		getV_Normalised_Axioms().add(v_factory.getOWLClassAssertionAxiom(getCurrentClassExpression(), x)));
 	}
 
 	@Override

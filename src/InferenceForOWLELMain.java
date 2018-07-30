@@ -51,9 +51,9 @@ public class InferenceForOWLELMain {
 	 * @throws IncompatiblePredicateArityException
 	 * @throws IOException
 	 */
-	public void applyDatalogRules(String arg1) throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
-		DatalogTranslation dlog = new DatalogTranslation(v_normalisedAxioms, arg1);
-		dlog.visitNormalisedAxiomsHash(arg1);
+	public void applyDatalogRules() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+		DatalogTranslation dlog = new DatalogTranslation(v_normalisedAxioms);
+		dlog.visitNormalisedAxiomsHash();
 	}
 	
 	/**
@@ -71,12 +71,12 @@ public class InferenceForOWLELMain {
 
 		try {
 			
-			timer.start("Start Normalisation! ");
+			timer.start("Load File! ");
 			inferMain.loadOntology(file);
-			timer.stop("Stop Normalisation");
+			timer.stop();
 			
-			timer.start("Start EL-Ontology reasoning! ");
-			inferMain.applyDatalogRules(args[1]);
+			timer.start();
+			inferMain.applyDatalogRules();
 			timer.stop("Done!");
 		
 		} catch (OWLOntologyCreationException e) {
