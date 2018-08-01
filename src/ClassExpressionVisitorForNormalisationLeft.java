@@ -32,14 +32,14 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	public ClassExpressionVisitorForNormalisationLeft(OWLDataFactory factory) {
 		super(factory);
 	}
-	
-	public OWLClassExpression getIntersectionOf(List<OWLClassExpression> ce_conjunct) {
 
-		if (ce_conjunct.size() ==1) {
-			OWLClassExpression ce = ce_conjunct.get(0);
+	public OWLClassExpression getIntersectionOf(List<OWLClassExpression> ce_intersect) {
+
+		if (ce_intersect.size() ==1) {
+			OWLClassExpression ce = ce_intersect.get(0);
 			return (OWLClassExpression)ce;
 		} else {
-			return (OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce_conjunct);
+			return (OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce_intersect);
 		}	
 	}
 
@@ -58,30 +58,36 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 		List<OWLClassExpression> obj_intersection = ce.getOperandsAsList();
 		List<OWLClassExpression> obj_intersection1 = obj_intersection.subList(0, (i+1)/2);
 		List<OWLClassExpression> obj_intersection2 = obj_intersection.subList((i+1)/2, i);
-		
+
 		obj_intersection1.remove(null);
 		obj_intersection2.remove(null);
 
 		OWLClassExpression ce1 = getIntersectionOf(obj_intersection1);
 		OWLClassExpression ce2 = getIntersectionOf(obj_intersection2);
-		
-		
+
+
 
 		if (isNonComplementOFNamedClass(ce1) && isNonComplementOFNamedClass(ce2)) {
 			getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(ce1, ce2,
 					getCurrentClassExpression()));
-		} else {
+			//try else if block here
+		} else if (isNonComplementOFNamedClass(ce1) && !isNonComplementOFNamedClass(ce2)) {
+			OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
+			v_counter_FreshConcept++;
+			getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(ce1, new_expr, getCurrentClassExpression()));
+			addSubClassAxiom(ce2, new_expr).accept(this);
+
+		}else if (isNonComplementOFNamedClass(ce2) && !isNonComplementOFNamedClass(ce1)){
+			OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
+			v_counter_FreshConcept++;
+			getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(ce2, new_expr, getCurrentClassExpression()));
+			addSubClassAxiom(ce1, new_expr).accept(this);
+		}else {
 			OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 			v_counter_FreshConcept++;			
-			
-			OWLClassExpression new_Expr2 = addFreshClassName(v_counter_FreshConcept);
-			v_counter_FreshConcept++;
-						
-			getV_Normalised_Axioms().add(addAxiomOfConjunctSubClass(new_Expr, new_Expr2, 
-					getCurrentClassExpression()));
-			
-			getAxiomsForFurtherNorm().add(addSubClassAxiom(ce1, new_Expr));
-			getAxiomsForFurtherNorm().add(addSubClassAxiom(ce2, new_Expr2));		
+
+			addAxiomOfConjunctSubClass(ce1, new_Expr, getCurrentClassExpression()).accept(this);
+			addSubClassAxiom(ce2, new_Expr).accept(this);
 		}
 	}
 
@@ -97,17 +103,18 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLObjectSomeValuesFrom ce) {
-
-		OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
-		v_counter_FreshConcept++;
-
-		getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), 
-				getCurrentClassExpression()));
 		
-		setCurrentClassExpression(new_Expr);
-		ce.getFiller().accept(this);
+		if (isNonComplementOFNamedClass(ce.getFiller())) {
+			getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
+		} else {
+			
+			OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
+			v_counter_FreshConcept++;
 
-		//addSubClassAxiom(ce.getFiller(), new_Expr).accept(this);
+			getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), 
+					getCurrentClassExpression()));
+			addSubClassAxiom(ce.getFiller(), new_Expr).accept(this);
+		}
 	}
 
 	@Override
@@ -117,25 +124,15 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		
+
 		// Exists R {o} subsumes A
 		getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
 	}
 
 	@Override
-	public void visit(OWLObjectMinCardinality ce) {	
-		
+	public void visit(OWLObjectMinCardinality ce) {			
 		getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
-
-/*		OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
-		v_counter_FreshConcept++;
-
-		getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), getCurrentClassExpression()));
-
-		setCurrentClassExpression(new_Expr);
-		ce.getFiller().accept(this);
-		//addSubClassAxiom(ce.getFiller(), new_Expr).accept(this);
-*/	}
+	}
 
 	@Override
 	public void visit(OWLObjectExactCardinality ce) {
