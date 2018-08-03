@@ -209,7 +209,8 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-		Iterator<OWLNamedIndividual> iter = axiom.individualsInSignature().iterator();
+		System.out.println(axiom.asOWLSubClassOfAxiom());
+/*		Iterator<OWLNamedIndividual> iter = axiom.individualsInSignature().iterator();
 		OWLNamedIndividual[] indi  = new OWLNamedIndividual[2];
 		int i = 0;
 		while (iter.hasNext()) {
@@ -224,7 +225,7 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 		toFourConstantFacts(v_supExEDB, c2, c1, c3, c3);		
 		toSingleConstantFacts(v_nomEDB, c2);
 		toSingleConstantFacts(v_nomEDB, c3);
-		toSingleConstantFacts(v_rolEDB, c1);	
+		toSingleConstantFacts(v_rolEDB, c1);	*/
 	}
 
 	@Override

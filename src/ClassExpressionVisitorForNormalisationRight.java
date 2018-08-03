@@ -55,7 +55,11 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectComplementOf ce) {
-		throw new IllegalArgumentException("OWLObjectComplementOf not OWL 2 EL ! " + ce.toString()  );
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -97,12 +101,20 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectExactCardinality ce) {
-		throw new IllegalStateException("OWLObjectExactCardinality " + ce.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLObjectMaxCardinality ce) {
-		throw new IllegalStateException("OWLObjectMaxCardinality " + ce.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -118,12 +130,20 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLDataSomeValuesFrom ce) {
-		throw new IllegalStateException("OWLDataSomeValuesFrom " + ce.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataAllValuesFrom ce) {
-		throw new IllegalStateException("OWLDataAllValuesFrom " + ce.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -137,16 +157,28 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLDataMinCardinality ce) {
-		throw new IllegalStateException("OWLDataMinCardinality " + ce.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataExactCardinality ce) {
-		throw new IllegalStateException("OWLDataExactCardinality " + ce.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataMaxCardinality ce) {
-		throw new IllegalStateException("OWLDataMaxCardinality " + ce.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 }

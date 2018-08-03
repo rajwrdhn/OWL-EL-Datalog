@@ -136,8 +136,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 		} else {
 			OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 			v_counter_FreshConcept++;
-			
-			//this can be changed
+
 			addSubClassAxiom(axiom.getSubClass(), new_Expr).accept(this);
 			addSubClassAxiom(new_Expr, axiom.getSuperClass()).accept(this);
 		}
@@ -155,23 +154,35 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLAsymmetricObjectPropertyAxiom arg0) {
-		throw new IllegalAccessError("Asymmetric Object Property Axiom Exception !");
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLReflexiveObjectPropertyAxiom arg0) {
-		throw new IllegalAccessError("Reflexive Object Property Axiom Exception !");
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDisjointClassesAxiom axiom) {
-		//throw new IllegalAccessError("Disjoint Class Axiom Exception !");
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataPropertyDomainAxiom axiom) {
 		try {
-			System.out.println("Data Property Domain Axiom Exception !" + axiom.toString());
+			
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -193,41 +204,60 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLNegativeDataPropertyAssertionAxiom axiom) {
-		throw new IllegalArgumentException("Negative Data Property Assertion Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDifferentIndividualsAxiom axiom) {
-		throw new IllegalArgumentException(
-				"Not an OWL 2 EL axiom ! "+axiom.toString()+" Different Individuals Axiom !");
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDisjointDataPropertiesAxiom axiom) {
-		throw new IllegalArgumentException(
-				"Not an OWL 2 EL axiom ! "+axiom.toString()+" Disjoint data Property Axiom !");
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDisjointObjectPropertiesAxiom axiom) {
-		throw new IllegalArgumentException(
-				"Not an OWL 2 EL axiom ! "+axiom.toString()+" Disjoint Object Property Axiom !");
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLObjectPropertyRangeAxiom axiom) {
-		//throw new IllegalArgumentException(	"Not an OWL 2 EL axiom ! "+axiom.toString()+" Object Property Range Axiom !");
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-		getV_Normalised_Axioms().add(axiom);
+		axiom.asOWLSubClassOfAxiom().accept(this);
+		//OWLObjectOneOf  subsumes OWLObjectHasValue
+		//getV_Normalised_Axioms().add(axiom);
 	}
 
 	@Override
 	public void visit(OWLFunctionalObjectPropertyAxiom axiom) {		
 		try {
-			System.out.println("Functional Object Property Axiom Exception !" + axiom.toString());
+			//System.out.println("Functional Object Property Axiom Exception !" + axiom.toString());
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -240,7 +270,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLDisjointUnionAxiom axiom) {
-		throw new IllegalArgumentException("Disjoint Union Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -271,7 +305,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLEquivalentDataPropertiesAxiom axiom) {
-		throw new IllegalArgumentException("Equivalent Data Properties Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 	@Override
 	public void visit(OWLClassAssertionAxiom axiom) {		
@@ -288,7 +326,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLDataPropertyAssertionAxiom axiom) {
-		throw new IllegalArgumentException("Data Property Assertion Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -303,18 +345,26 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLIrreflexiveObjectPropertyAxiom axiom) {
-		throw new IllegalArgumentException("Irreflexive Object Property Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLSubDataPropertyOfAxiom axiom) {
-		throw new IllegalArgumentException("Sub Data Property Of Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLInverseFunctionalObjectPropertyAxiom axiom) {
 		try {
-			System.out.println("Inverse Functional Object Property Axiom Exception !" + axiom.toString());
+		
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -322,7 +372,11 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSameIndividualAxiom axiom) {
-		throw new IllegalArgumentException("Same Individual Axiom Exception !");
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -347,16 +401,28 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLHasKeyAxiom axiom) {
-		throw new IllegalArgumentException("Has Key Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDatatypeDefinitionAxiom axiom) {
-		throw new IllegalArgumentException("Data Type Definition Axiom Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(SWRLRule axiom) {
-		throw new IllegalArgumentException("SWRL rule Exception !" + axiom.toString());
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 }

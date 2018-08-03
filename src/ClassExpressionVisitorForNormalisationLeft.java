@@ -93,12 +93,20 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLObjectUnionOf ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLObjectComplementOf ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -119,7 +127,11 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLObjectAllValuesFrom ce) {
-		//throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -136,7 +148,11 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLObjectExactCardinality ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
@@ -158,31 +174,55 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLDataSomeValuesFrom ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataAllValuesFrom ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataHasValue ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataMinCardinality ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataExactCardinality ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLDataMaxCardinality ce) {
-		throw new IllegalStateException();
+		try {
+			
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 }
