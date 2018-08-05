@@ -55,7 +55,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	protected static Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
 	
-	protected static Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<>();
+	//protected static Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<>();
 
 	static int v_counter_FreshConcept = 0;
 
@@ -88,13 +88,13 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 		return v_Normalised_Axioms;
 	}
 	
-	public Set<OWLAxiom> getAxiomsForFurtherNorm() {
+/*	public Set<OWLAxiom> getAxiomsForFurtherNorm() {
 		return v_For_FurtherNormalisation;
 	}
 	public void clear() {
 		v_For_FurtherNormalisation.clear();
 		v_For_FurtherNormalisation.remove(null);
-	}
+	}*/
 
 	@Override
 	public void visit(OWLAnnotationAssertionAxiom axiom) {
