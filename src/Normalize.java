@@ -35,6 +35,10 @@ public class Normalize {
 	public Set<OWLAxiom> getFromOntology(OWLOntology onto) throws OWLOntologyCreationException, ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
 		StopWatch timer = new StopWatch();
 		
+		System.out.println("Number of Axioms : - " + onto.axioms().count());
+		
+		System.out.println("Number Of Logical Axioms : - "+ onto.logicalAxioms().count());
+		
 		Set<OWLAxiom> asi = new HashSet<>();		
 		onto.axioms().forEach(x -> asi.add(x));
 
@@ -46,6 +50,9 @@ public class Normalize {
 			visitAxioms(asi,axmVisitor);
 		}
 		timer.stop("   ...Normalised! ");
+		
+		System.out.println("Number of not used logical axioms :- "+  axmVisitor.getNotNormalisedCount());
+		
 		return axmVisitor.getV_Normalised_Axioms();
 	}
 

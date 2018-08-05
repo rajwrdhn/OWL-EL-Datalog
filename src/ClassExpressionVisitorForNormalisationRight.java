@@ -47,7 +47,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLObjectUnionOf ce) {
 		try {
-			//System.out.println("OWLObjectUnionOf not OWL 2 EL ! " + ce.toString() ) ;
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -56,7 +56,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLObjectComplementOf ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -83,7 +83,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLObjectAllValuesFrom ce) {
 		try {
-			//System.out.println("Not a OWL EL syntax !"+ce.toString());
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -102,7 +102,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLObjectExactCardinality ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -111,7 +111,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLObjectMaxCardinality ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -131,7 +131,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLDataSomeValuesFrom ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -140,7 +140,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLDataAllValuesFrom ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -149,7 +149,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLDataHasValue ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -158,7 +158,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLDataMinCardinality ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -167,7 +167,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLDataExactCardinality ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -176,7 +176,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLDataMaxCardinality ce) {
 		try {
-			
+			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
 		}

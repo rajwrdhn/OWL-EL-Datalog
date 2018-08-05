@@ -54,8 +54,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	static OWLClassExpression v_classExpression = null;
 
 	protected static Set<OWLAxiom> v_Normalised_Axioms = new HashSet<>();
-	
-	//protected static Set<OWLAxiom> v_For_FurtherNormalisation = new HashSet<>();
+	protected static Set<OWLAxiom> v_NotNormalised = new HashSet<>();
 
 	static int v_counter_FreshConcept = 0;
 
@@ -63,6 +62,10 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 		super(factory);
 	}
 
+	public int getNotNormalisedCount() {
+		return v_NotNormalised.size();
+	}
+	
 	/**
 	 * set the class expression to be used as super or sub class in ClassExpressionNormalize Visitor
 	 */
@@ -87,14 +90,6 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	public Set<OWLAxiom> getV_Normalised_Axioms() {
 		return v_Normalised_Axioms;
 	}
-	
-/*	public Set<OWLAxiom> getAxiomsForFurtherNorm() {
-		return v_For_FurtherNormalisation;
-	}
-	public void clear() {
-		v_For_FurtherNormalisation.clear();
-		v_For_FurtherNormalisation.remove(null);
-	}*/
 
 	@Override
 	public void visit(OWLAnnotationAssertionAxiom axiom) {
@@ -144,18 +139,17 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLNegativeObjectPropertyAssertionAxiom arg0) {
-		//throw new IllegalAccessError("Annotation Negative Object Property Assertion Axiom Exception !");
-		throw new IllegalArgumentException("The axiom "+arg0+" contains Negative Object property, "
-				+ "which is not allowed in OWL 2 EL. ");
-		//A negative ce_bool property assertion NegativeObjectPropertyAssertion( OPE a1 a2 ) 
-		//states that the individual a1 is not connected by the ce_bool property expression OPE to the individual a2.
-		//not in OWL 2 EL.
+		try {
+			v_NotNormalised.add(arg0);
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 
 	@Override
 	public void visit(OWLAsymmetricObjectPropertyAxiom arg0) {
 		try {
-			
+			v_NotNormalised.add(arg0);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -164,7 +158,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLReflexiveObjectPropertyAxiom arg0) {
 		try {
-			
+			v_NotNormalised.add(arg0);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -173,7 +167,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDisjointClassesAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -182,7 +176,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDataPropertyDomainAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -205,7 +199,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLNegativeDataPropertyAssertionAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -214,7 +208,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDifferentIndividualsAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -223,7 +217,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDisjointDataPropertiesAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -232,7 +226,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDisjointObjectPropertiesAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -241,7 +235,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLObjectPropertyRangeAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -250,14 +244,12 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom axiom) {
 		axiom.asOWLSubClassOfAxiom().accept(this);
-		//OWLObjectOneOf  subsumes OWLObjectHasValue
-		//getV_Normalised_Axioms().add(axiom);
 	}
 
 	@Override
 	public void visit(OWLFunctionalObjectPropertyAxiom axiom) {		
 		try {
-			//System.out.println("Functional Object Property Axiom Exception !" + axiom.toString());
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -271,7 +263,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDisjointUnionAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -280,7 +272,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLSymmetricObjectPropertyAxiom axiom) {
 		try {
-			//System.out.println(axiom.toString());
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -289,6 +281,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDataPropertyRangeAxiom axiom) {
 		try {
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -297,7 +290,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLFunctionalDataPropertyAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -306,7 +299,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLEquivalentDataPropertiesAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -327,7 +320,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDataPropertyAssertionAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -337,7 +330,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	public void visit(OWLTransitiveObjectPropertyAxiom axiom) {
 		//throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -346,7 +339,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLIrreflexiveObjectPropertyAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -355,7 +348,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLSubDataPropertyOfAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -364,7 +357,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLInverseFunctionalObjectPropertyAxiom axiom) {
 		try {
-		
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -373,7 +366,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLSameIndividualAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -383,7 +376,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	public void visit(OWLSubPropertyChainOfAxiom axiom) {
 		//throw new IllegalArgumentException("Sub Property Chain Of Axiom" + axiom.toString());
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -393,7 +386,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	public void visit(OWLInverseObjectPropertiesAxiom axiom) {
 		//throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -402,7 +395,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLHasKeyAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -411,7 +404,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(OWLDatatypeDefinitionAxiom axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -420,7 +413,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 	@Override
 	public void visit(SWRLRule axiom) {
 		try {
-			
+			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
 			e.getMessage();
 		}

@@ -1,5 +1,4 @@
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -26,7 +25,6 @@ import org.semanticweb.owlapi.model.OWLHasKeyAxiom;
 import org.semanticweb.owlapi.model.OWLInverseFunctionalObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLNegativeDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLNegativeObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -209,7 +207,7 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-		System.out.println(axiom.asOWLSubClassOfAxiom());
+		throw new IllegalArgumentException();
 /*		Iterator<OWLNamedIndividual> iter = axiom.individualsInSignature().iterator();
 		OWLNamedIndividual[] indi  = new OWLNamedIndividual[2];
 		int i = 0;
