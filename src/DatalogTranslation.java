@@ -68,7 +68,7 @@ public class DatalogTranslation {
 		reasoner.addFacts(allfacts);
 		
 		reasoner.load();
-		reasoner.setAlgorithm(Algorithm.SKOLEM_CHASE);
+		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 		reasoner.reason();
 		reasoner.close();
 	}
