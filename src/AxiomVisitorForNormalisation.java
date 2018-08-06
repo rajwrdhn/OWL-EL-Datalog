@@ -328,7 +328,7 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLTransitiveObjectPropertyAxiom axiom) {
-		//throw new IllegalArgumentException("Transitive Object Property Axiom Exception !" + axiom.toString());
+		
 		try {
 			v_NotNormalised.add(axiom);
 		} catch (Exception e) {
@@ -384,7 +384,6 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLInverseObjectPropertiesAxiom axiom) {
-		//throw new IllegalArgumentException("Inverse Object Property Exception !" + axiom.toString());
 		try {
 			v_NotNormalised.add(axiom);
 		} catch (Exception e) {

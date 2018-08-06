@@ -174,16 +174,20 @@ public class DatalogRules extends VisitNormalisedAxioms{
 		Variable t = Expressions.makeVariable("t");
 
 		// nom(x) :- v_inst(x,x)
-		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, x,x), Expressions.makeAtom(v_nomEDB, x)));
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, x,x), 
+				Expressions.makeAtom(v_nomEDB, x)));
 
 		// cls(x) :- v_inst(x,x)
-		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, y,y), Expressions.makeAtom(v_clsEDB, y)));
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, y,y), 
+				Expressions.makeAtom(v_clsEDB, y)));
 
 		// rol(x) :- v_srole(x,x)
-		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_srole, y,y), Expressions.makeAtom(v_rolEDB, x)));
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_srole, y,y), 
+				Expressions.makeAtom(v_rolEDB, y)));
 
 		// supEx(x,y,z,v) :- v_inst(v,z)
-		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, v,z), Expressions.makeAtom(v_supExEDB, x,y,z,v)));
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, v,z), 
+				Expressions.makeAtom(v_supExEDB, x,y,z,v)));
 		
 		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_self, x,v)), 
 				Expressions.makeConjunction(Expressions.makeAtom(v_nomEDB, x),
@@ -202,7 +206,7 @@ public class DatalogRules extends VisitNormalisedAxioms{
 						Expressions.makeAtom(v_inst, x, v))
 				));
 		
-		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,z)),
+		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,t)),
 				Expressions.makeConjunction(Expressions.makeAtom(v_supExEDB, y,v,z,w),
 						Expressions.makeAtom(v_subExEDB, r,s,t),
 						Expressions.makeAtom(v_inst, x,y),
@@ -212,7 +216,7 @@ public class DatalogRules extends VisitNormalisedAxioms{
 				));
 		
 		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,z)),
-				Expressions.makeConjunction(Expressions.makeAtom(v_subConjEDB, v,y,z),
+				Expressions.makeConjunction(Expressions.makeAtom(v_subExEDB, v,y,z),
 						Expressions.makeAtom(v_self, x,v),
 						Expressions.makeAtom(v_inst, x, y))
 				));
@@ -237,16 +241,15 @@ public class DatalogRules extends VisitNormalisedAxioms{
 				Expressions.makeAtom(v_self, x,w)),
 				Expressions.makeConjunction(
 						Expressions.makeAtom(v_subRoleEDB, v,w)
-						,Expressions.makeAtom(v_self, x,y)
+						,Expressions.makeAtom(v_self, x,v)
 						)));
 
 		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(
 				Expressions.makeAtom(v_srole, x,w)),
 				Expressions.makeConjunction(
-						Expressions.makeAtom(v_srole, x,v),
-						Expressions.makeAtom(v_subRoleEDB, v,w)
+						Expressions.makeAtom(v_srole, v,w),
+						Expressions.makeAtom(v_subRoleEDB, x,v)
 						)));
-
 
 	}
 }

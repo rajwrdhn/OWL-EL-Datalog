@@ -34,15 +34,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 	}
 	@Override
 	public void visit(OWLClass ce) {
-		if (ce.isOWLNamedIndividual()) {
-			Constant c1 = getConstant(ce.toString());
-			Constant c2 = getConstant(sub_class_of_axiom.toString());
-			toDoubleConstantFacts(v_subClassEDB,c2,c1);
-			
-			toSingleConstantFacts(v_nomEDB, c1);
-			toSingleConstantFacts(v_clsEDB, c2);
-
-		} else if (ce.isOWLNothing()){
+		if (ce.isOWLNothing()){
 			
 			Constant c2 = getConstant(sub_class_of_axiom.toString());
 			toSingleConstantFacts(v_botEDB, c2);
@@ -75,7 +67,6 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 
 	@Override
 	public void visit(OWLObjectSomeValuesFrom ce) {
-
 		Constant c1 = getConstant(ce.getFiller().toString());
 		Constant c2 = getConstant(sub_class_of_axiom.toString());
 		Constant c3 = getConstant(ce.getProperty().toString());
@@ -95,30 +86,12 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		Constant c1 = getConstant(ce.getFiller().toString());
-		Constant c2 = getConstant(sub_class_of_axiom.toString());
-		Constant c3 = getConstant(ce.getProperty().toString());
-		Constant c4 = getConstant("aux"+auxnum);
-		auxnum++;
-		
-		toSingleConstantFacts(v_nomEDB, c1);
-		toSingleConstantFacts(v_rolEDB, c3);
-		toSingleConstantFacts(v_clsEDB, c2);
-		toFourConstantFacts(v_supExEDB, c2, c3, c1, c4);
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public void visit(OWLObjectMinCardinality ce) {
-		Constant c1 = getConstant(ce.getFiller().toString());
-		Constant c2 = getConstant(sub_class_of_axiom.toString());
-		Constant c3 = getConstant(ce.getProperty().toString());
-		Constant c4 = getConstant("aux"+auxnum);
-		auxnum++;
-		
-		toSingleConstantFacts(v_nomEDB, c1);
-		toSingleConstantFacts(v_rolEDB, c3);
-		toSingleConstantFacts(v_clsEDB, c2);
-		toFourConstantFacts(v_supExEDB, c2, c3, c1, c4);
+		throw new IllegalStateException();
 	}
 
 	@Override

@@ -138,12 +138,19 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	public void visit(OWLObjectHasValue ce) {
 
 		// Exists R {o} subsumes A
-		getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
+		addSubClassAxiom(ce.asSomeValuesFrom(), getCurrentClassExpression()).accept(this);
+		
 	}
 
 	@Override
-	public void visit(OWLObjectMinCardinality ce) {			
-		getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
+	public void visit(OWLObjectMinCardinality ce) {		
+		
+		OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
+		v_counter_FreshConcept++;
+
+		getV_Normalised_Axioms().add(addSomevaluesFromAxiomLeft(new_Expr, ce.getProperty(), 
+				getCurrentClassExpression()));
+		addSubClassAxiom(ce.getFiller(), new_Expr).accept(this);
 	}
 
 	@Override

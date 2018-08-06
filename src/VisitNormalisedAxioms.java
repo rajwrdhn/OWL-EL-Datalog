@@ -131,14 +131,14 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 		if(axiom.getSubClass().isClassExpressionLiteral() && !axiom.getSuperClass().isClassExpressionLiteral()) {
 		
 			ClassExpressionVisitorForNormalisedAxiomRight ce_visit = 
-					new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSuperClass(), v_s_normalisedAxioms); 
+					new ClassExpressionVisitorForNormalisedAxiomRight(axiom.getSubClass(), v_s_normalisedAxioms); 
 			
 			axiom.getSuperClass().accept(ce_visit);
 		
 		} else {
 		
 			ClassExpressionVisitorForNormalisedAxiomLeft ce_visit = 
-					new ClassExpressionVisitorForNormalisedAxiomLeft(axiom.getSubClass(), v_s_normalisedAxioms); 
+					new ClassExpressionVisitorForNormalisedAxiomLeft(axiom.getSuperClass(), v_s_normalisedAxioms); 
 			
 			axiom.getSubClass().accept(ce_visit);
 		}
@@ -208,22 +208,6 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 	@Override
 	public void visit(OWLObjectPropertyAssertionAxiom axiom) {
 		throw new IllegalArgumentException();
-/*		Iterator<OWLNamedIndividual> iter = axiom.individualsInSignature().iterator();
-		OWLNamedIndividual[] indi  = new OWLNamedIndividual[2];
-		int i = 0;
-		while (iter.hasNext()) {
-			indi[i] = iter.next();
-			i++;
-		}
-		
-		Constant c1 = getConstant(axiom.getProperty().toString());
-		Constant c2 = getConstant(indi[0].toString());
-		Constant c3 = getConstant(indi[1].toString());
-
-		toFourConstantFacts(v_supExEDB, c2, c1, c3, c3);		
-		toSingleConstantFacts(v_nomEDB, c2);
-		toSingleConstantFacts(v_nomEDB, c3);
-		toSingleConstantFacts(v_rolEDB, c1);	*/
 	}
 
 	@Override
@@ -239,7 +223,7 @@ public class VisitNormalisedAxioms extends DatalogTranslation implements OWLAxio
 		
 		toSingleConstantFacts(v_rolEDB, c1);
 		toSingleConstantFacts(v_rolEDB, c2);
-		toDoubleConstantFacts(v_subRoleEDB, c1, c2);		
+		toDoubleConstantFacts(v_subRoleEDB, c1, c2);
 	}
 
 	@Override
