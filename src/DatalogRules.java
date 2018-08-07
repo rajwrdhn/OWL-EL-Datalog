@@ -27,12 +27,13 @@ public class DatalogRules extends VisitNormalisedAxioms{
 		Variable w = Expressions.makeVariable("w");
 
 		// nom(x) :- v_inst(x,x)
-		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, x,x), Expressions.makeAtom(v_nomEDB, x)));
+		v_l_rules.add(Expressions.makeRule(Expressions.makeAtom(v_inst, x,x), 
+				Expressions.makeAtom(v_nomEDB, x)));
 
 		//nom(x), v_triple(x,y,x) :- v_self(x,y)
 		v_l_rules.add(Expressions.makeRule(
-				Expressions.makeConjunction(Expressions.makeAtom(v_self, x,y)),Expressions.makeConjunction(
-						Expressions.makeAtom(v_nomEDB, x),
+				Expressions.makeConjunction(Expressions.makeAtom(v_self, x,y)),
+				Expressions.makeConjunction(Expressions.makeAtom(v_nomEDB, x),
 						Expressions.makeAtom(v_triple, x,y,x)
 						)));
 
@@ -43,7 +44,6 @@ public class DatalogRules extends VisitNormalisedAxioms{
 						Expressions.makeAtom(v_inst, y,z)
 						)));
 
-		//use botEDB and clsEDB
 		//bot(z) , v_inst (x,z) , v_inst (v,w) , cls(y) :- v_inst (v,y)
 		v_l_rules.add(Expressions.makeRule(
 				Expressions.makeConjunction(Expressions.makeAtom(v_inst, v,y)),
@@ -56,8 +56,8 @@ public class DatalogRules extends VisitNormalisedAxioms{
 		v_l_rules.add(Expressions.makeRule(
 				Expressions.makeConjunction(Expressions.makeAtom(v_inst, x,z)),
 				Expressions.makeConjunction(
-						Expressions.makeAtom(v_subClassEDB, x,y),
-						Expressions.makeAtom(v_inst, y,z)
+						Expressions.makeAtom(v_subClassEDB, y,z),
+						Expressions.makeAtom(v_inst, x,y)
 						)));
 
 		//subConj(x,y,z) , v_inst(v,x) , v_inst(v,y) :- v_inst(v,z)

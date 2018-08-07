@@ -85,8 +85,10 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 		}else {
 			OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 			v_counter_FreshConcept++;			
+			
+			addSubClassAxiom(v_factory.getOWLObjectIntersectionOf(ce1,new_Expr), getCurrentClassExpression()).accept(this); 
 
-			addAxiomOfConjunctSubClass(ce1, new_Expr, getCurrentClassExpression()).accept(this);
+			//addAxiomOfConjunctSubClass(ce1, new_Expr, getCurrentClassExpression()).accept(this);
 			addSubClassAxiom(ce2, new_Expr).accept(this);
 		}
 	}

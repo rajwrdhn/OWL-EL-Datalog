@@ -84,7 +84,7 @@ public class Normalize {
 
 	public OWLAxiom addAxiomOfConjunctSubClass(OWLClassExpression ce1, OWLClassExpression ce2, OWLClassExpression ce3) {
 		//ce1 and ce2 subsumes ce3
-		return (OWLAxiom)v_factory.getOWLSubClassOfAxiom((OWLClassExpression)v_factory.getOWLObjectIntersectionOf(ce1,ce2),ce3);
+		return v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(ce1,ce2),ce3);
 	}
 
 	public OWLAxiom addSubClassAxiom(OWLClassExpression ce1, OWLClassExpression ce2) {

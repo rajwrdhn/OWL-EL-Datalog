@@ -12,9 +12,6 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.VLog4jException;
 //Main class upload ontology here
 public class InferenceForOWLELMain {
@@ -75,12 +72,10 @@ public class InferenceForOWLELMain {
 	/**
 	 * 
 	 * @param arg1
-	 * @throws ReasonerStateException
-	 * @throws EdbIdbSeparationException
-	 * @throws IncompatiblePredicateArityException
 	 * @throws IOException
+	 * @throws VLog4jException 
 	 */
-	public void applyDatalogRules() throws ReasonerStateException, EdbIdbSeparationException, IncompatiblePredicateArityException, IOException {
+	public void applyDatalogRules() throws IOException, VLog4jException {
 		DatalogTranslation dlog = new DatalogTranslation(v_normalisedAxioms);
 		dlog.visitNormalisedAxiomsHash();
 	}
