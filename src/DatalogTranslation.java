@@ -42,8 +42,8 @@ public class DatalogTranslation {
 		dlogrules.instanceRetrievalRules();
 
 		callReasoner(dlogrules,normalizedAxiomVisitor);
-		System.out.println(" Number of Instance Retrivals:-"+ i);
-		timer.stop("Instance Checking Done!!");
+		System.out.println(" Instance Retrivals:-"+ i);
+		timer.stop(" Instance Retrieval Done!!");
 	}
 
 	public void subclass() throws IOException, VLog4jException {
@@ -57,8 +57,8 @@ public class DatalogTranslation {
 		dlogrules.subClassRules();
 
 		callReasoner(dlogrules,normalizedAxiomVisitor);
-		System.out.println(" Number of Subsumption Relations:-"+ i);
-		timer.stop("SubClass Done!!");
+		System.out.println(" Subsumption Relations:-"+ i);
+		timer.stop("Subsumption Done!!");
 	}
 
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws IOException, VLog4jException {
@@ -90,9 +90,9 @@ public class DatalogTranslation {
 		i =0;
 
 		try (QueryResultIterator queryResultIterator = reasoner.answerQuery(queryAtom, true)) {
-			//queryResultIterator.forEachRemaining(queryResult -> System.out.println(" - " + queryResult));
 			queryResultIterator.forEachRemaining(res ->  {
 				if (!res.toString().contains("FreshConcept") && !res.toString().contains("aux")) {
+					//System.out.println(res.toString());
 					i++;
 				}
 			});

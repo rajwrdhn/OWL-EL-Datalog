@@ -86,9 +86,9 @@ public class DatalogRules extends VisitNormalisedAxioms{
 						Expressions.makeAtom(v_inst, x,y)
 						)));
 
-		//supEx(v,w,y,z) , v_inst(x,v) :- v_triple(z,y)
+		//supEx(v,w,y,z) , v_inst(x,v) :- v_triple(x,w,z)
 		v_l_rules.add(Expressions.makeRule(
-				Expressions.makeConjunction(Expressions.makeAtom(v_inst, z,y)),
+				Expressions.makeConjunction(Expressions.makeAtom(v_triple, x,w,z)),
 				Expressions.makeConjunction(
 						Expressions.makeAtom(v_supExEDB, v,w,y,z),
 						Expressions.makeAtom(v_inst, x,v)
@@ -131,7 +131,7 @@ public class DatalogRules extends VisitNormalisedAxioms{
 				Expressions.makeConjunction(
 						Expressions.makeAtom(v_inst, x,y),
 						Expressions.makeAtom(v_nomEDB, y),
-						Expressions.makeAtom(v_inst, x,z)
+						Expressions.makeAtom(v_inst, y,z)
 						)));
 
 		//v_inst(x,y) , nom(y) , v_triple(z,v,x) :- v_triple(z,v,y)

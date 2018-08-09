@@ -75,14 +75,14 @@ public class Normalize {
 		if (ce instanceof OWLObjectComplementOf) {
 			throw new IllegalStateException();
 		}
-		return ce.isClassExpressionLiteral();
+		return ce.isClassExpressionLiteral() && !(ce instanceof OWLObjectComplementOf);
 	}
 
 	public boolean isNotNamedClass(OWLClassExpression ce) {
 		return !ce.isClassExpressionLiteral() && ce.isAnonymous();
 	}
 
-	public OWLAxiom addAxiomOfConjunctSubClass(OWLClassExpression ce1, OWLClassExpression ce2, OWLClassExpression ce3) {
+	public OWLAxiom addAxiomOfIntersectSubClass(OWLClassExpression ce1, OWLClassExpression ce2, OWLClassExpression ce3) {
 		//ce1 and ce2 subsumes ce3
 		return v_factory.getOWLSubClassOfAxiom(v_factory.getOWLObjectIntersectionOf(ce1,ce2),ce3);
 	}
