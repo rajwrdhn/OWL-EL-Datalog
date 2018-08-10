@@ -67,7 +67,7 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 		OWLClassExpression ce1 = getIntersectionOf(obj_intersection1);
 		OWLClassExpression ce2 = getIntersectionOf(obj_intersection2);
-		if (ce1 != null || ce2 != null) {
+		if (ce1 != null && ce2 != null) {
 			if (isNonComplementOFNamedClass(ce1) && isNonComplementOFNamedClass(ce2)) {
 				getV_Normalised_Axioms().add(addAxiomOfIntersectSubClass(ce1, ce2,
 						getCurrentClassExpression()));
