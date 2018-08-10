@@ -51,7 +51,10 @@ public class Normalize {
 		}
 		timer.stop("   ...Normalised! ");
 		
-		System.out.println("Number of not used logical axioms :- "+  axmVisitor.getNotNormalisedCount());
+/*		System.out.println("Number of not used logical axioms :- "+  axmVisitor.getNotNormalisedCount());
+		for (OWLAxiom axm : axmVisitor.v_NotNormalised) {
+			System.out.println("Not normalised axiom - "+axm);
+		}*/
 		
 		return axmVisitor.getV_Normalised_Axioms();
 	}
