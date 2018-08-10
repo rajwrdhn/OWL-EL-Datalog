@@ -117,14 +117,16 @@ public class AxiomVisitorForNormalisation extends Normalize implements OWLAxiomV
 
 	@Override
 	public void visit(OWLSubClassOfAxiom axiom) {
-		
-		if (axiom.getSubClass().isOWLThing() || axiom.getSuperClass().isOWLNothing()) {
-			if ( !axiom.getSuperClass().isOWLThing() || !axiom.getSubClass().isOWLNothing()) {
+
+		if ((axiom.getSubClass().isOWLThing() || axiom.getSuperClass().isOWLNothing()) ) {
+			if ((!isNonComplementOFNamedClass(axiom.getSubClass()) || !isNonComplementOFNamedClass(axiom.getSuperClass()))) {
+				//if ( !axiom.getSuperClass().isOWLThing() || !axiom.getSubClass().isOWLNothing()) {
 				OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 				v_counter_FreshConcept++;
 
 				addSubClassAxiom(axiom.getSubClass(), new_Expr).accept(this);
 				addSubClassAxiom(new_Expr, axiom.getSuperClass()).accept(this);
+				//}
 			}
 		}
 
