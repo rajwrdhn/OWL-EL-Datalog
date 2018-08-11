@@ -20,7 +20,7 @@ public class InferenceForOWLELMain {
 	protected final String[] v_arrargsList;
 
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
-	
+
 	public InferenceForOWLELMain(String[] args) {
 		this.v_arrargsList = args;
 	}
@@ -44,29 +44,22 @@ public class InferenceForOWLELMain {
 
 		Normalize norm = new Normalize(factory);			
 		v_normalisedAxioms = norm.getFromOntology(onto);
-		
+
 		StopWatch timer = new StopWatch();
 		timer.start("Save Normalised Ontology...");
 		createNormalisedOntology();
 		timer.stop("Saved Normalised Ontology !!");
 	}
-	
+
 	public void createNormalisedOntology() throws OWLOntologyCreationException, IOException, OWLOntologyStorageException {
-		  	OWLOntologyManager m = OWLManager.createOWLOntologyManager();
-	        OWLOntology o = m.createOntology(v_normalisedAxioms);
-	        
-	        //File output = temporaryFolder.newFile("normalisedOnto.owl");
-	        // Output will be deleted on exit; to keep temporary file replace
-	        // previous line with the following
-	        File output = new File("/home/raj/normalisedOnto.owl");
-	        //StringDocumentTarget target = new StringDocumentTarget(); 
-	        //target = output.getAbsolutePath();
-	        
-	        m.saveOntology(o, IRI.create(output));
-	       
-	        //System.out.println(target);
-	        // Remove the ontology from the manager
-	        m.removeOntology(o);
+		OWLOntologyManager m = OWLManager.createOWLOntologyManager();
+		OWLOntology o = m.createOntology(v_normalisedAxioms);
+
+		File output = new File("/home/raj/normalisedOnto.owl");	        
+		m.saveOntology(o, IRI.create(output));
+
+		// Remove the ontology from the manager
+		m.removeOntology(o);
 	}
 
 	/**
@@ -79,7 +72,7 @@ public class InferenceForOWLELMain {
 		DatalogTranslation dlog = new DatalogTranslation(v_normalisedAxioms);
 		dlog.visitNormalisedAxiomsHash();
 	}
-	
+
 	/**
 	 * 
 	 * @param args
@@ -88,22 +81,22 @@ public class InferenceForOWLELMain {
 	 * @throws OWLOntologyStorageException 
 	 */
 	public static void main(String []args) throws VLog4jException, IOException, OWLOntologyStorageException{
-		
+
 		StopWatch timer = new StopWatch();
 		InferenceForOWLELMain inferMain = new InferenceForOWLELMain(args);		
 
 		String file = args[0];
 
 		try {
-			
+
 			timer.start("Load File! ");
 			inferMain.loadOntology(file);
 			timer.stop();
-			
+
 			timer.start();
 			inferMain.applyDatalogRules();
 			timer.stop("Done!");
-		
+
 		} catch (OWLOntologyCreationException e) {
 			e.printStackTrace();
 		}		
