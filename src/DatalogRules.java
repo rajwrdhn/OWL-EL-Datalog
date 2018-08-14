@@ -163,6 +163,8 @@ public class DatalogRules extends VisitNormalisedAxioms{
 		Predicate v_inst = Expressions.makePredicate("inst",2);
 		Predicate v_srole = Expressions.makePredicate("srole",2);
 		Predicate v_self = Expressions.makePredicate("self", 2);
+		//Predicate v_equi = Expressions.makePredicate("equi", 2);
+		
 
 		Variable x = Expressions.makeVariable("x");
 		Variable y = Expressions.makeVariable("y");
@@ -250,6 +252,10 @@ public class DatalogRules extends VisitNormalisedAxioms{
 						Expressions.makeAtom(v_srole, v,w),
 						Expressions.makeAtom(v_subRoleEDB, x,v)
 						)));
+/*		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_equi, x,y)), 
+				Expressions.makeConjunction(Expressions.makeAtom(v_inst, y,x),
+				Expressions.makeAtom(v_inst, x,y)		)
+				));*/
 
 	}
 }

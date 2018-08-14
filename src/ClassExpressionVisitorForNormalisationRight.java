@@ -125,8 +125,11 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectOneOf ce) {
-		ce.individuals().forEach(x -> 
-		getV_Normalised_Axioms().add(v_factory.getOWLClassAssertionAxiom(getCurrentClassExpression(), x)));
+		OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
+		v_counter_FreshConcept++;
+		
+		getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), new_expr));
+		addSubClassAxiom(ce, new_expr).accept(this);
 	}
 
 	@Override
