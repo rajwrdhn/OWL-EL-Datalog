@@ -93,32 +93,11 @@ public class DatalogTranslation {
 		try (QueryResultIterator queryResultIterator = reasoner.answerQuery(queryAtom, true)) {
 			queryResultIterator.forEachRemaining(res ->  {
 				if (!res.toString().contains("FreshConcept") && !res.toString().contains("aux")) {
-					//System.out.println(res.toString());
+					System.out.println(res.toString());
 					i++;
 				}
 			});
 
 		}
 	}
-	
-/*	public void countResultsEquivalent(Reasoner reasoner) throws VLog4jException {
-		Variable x = Expressions.makeVariable("x");
-		Variable y = Expressions.makeVariable("y");
-
-		Predicate pred = Expressions.makePredicate("equi", 2);
-
-		Atom queryAtom = Expressions.makeAtom(pred, x,y);
-
-		i =0;
-
-		try (QueryResultIterator queryResultIterator = reasoner.answerQuery(queryAtom, true)) {
-			queryResultIterator.forEachRemaining(res ->  {
-				if (!res.toString().contains("FreshConcept") && !res.toString().contains("aux")) {
-					//System.out.println(res.toString());
-					i++;
-				}
-			});
-
-		}
-	}*/
 }

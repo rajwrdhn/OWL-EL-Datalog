@@ -129,12 +129,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
-		}
-/*		OWLClassExpression new_expr = addFreshClassName(v_counter_FreshConcept);
-		v_counter_FreshConcept++;
-		
-		getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), new_expr));
-		addSubClassAxiom(ce, new_expr).accept(this);*/
+		}		
 	}
 
 	@Override
