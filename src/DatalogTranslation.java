@@ -101,7 +101,7 @@ public class DatalogTranslation {
 		}
 	}
 	
-	public void countResultsEquivalent(Reasoner reasoner) throws VLog4jException {
+/*	public void countResultsEquivalent(Reasoner reasoner) throws VLog4jException {
 		Variable x = Expressions.makeVariable("x");
 		Variable y = Expressions.makeVariable("y");
 
@@ -120,5 +120,5 @@ public class DatalogTranslation {
 			});
 
 		}
-	}
+	}*/
 }
