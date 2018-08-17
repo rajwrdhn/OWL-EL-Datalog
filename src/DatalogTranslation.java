@@ -141,35 +141,32 @@ public class DatalogTranslation {
 		for (int k = 0; k< list_terms.size(); k++) {
 
 			for (int j =0; j< list_terms.size() ;j++) {
-				// A sub A and A sub A case gone
-				if (arr[k][0].equals( arr[j][0]) && arr[k][1].equals( arr[j][1])) {
-					break;
-				}
-
+				// A sub A and A sub A case gon
 				if (arr[k][1].equals( arr[j][0])) {
 					directsuper = true;
 					if (!arr[k][0].equals(arr[j][1])) {
-						for (int l = 0; l<list_terms.size(); l++) {
-							if (arr[j][0].equals( arr[l][0]) && arr[j][1].equals( arr[l][1])) {
-								directsuper = false;
-								break;
-							}
+						if ((arr[j][0].equals( arr[k][0]) && arr[j][1].equals( arr[k][1]))) {
+							directsuper = false;
+							count_subclasses--;
+							break;
+						} 
 
-							if (arr[k][0].equals(arr[j][0]) && arr[k][1].equals(arr[l][1])) {
-								directsuper = false;
-								break;
-							}
-
-							if (arr[k][1].equals(arr[j][0]) && arr[j][1].equals(arr[l][0])) {
-								directsuper = false;
-								count_subclasses--;
-							}
+						if (arr[k][1].equals(arr[j][0]) && !(arr[j][1].equals(arr[k][0]))) {
+							//directsuper = false;
+							count_subclasses--;
 						}
 						if (directsuper) {
 							count_subclasses++;
 						}
 					}else {
-						count_equivalentclasses++;
+						if (arr[k][0].equals( arr[j][0]) && arr[k][1].equals( arr[j][1])) {
+							//
+						} else {
+							count_equivalentclasses++;
+						}
+						if (directsuper) {
+							count_subclasses++;
+						}
 					}
 				}
 
