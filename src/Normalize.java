@@ -115,6 +115,6 @@ public class Normalize {
 	 */
 	public OWLClassExpression addFreshClassName(long conceptNumber) {
 
-		return v_factory.getOWLClass(IRI.create("#FreshConcept" + conceptNumber));
+		return v_factory.getOWLClass(IRI.create("#FreshConcept_X_" + conceptNumber));
 	}
 }

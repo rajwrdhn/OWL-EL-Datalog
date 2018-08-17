@@ -45,16 +45,16 @@ public class InferenceForOWLELMain {
 		Normalize norm = new Normalize(factory);			
 		v_normalisedAxioms = norm.getFromOntology(onto);
 
-		StopWatch timer = new StopWatch();
-		timer.start("Save Normalised Ontology...");
-		createNormalisedOntology();
-		timer.stop("Saved Normalised Ontology !!");
+		//StopWatch timer = new StopWatch();
+		//timer.start("Save Normalised Ontology...");
+		//createNormalisedOntology();
+		//timer.stop("Saved Normalised Ontology !!");
 	}
 
 	public void createNormalisedOntology() throws OWLOntologyCreationException, IOException, OWLOntologyStorageException {
 		OWLOntologyManager m = OWLManager.createOWLOntologyManager();
 		OWLOntology o = m.createOntology(v_normalisedAxioms);
-
+		
 		File output = new File("/home/raj/normalisedOnto.owl");	        
 		m.saveOntology(o, IRI.create(output));
 
