@@ -79,7 +79,7 @@ public class DatalogTranslation {
 		timer.stop("Subsumption Done!!");
 
 		//countTransitivelyReducedResult();
-		System.out.println("Equivalent classes :::::::::::::" + count_equivalentclasses);
+		//System.out.println("Equivalent classes :::::::::::::" + count_equivalentclasses);
 		System.out.println("Sub Classes :::::::::::::" + count_subclasses);
 	}
 
@@ -158,11 +158,11 @@ public class DatalogTranslation {
 							count_subclasses++;
 						}
 					}else {
-						if (arr[k][0].equals( arr[j][0]) && arr[k][1].equals( arr[j][1])) {
-							//
+/*						if (arr[k][0].equals( arr[j][0]) && arr[k][1].equals( arr[j][1])) {
+							count_equivalentclasses--;
 						} else {
 							count_equivalentclasses++;
-						}
+						}*/
 						if (directsuper) {
 							count_subclasses++;
 						}
