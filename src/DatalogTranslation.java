@@ -125,10 +125,10 @@ public class DatalogTranslation {
 
 		}
 
-		addToSuperConceptOfEach();
+		TransitiveReduction();
 	}
 
-	public void addToSuperConceptOfEach() {
+	public void TransitiveReduction() {
 		Term[][] arr = new Term[list_terms.size()][2];
 		boolean directsuper;
 
@@ -141,7 +141,6 @@ public class DatalogTranslation {
 		for (int k = 0; k< list_terms.size(); k++) {
 
 			for (int j =0; j< list_terms.size() ;j++) {
-				// A sub A and A sub A case gon
 				if (arr[k][1].equals( arr[j][0])) {
 					directsuper = true;
 					if (!arr[k][0].equals(arr[j][1])) {
