@@ -82,9 +82,9 @@ public class DatalogTranslation {
 		System.out.println(" Subsumption Relations:-"+ i);
 		timer.stop("Subsumption Done!!");
 
-		//TransitiveReduction();
-		//System.out.println("Equivalent classes Reduced Count :" + count_equivalentclasses);
-		//System.out.println("Subsumption Retrievals Reduced Count :" + count_subclasses);
+		TransitiveReductionSubsumption();
+		System.out.println("Equivalent classes Reduced Count :" + count_equivalentclasses);
+		System.out.println("Subsumption Retrievals Reduced Count :" + count_subclasses);
 	}
 
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws IOException, VLog4jException {
@@ -143,9 +143,75 @@ public class DatalogTranslation {
 		System.out.println("Reduced Instance Retrievals Count : " +count_instance_reduced);
 	}
 
-	/*	public void TransitiveReduction() {
+
+	public void TransitiveReductionSubsumption() {
 		Term[][] arr = new Term[list_terms.size()][2];
-		boolean directsuper;
+		List<List<Term>> subsump_list = new ArrayList<>();
+
+		int l =0;
+		for (int k = 0; k< list_terms.size(); k++) {
+			for (int j =0; j< 2;j++) {
+				arr[k][j] = list_terms.get(k).get(j);
+			}
+			if (arr[k][0].equals(arr[k][1])) {
+				List<Term> eq = new ArrayList<>();
+				eq.add(arr[k][0]);
+				subsump_list.add(l, eq);
+				l++;
+			}
+
+		}
+
+
+
+		for (int k = 0; k< list_terms.size(); k++) {
+
+			if (!arr[k][0].equals(arr[k][1])) {
+				for (int f =0 ; f<subsump_list.size(); f++) {
+					if (arr[k][0].equals(subsump_list.get(f).get(0))) {
+						subsump_list.get(f).add(arr[k][1]);
+					}
+				}
+			} 
+		}
+
+		System.out.println(subsump_list);
+		reduction(subsump_list);
+
+	}
+
+
+	public void reduction(List<List<Term>> termList) {
+		//boolean contains = termList.contains(termList.get(1));
+		for (int k =0; k<termList.size(); k++) {
+
+			if (termList.get(k).size() > 1) {
+
+				Iterator<List<Term>> itr = termList.iterator();
+				while (itr.hasNext()) {
+					Iterator<Term> it = itr.next().iterator();
+					while (it.hasNext()) {
+						if (!termList.get(k).contains(it.next())) {
+							//if (termList.get(k).contains(termList.get(l).get(f))) {
+							//if (!termList.get(k).get(0).equals(itr.next().get(f)))
+							Iterator<Term> trir = termList.get(k).iterator();
+							while (trir.hasNext()) {
+								if (it.next().equals(trir.next())) {
+									count_equivalentclasses++;
+								}
+							}
+						} else {
+							count_subclasses++;
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	public void TransitiveReduction() {
+		Term[][] arr = new Term[list_terms.size()][2];
 
 		for (int k = 0; k< list_terms.size(); k++) {
 			for (int j =0; j< 2;j++) {
@@ -153,26 +219,64 @@ public class DatalogTranslation {
 			}
 		}
 
+		List<List<Term>> equi_list = new ArrayList<>();
+
 		for (int k = 0; k< list_terms.size(); k++) {
 
 			for (int f = 0; f< list_terms.size(); f++) {
-
 				if (arr[k][0].equals( arr[f][0]) && arr[k][1].equals( arr[f][1])) {
 					break;
 				}
 
-				if ((arr[k][1].equals(arr[f][0])) && !(arr[k][0].equals(arr[k][1])) && !(arr[k][1].equals(arr[f][1]))
-						&& !(arr[f][1].equals(arr[f][0]))) {
-					if (!(arr[k][0].equals(arr[f][1]))) {
-						//Do Subsumption Reduced Result Here
-						count_subclasses++;
-					} else {
-						//Equivalent Reduced Result
-						if (!(arr[f][0].equals(arr[f][1])))
-							count_equivalentclasses++;
-					}
-				} 
+				if (arr[k][1].equals(arr[f][0]) && arr[k][0].equals(arr[f][1])) {
+					List<Term> equ = new ArrayList<>();
+					equ.add(0, arr[k][0]);
+					equ.add(1, arr[k][1]);
+					equi_list.add(equ);
+				}
 			}
 		}
-	}*/
+
+		List<Term> equicalc = new ArrayList<>();
+		boolean equivalent = false;
+		for (int k = 0; k<equi_list.size();k++) {
+			//System.out.println(equi_list.get(k));
+			equivalent = true;
+			for (int f = 0; f<equi_list.size();f++) {
+				if (equi_list.get(k).get(0).equals(equi_list.get(f).get(0)) && 
+						equi_list.get(k).get(1).equals(equi_list.get(f).get(1))) {
+					break;
+				}
+
+				if (equi_list.get(k).get(0).equals(equi_list.get(f).get(0)) && 
+						!equi_list.get(k).get(1).equals(equi_list.get(f).get(1))) {
+					count_equivalentclasses++;
+					equivalent = false;
+					break;
+				}else if (equi_list.get(k).get(0).equals(equi_list.get(f).get(1)) && 
+						!equi_list.get(k).get(1).equals(equi_list.get(f).get(0))) {
+					count_equivalentclasses--;
+					equivalent = false;
+					break;
+				}else if (equi_list.get(k).get(1).equals(equi_list.get(f).get(1)) && 
+						!equi_list.get(k).get(0).equals(equi_list.get(f).get(0))) {
+					count_equivalentclasses++;
+					equivalent = false;
+					break;
+				}else if (equi_list.get(k).get(1).equals(equi_list.get(f).get(0)) && 
+						!equi_list.get(k).get(0).equals(equi_list.get(f).get(1))) {
+					count_equivalentclasses--;
+					equivalent = false;
+					break;
+				} else {
+					equivalent = true;
+				}
+			}
+
+			if (equivalent) {
+				//System.out.println(equi_list.get(k));
+				count_equivalentclasses++;
+			}
+		}
+	}
 }
