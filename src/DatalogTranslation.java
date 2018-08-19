@@ -82,9 +82,9 @@ public class DatalogTranslation {
 		System.out.println(" Subsumption Relations:-"+ i);
 		timer.stop("Subsumption Done!!");
 
-		TransitiveReduction();
-		System.out.println("Equivalent classes Reduced Count :" + count_equivalentclasses);
-		System.out.println("Subsumption Retrievals Reduced Count :" + count_subclasses);
+		//TransitiveReduction();
+		//System.out.println("Equivalent classes Reduced Count :" + count_equivalentclasses);
+		//System.out.println("Subsumption Retrievals Reduced Count :" + count_subclasses);
 	}
 
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws IOException, VLog4jException {
@@ -131,21 +131,11 @@ public class DatalogTranslation {
 	}
 
 	public void ReductionInstance() {
-		Term[][] arr = new Term[list_terms.size()][2];
 
-		for (int k = 0; k< list_terms.size(); k++) {
-			for (int j =0; j< 2;j++) {
-				arr[k][j] = list_terms.get(k).get(j);
-			}
-		}
-
-		Term[][] arrmain = new Term[list_terms.size()][2];
 		int count_instance_reduced =0;
-		for (int k = 0; k< list_terms.size(); k++) {
 
-			if (!(arr[k][0].equals(arr[k][1]))) {
-				arrmain[k][0] = arr[k][0];
-				arrmain[k][1] = arr[k][1];
+		for (int k = 0; k< list_terms.size(); k++) {
+			if (!(list_terms.get(k).get(0)).equals(list_terms.get(k).get(1))){
 				count_instance_reduced++;
 			}
 		}
@@ -153,7 +143,7 @@ public class DatalogTranslation {
 		System.out.println("Reduced Instance Retrievals Count : " +count_instance_reduced);
 	}
 
-	public void TransitiveReduction() {
+	/*	public void TransitiveReduction() {
 		Term[][] arr = new Term[list_terms.size()][2];
 		boolean directsuper;
 
@@ -178,11 +168,11 @@ public class DatalogTranslation {
 						count_subclasses++;
 					} else {
 						//Equivalent Reduced Result
-						if (!(arr[k][0].equals(arr[f][1])))
+						if (!(arr[f][0].equals(arr[f][1])))
 							count_equivalentclasses++;
 					}
 				} 
 			}
 		}
-	}
+	}*/
 }
