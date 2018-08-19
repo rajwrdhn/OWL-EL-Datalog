@@ -171,13 +171,15 @@ public class DatalogTranslation {
 					break;
 				}
 
-				if ((arr[k][1].equals(arr[f][0])) && !(arr[k][0].equals(arr[k][1])) && !(arr[k][1].equals(arr[f][1]))) {
-					if (!arr[k][0].equals(arr[f][1])) {
+				if ((arr[k][1].equals(arr[f][0])) && !(arr[k][0].equals(arr[k][1])) && !(arr[k][1].equals(arr[f][1]))
+						&& !(arr[f][1].equals(arr[f][0]))) {
+					if (!(arr[k][0].equals(arr[f][1]))) {
 						//Do Subsumption Reduced Result Here
-						//count_subclasses++;
+						count_subclasses++;
 					} else {
 						//Equivalent Reduced Result
-						count_equivalentclasses++;
+						if (!(arr[k][0].equals(arr[f][1])))
+							count_equivalentclasses++;
 					}
 				} 
 			}
