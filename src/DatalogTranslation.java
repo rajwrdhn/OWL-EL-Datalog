@@ -45,7 +45,7 @@ public class DatalogTranslation {
 			axiom.accept(normalizedAxiomVisitor);
 		}
 
-		//instance();
+		instance();
 
 		subclass();		
 	}
@@ -62,6 +62,10 @@ public class DatalogTranslation {
 		callReasoner(dlogrules,normalizedAxiomVisitor);
 		System.out.println(" Instance Retrivals:-"+ i);
 		timer.stop(" Instance Retrieval Done!!");
+
+		ReductionInstance();
+
+		list_terms.clear();
 	}
 
 	public void subclass() throws IOException, VLog4jException {
@@ -78,9 +82,9 @@ public class DatalogTranslation {
 		System.out.println(" Subsumption Relations:-"+ i);
 		timer.stop("Subsumption Done!!");
 
-		//countTransitivelyReducedResult();
-		//System.out.println("Equivalent classes :::::::::::::" + count_equivalentclasses);
-		System.out.println("Sub Classes :::::::::::::" + count_subclasses);
+		TransitiveReduction();
+		System.out.println("Equivalent classes Reduced Count :" + count_equivalentclasses);
+		System.out.println("Subsumption Retrievals Reduced Count :" + count_subclasses);
 	}
 
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws IOException, VLog4jException {
@@ -124,8 +128,29 @@ public class DatalogTranslation {
 			});
 
 		}
+	}
 
-		TransitiveReduction();
+	public void ReductionInstance() {
+		Term[][] arr = new Term[list_terms.size()][2];
+
+		for (int k = 0; k< list_terms.size(); k++) {
+			for (int j =0; j< 2;j++) {
+				arr[k][j] = list_terms.get(k).get(j);
+			}
+		}
+
+		Term[][] arrmain = new Term[list_terms.size()][2];
+		int count_instance_reduced =0;
+		for (int k = 0; k< list_terms.size(); k++) {
+
+			if (!(arr[k][0].equals(arr[k][1]))) {
+				arrmain[k][0] = arr[k][0];
+				arrmain[k][1] = arr[k][1];
+				count_instance_reduced++;
+			}
+		}
+
+		System.out.println("Reduced Instance Retrievals Count : " +count_instance_reduced);
 	}
 
 	public void TransitiveReduction() {
@@ -140,37 +165,22 @@ public class DatalogTranslation {
 
 		for (int k = 0; k< list_terms.size(); k++) {
 
-			for (int j =0; j< list_terms.size() ;j++) {
-				if (arr[k][1].equals( arr[j][0])) {
-					directsuper = true;
-					if (!arr[k][0].equals(arr[j][1])) {
-						if ((arr[j][0].equals( arr[k][0]) && arr[j][1].equals( arr[k][1]))) {
-							directsuper = false;
-							count_subclasses--;
-							break;
-						} 
+			for (int f = 0; f< list_terms.size(); f++) {
 
-						if (arr[k][1].equals(arr[j][0]) && !(arr[j][1].equals(arr[k][0]))) {
-							//directsuper = false;
-							count_subclasses--;
-						}
-						if (directsuper) {
-							count_subclasses++;
-						}
-					}else {
-/*						if (arr[k][0].equals( arr[j][0]) && arr[k][1].equals( arr[j][1])) {
-							count_equivalentclasses--;
-						} else {
-							count_equivalentclasses++;
-						}*/
-						if (directsuper) {
-							count_subclasses++;
-						}
-					}
+				if (arr[k][0].equals( arr[f][0]) && arr[k][1].equals( arr[f][1])) {
+					break;
 				}
 
+				if ((arr[k][1].equals(arr[f][0])) && !(arr[k][0].equals(arr[k][1])) && !(arr[k][1].equals(arr[f][1]))) {
+					if (!arr[k][0].equals(arr[f][1])) {
+						//Do Subsumption Reduced Result Here
+						//count_subclasses++;
+					} else {
+						//Equivalent Reduced Result
+						count_equivalentclasses++;
+					}
+				} 
 			}
 		}
 	}
-
 }
