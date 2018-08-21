@@ -82,9 +82,9 @@ public class DatalogTranslation {
 		System.out.println(" Subsumption Relations:-"+ i);
 		timer.stop("Subsumption Done!!");
 
-		TransitiveReductionSubsumption();
-		System.out.println("Equivalent classes Reduced Count :" + count_equivalentclasses);
-		System.out.println("Subsumption Retrievals Reduced Count :" + count_subclasses);
+		//TransitiveReductionSubsumption();
+		//System.out.println("Equivalent classes Reduced Count :" + count_equivalentclasses);
+		//System.out.println("Subsumption Retrievals Reduced Count :" + count_subclasses);
 	}
 
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws IOException, VLog4jException {
@@ -175,37 +175,28 @@ public class DatalogTranslation {
 			} 
 		}
 
-		System.out.println(subsump_list);
-		reduction(subsump_list);
+		//System.out.println(subsump_list);
+		//reduction(subsump_list);
 
 	}
 
 
-	public void reduction(List<List<Term>> termList) {
+/*	public void reduction(List<List<Term>> termList) {
 		//boolean contains = termList.contains(termList.get(1));
+		List<List<Term>> setre = new ArrayList<>();
 		for (int k =0; k<termList.size(); k++) {
 
-			if (termList.get(k).size() > 1) {
-
-				Iterator<List<Term>> itr = termList.iterator();
-				while (itr.hasNext()) {
-					Iterator<Term> it = itr.next().iterator();
-					while (it.hasNext()) {
-						if (!termList.get(k).contains(it.next())) {
-							//if (termList.get(k).contains(termList.get(l).get(f))) {
-							//if (!termList.get(k).get(0).equals(itr.next().get(f)))
-							Iterator<Term> trir = termList.get(k).iterator();
-							while (trir.hasNext()) {
-								if (it.next().equals(trir.next())) {
-									count_equivalentclasses++;
-								}
-							}
-						} else {
-							count_subclasses++;
+			for (int f =0; f<termList.size(); f++) {
+				
+				for (int l =0; l<termList.get(f).size(); l++) {
+					if (!termList.get(k).contains(termList.get(f).get(l))) {
+						Term m = termList.get(k).get(0);
+						Term m1 = termList.get(f).get(l);
+						if (!m.equals(m1)) {
+							System.out.println(m1.toString()+m.toString());
 						}
 					}
 				}
-
 			}
 		}
 	}
@@ -278,5 +269,5 @@ public class DatalogTranslation {
 				count_equivalentclasses++;
 			}
 		}
-	}
+	}*/
 }

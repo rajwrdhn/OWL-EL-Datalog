@@ -130,7 +130,8 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 	public void visit(OWLObjectHasValue ce) {
 
 		// Exists R {o} subsumes A
-		addSubClassAxiom(ce.asSomeValuesFrom(), getCurrentClassExpression()).accept(this);
+		getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
+		//addSubClassAxiom(ce.asSomeValuesFrom(), getCurrentClassExpression()).accept(this);
 
 	}
 

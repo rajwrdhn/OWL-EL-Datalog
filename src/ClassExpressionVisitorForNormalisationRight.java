@@ -86,7 +86,9 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		addSubClassAxiom(getCurrentClassExpression(), ce.asSomeValuesFrom()).accept(this);		
+
+		getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce));
+			
 	}
 
 	@Override
@@ -125,11 +127,13 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectOneOf ce) {
+
 		try {
 			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
 			e.getMessage();
-		}		
+		}
+
 	}
 
 	@Override

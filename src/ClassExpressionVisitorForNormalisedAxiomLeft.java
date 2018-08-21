@@ -100,7 +100,14 @@ public class ClassExpressionVisitorForNormalisedAxiomLeft extends VisitNormalise
 
 	@Override
 	public void visit(OWLObjectHasValue ce) {
-		throw new IllegalStateException();
+		Constant c1 = getConstant(ce.getFiller().toString());
+		Constant c2 = getConstant(super_class_of_axiom.toString());
+		Constant c3 = getConstant(ce.getProperty().toString());
+		
+		toSingleConstantFacts(v_nomEDB, c1);
+		toThreeConstantFacts(v_subExEDB, c3, c1, c2);
+		toSingleConstantFacts(v_clsEDB, c2);
+		toSingleConstantFacts(v_rolEDB, c3);
 	}
 
 	@Override
