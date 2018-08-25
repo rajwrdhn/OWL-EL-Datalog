@@ -2,14 +2,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Rule;
@@ -131,11 +127,35 @@ public class DatalogTranslation {
 	}
 
 	public void ReductionInstance() {
+		List<List<Term>> termPk = new ArrayList<>();
+		
+		for (int k = 0; k< list_terms.size(); k++) {
+			if (!list_terms.get(k).get(0).equals(list_terms.get(k).get(1))) {
+				termPk.add(list_terms.get(k));
+			}
+		}
+		
+		
 
 		int count_instance_reduced =0;
-
+		boolean boolcount = false;
 		for (int k = 0; k< list_terms.size(); k++) {
+			
+			boolcount = false;
+			
 			if (!(list_terms.get(k).get(0)).equals(list_terms.get(k).get(1))){
+				boolcount = true;
+			} else {
+				boolcount = true;
+				for (int j = 0; j<termPk.size(); j++) {
+					if (list_terms.get(k).get(0).equals(termPk.get(j).get(0))) {
+						boolcount = false;
+						break;
+					}
+				}
+			}
+			
+			if (boolcount) {
 				count_instance_reduced++;
 			}
 		}
