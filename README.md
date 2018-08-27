@@ -2,4 +2,5 @@
 
 OWL EL input ontology
 
-Argument:- Local address of the input ontology
+To retrieve count of instances and subsumptions 
+args[0] = "//local address of the input ontology"
