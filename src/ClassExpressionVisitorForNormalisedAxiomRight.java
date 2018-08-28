@@ -92,12 +92,12 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 		
 		Constant c2 = Expressions.makeConstant(sub_class_of_axiom.toString());
 		Constant c3 = Expressions.makeConstant(ce.getProperty().toString());
-		Constant c4 = getConstant("aux_au_"+auxnum);
-		auxnum++;
+		//Constant c4 = getConstant("aux_au_"+auxnum);
+		//auxnum++;
 		toSingleConstantFacts(v_nomEDB, c1);
 		toSingleConstantFacts(v_clsEDB, c2);
 		toSingleConstantFacts(v_rolEDB, c3);
-		toFourConstantFacts(v_supExEDB, c2, c3, c1, c4);	
+		toFourConstantFacts(v_supExEDB, c2, c3, c1, c1);	
 	}
 
 	@Override

@@ -127,7 +127,7 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 
 	@Override
 	public void visit(OWLObjectOneOf ce) {
-
+		//ce.asObjectUnionOf();
 		try {
 			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
