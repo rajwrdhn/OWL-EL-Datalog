@@ -127,37 +127,24 @@ public class DatalogTranslation {
 	}
 
 	public void ReductionInstance() {
-		List<List<Term>> termPk = new ArrayList<>();
+		//List<List<Term>> termPk = new ArrayList<>();
 		
-		for (int k = 0; k< list_terms.size(); k++) {
+/*		for (int k = 0; k< list_terms.size(); k++) {
 			if (!list_terms.get(k).get(0).equals(list_terms.get(k).get(1))) {
 				termPk.add(list_terms.get(k));
 			}
 		}
-		
+		*/
 		
 
 		int count_instance_reduced =0;
-		boolean boolcount = false;
-		for (int k = 0; k< list_terms.size(); k++) {
-			
-			boolcount = false;
+		
+		for (int k = 0; k< list_terms.size(); k++) {			
 			
 			if (!(list_terms.get(k).get(0)).equals(list_terms.get(k).get(1))){
-				boolcount = true;
-			} else {
-				boolcount = true;
-				for (int j = 0; j<termPk.size(); j++) {
-					if (list_terms.get(k).get(0).equals(termPk.get(j).get(0))) {
-						boolcount = false;
-						break;
-					}
-				}
-			}
-			
-			if (boolcount) {
 				count_instance_reduced++;
-			}
+			} 
+			
 		}
 
 		System.out.println("Reduced Instance Retrievals Count : " +count_instance_reduced);
