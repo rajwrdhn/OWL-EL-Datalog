@@ -128,6 +128,12 @@ public class ClassExpressionVisitorForNormalisationRight extends AxiomVisitorFor
 	@Override
 	public void visit(OWLObjectOneOf ce) {
 		//ce.asObjectUnionOf();
+/*		long cou = ce.asObjectUnionOf().individualsInSignature().count();
+		System.out.println("here");
+		if (cou ==1) {
+			getV_Normalised_Axioms().add(addSubClassAxiom(getCurrentClassExpression(), ce.asOWLClass()));
+		}*/
+		
 		try {
 			v_NotNormalised.add(addSubClassAxiom(getCurrentClassExpression(),ce));
 		} catch (Exception e) {
