@@ -72,7 +72,24 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 				getV_Normalised_Axioms().add(addAxiomOfIntersectSubClass(ce1, ce2,
 						getCurrentClassExpression()));
 
-			} else {
+			} else if (isNonComplementOFNamedClass(ce2)  && !isNonComplementOFNamedClass(ce1) ) {		
+
+				OWLClassExpression new_expr1 = addFreshClassName(v_counter_FreshConcept);
+				v_counter_FreshConcept++;
+
+				getV_Normalised_Axioms().add(addAxiomOfIntersectSubClass(ce2, new_expr1, getCurrentClassExpression()));
+
+				addSubClassAxiom(ce1, new_expr1).accept(this); 
+				
+			}else if (isNonComplementOFNamedClass(ce1)  && !isNonComplementOFNamedClass(ce2) ){
+				OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
+				v_counter_FreshConcept++;			
+
+				getV_Normalised_Axioms().add(addAxiomOfIntersectSubClass(new_Expr, ce1, getCurrentClassExpression()));
+
+				addSubClassAxiom(ce2, new_Expr).accept(this);
+			
+			}else {
 				OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 				v_counter_FreshConcept++;			
 
@@ -131,8 +148,6 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 		// Exists R {o} subsumes A
 		getV_Normalised_Axioms().add(addSubClassAxiom(ce, getCurrentClassExpression()));
-		//addSubClassAxiom(ce.asSomeValuesFrom(), getCurrentClassExpression()).accept(this);
-
 	}
 
 	@Override

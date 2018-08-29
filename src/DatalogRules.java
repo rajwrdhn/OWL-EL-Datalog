@@ -252,6 +252,8 @@ public class DatalogRules extends VisitNormalisedAxioms{
 						Expressions.makeAtom(v_srole, v,w),
 						Expressions.makeAtom(v_subRoleEDB, x,v)
 						)));
+		
+		//Equivalent classes rule addition
 		v_l_rules.add(Expressions.makeRule(Expressions.makeConjunction(Expressions.makeAtom(v_equi, x,y)), 
 				Expressions.makeConjunction(Expressions.makeAtom(v_inst, y,x),
 				Expressions.makeAtom(v_inst, x,y)		)
