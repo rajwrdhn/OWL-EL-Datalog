@@ -34,8 +34,7 @@ public class ClassExpressionVisitorForNormalisedAxiomRight extends VisitNormalis
 	}
 	@Override
 	public void visit(OWLClass ce) {
-		if (ce.isOWLNothing()){
-			
+		if (ce.isOWLNothing()){			
 			Constant c2 = getConstant(sub_class_of_axiom.toString());
 			toSingleConstantFacts(v_botEDB, c2);
 			toSingleConstantFacts(v_clsEDB, c2);

@@ -79,8 +79,6 @@ public class DatalogTranslation {
 		timer.stop("Subsumption Done!!");
 
 		//TransitiveReductionSubsumption();
-		//System.out.println("Equivalent classes Reduced Count :" + count_equivalentclasses);
-		//System.out.println("Subsumption Retrievals Reduced Count :" + count_subclasses);
 	}
 
 	public void callReasoner(DatalogRules dlogruls, VisitNormalisedAxioms visitorget) throws IOException, VLog4jException {
@@ -127,15 +125,6 @@ public class DatalogTranslation {
 	}
 
 	public void ReductionInstance() {
-		//List<List<Term>> termPk = new ArrayList<>();
-		
-/*		for (int k = 0; k< list_terms.size(); k++) {
-			if (!list_terms.get(k).get(0).equals(list_terms.get(k).get(1))) {
-				termPk.add(list_terms.get(k));
-			}
-		}
-		*/
-		
 
 		int count_instance_reduced =0;
 		

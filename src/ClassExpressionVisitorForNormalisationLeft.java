@@ -56,7 +56,6 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 
 	@Override
 	public void visit(OWLObjectIntersectionOf ce) {		
-		//System.out.println(ce);
 		int i = (int) ce.operands().count();
 		List<OWLClassExpression> obj_intersection = ce.getOperandsAsList();
 		List<OWLClassExpression> obj_intersection1 = obj_intersection.subList(0, (i+1)/2);
@@ -80,7 +79,7 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 				getV_Normalised_Axioms().add(addAxiomOfIntersectSubClass(ce2, new_expr1, getCurrentClassExpression()));
 
 				addSubClassAxiom(ce1, new_expr1).accept(this); 
-				
+
 			}else if (isNonComplementOFNamedClass(ce1)  && !isNonComplementOFNamedClass(ce2) ){
 				OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 				v_counter_FreshConcept++;			
@@ -88,7 +87,7 @@ public class ClassExpressionVisitorForNormalisationLeft extends AxiomVisitorForN
 				getV_Normalised_Axioms().add(addAxiomOfIntersectSubClass(new_Expr, ce1, getCurrentClassExpression()));
 
 				addSubClassAxiom(ce2, new_Expr).accept(this);
-			
+
 			}else {
 				OWLClassExpression new_Expr = addFreshClassName(v_counter_FreshConcept);
 				v_counter_FreshConcept++;			

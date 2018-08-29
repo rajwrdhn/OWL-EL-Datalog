@@ -51,6 +51,9 @@ public class InferenceForOWLELMain {
 		//timer.stop("Saved Normalised Ontology !!");
 	}
 
+	/*
+	 * Was added only for testing
+	 */
 	public void createNormalisedOntology() throws OWLOntologyCreationException, IOException, OWLOntologyStorageException {
 		OWLOntologyManager m = OWLManager.createOWLOntologyManager();
 		OWLOntology o = m.createOntology(v_normalisedAxioms);
