@@ -1,4 +1,4 @@
-# OWL-ELL
+# OWL-EL
 
 OWL EL input ontology
 
