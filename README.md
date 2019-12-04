@@ -1,4 +1,4 @@
-# CLThesisOWL-EL
+# OWL-ELL
 
 OWL EL input ontology
 
